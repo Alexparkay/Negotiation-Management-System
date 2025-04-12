@@ -17,13 +17,40 @@ import Orders from './pages/Orders';
 import Posts from './pages/Posts';
 import Notes from './pages/Notes';
 import Calendar from './pages/Calendar';
-import Charts from './pages/Charts';
-import Logs from './pages/Logs';
+import Infrastructure from './pages/Infrastructure';
+import NetworkStatus from './pages/NetworkStatus';
 import ToasterProvider from './components/ToasterProvider';
 import EditProfile from './pages/EditProfile';
 import User from './pages/User';
 import Product from './pages/Product';
 import Login from './pages/Login';
+import Stores from './pages/Stores';
+import StoreDetail from './pages/StoreDetail';
+import Checklists from './pages/Checklists';
+import Tasks from './pages/Tasks';
+import Vendors from './pages/Vendors';
+import Contracts from './pages/Contracts';
+import Procurement from './pages/Procurement';
+import NewStore from './pages/NewStore';
+import ITSecurity from './pages/ITSecurity';
+import ITHardware from './pages/ITHardware';
+import POSSystems from './pages/POSSystems';
+import Charts from './pages/Charts';
+import Logs from './pages/Logs';
+
+// Supplier Management Pages
+import Suppliers from './pages/Suppliers';
+import SupplierDetail from './pages/SupplierDetail';
+import SupplierPerformance from './pages/SupplierPerformance';
+import SupplierOnboarding from './pages/SupplierOnboarding';
+import SupplierCompliance from './pages/SupplierCompliance';
+import SupplierRisk from './pages/SupplierRisk';
+import Invoices from './pages/Invoices';
+import SpendAnalysis from './pages/SpendAnalysis';
+import DemandForecasting from './pages/DemandForecasting';
+import IncidentManagement from './pages/IncidentManagement';
+import Integrations from './pages/Integrations';
+import Admin from './pages/Admin';
 
 function App() {
   const Layout = () => {
@@ -106,6 +133,103 @@ function App() {
         {
           path: '/logs',
           element: <Logs />,
+        },
+        {
+          path: '/infrastructure',
+          element: <Infrastructure />,
+        },
+        {
+          path: '/it-security',
+          element: <ITSecurity />,
+        },
+        {
+          path: '/it-hardware',
+          element: <ITHardware />,
+        },
+        {
+          path: '/pos-systems',
+          element: <POSSystems />,
+        },
+        {
+          path: '/stores',
+          element: <Stores />,
+        },
+        {
+          path: '/stores/:storeId',
+          element: <StoreDetail />,
+        },
+        {
+          path: '/new-store',
+          element: <NewStore />,
+        },
+        {
+          path: '/checklists',
+          element: <Checklists />,
+        },
+        {
+          path: '/tasks',
+          element: <Tasks />,
+        },
+        {
+          path: '/vendors',
+          element: <Vendors />,
+        },
+        {
+          path: '/contracts',
+          element: <Contracts />,
+        },
+        {
+          path: '/procurement',
+          element: <Procurement />,
+        },
+        // New Supplier Management Routes
+        {
+          path: '/suppliers',
+          element: <Suppliers />,
+        },
+        {
+          path: '/suppliers/:supplierId',
+          element: <SupplierDetail />,
+        },
+        {
+          path: '/supplier-performance',
+          element: <SupplierPerformance />,
+        },
+        {
+          path: '/supplier-onboarding',
+          element: <SupplierOnboarding />,
+        },
+        {
+          path: '/invoices',
+          element: <Invoices />,
+        },
+        {
+          path: '/spend-analysis',
+          element: <SpendAnalysis />,
+        },
+        {
+          path: '/demand-forecasting',
+          element: <DemandForecasting />,
+        },
+        {
+          path: '/supplier-compliance',
+          element: <SupplierCompliance />,
+        },
+        {
+          path: '/supplier-risk',
+          element: <SupplierRisk />,
+        },
+        {
+          path: '/incident-management',
+          element: <IncidentManagement />,
+        },
+        {
+          path: '/integrations',
+          element: <Integrations />,
+        },
+        {
+          path: '/admin',
+          element: <Admin />,
         },
       ],
       errorElement: <Error />,

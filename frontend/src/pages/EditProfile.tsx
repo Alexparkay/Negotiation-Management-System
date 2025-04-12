@@ -25,14 +25,15 @@ const EditProfile = () => {
     fileInputRef.current?.click();
   };
 
-  const [firstName, setFirstName] = React.useState('Frans');
-  const [lastName, setLastName] = React.useState('AHW');
-  const [nickName, setNickName] = React.useState('Frans');
-  const [email, setEmail] = React.useState('franswinata6@gmail.com');
-  const [phone, setPhone] = React.useState('081-234-5678');
+  const [firstName, setFirstName] = React.useState('Alex');
+  const [lastName, setLastName] = React.useState('Johnson');
+  const [department, setDepartment] = React.useState('Store Operations');
+  const [email, setEmail] = React.useState('alex.johnson@marx-technology.com');
+  const [phone, setPhone] = React.useState('+1 (555) 123-4567');
   const [address, setAddress] = React.useState(
-    'Suite 948 Jl. Gajahmada No. 91, Malang, SM 74810'
+    '350 Fifth Avenue, New York, NY 10118'
   );
+  const [role, setRole] = React.useState('Manager');
 
   return (
     // screen
@@ -42,7 +43,7 @@ const EditProfile = () => {
         {/* block 1 */}
         <div className="flex flex-col xl:flex-row items-start justify-between gap-3 xl:gap-0">
           <h2 className="font-bold text-2xl xl:text-4xl mt-0 pt-0 text-base-content dark:text-neutral-200">
-            My Profile
+            Edit Profile
           </h2>
           <div className="w-full xl:w-auto grid grid-cols-2 xl:flex gap-3">
             <button
@@ -54,7 +55,7 @@ const EditProfile = () => {
             <button
               onClick={() => {
                 navigate('/profile');
-                toast('Gabisa diedit dong!', { icon: '😛' });
+                toast('Profile updated successfully!', { icon: '✅' });
               }}
               className="btn btn-block xl:w-auto btn-primary"
             >
@@ -79,7 +80,7 @@ const EditProfile = () => {
                     preview ||
                     'https://avatars.githubusercontent.com/u/74099030?v=4'
                   }
-                  alt="foto-cowok-ganteng"
+                  alt="user-avatar"
                 />
               </div>
             </div>
@@ -96,7 +97,7 @@ const EditProfile = () => {
             <h3 className="font-semibold text-xl xl:text-3xl">
               {firstName} {lastName}
             </h3>
-            <span className="font-normal text-base">Supervisor</span>
+            <span className="font-normal text-base">Store Operations Manager</span>
           </div>
         </div>
         {/* block 3 */}
@@ -149,14 +150,14 @@ const EditProfile = () => {
               {/* row 3 */}
               <div className="w-full grid xl:grid-cols-3 2xl:grid-cols-4 items-center gap-1 xl:gap-0">
                 <div className="w-full whitespace-nowrap">
-                  <span className="whitespace-nowrap">Nickname</span>
+                  <span className="whitespace-nowrap">Department</span>
                 </div>
                 <input
                   type="text"
                   placeholder="Type here"
-                  value={nickName}
+                  value={department}
                   onChange={(element) =>
-                    setNickName(element.target.value)
+                    setDepartment(element.target.value)
                   }
                   className="input input-bordered w-full col-span-2 2xl:col-span-3"
                 />
@@ -207,15 +208,6 @@ const EditProfile = () => {
                     setAddress(element.target.value)
                   }
                 ></textarea>
-                {/* <input
-                  type="text"
-                  placeholder="Type here"
-                  value={address}
-                  onChange={(element) =>
-                    setAddress(element.target.value)
-                  }
-                  className="input input-bordered w-full col-span-2 2xl:col-span-3"
-                /> */}
               </div>
             </div>
             {/* column 3 */}
@@ -225,9 +217,28 @@ const EditProfile = () => {
                 <div className="w-full whitespace-nowrap">
                   <span className="whitespace-nowrap">Password</span>
                 </div>
-                <div className="btn btn-disabled col-span-2">
+                <button 
+                  className="btn btn-outline col-span-2"
+                  onClick={() => toast('Password change feature coming soon', { icon: '🔒' })}
+                >
                   Change Password
+                </button>
+              </div>
+              {/* row 2 */}
+              <div className="w-full grid xl:grid-cols-3 2xl:grid-cols-4 items-center gap-1 xl:gap-0">
+                <div className="w-full whitespace-nowrap">
+                  <span className="whitespace-nowrap">Role</span>
                 </div>
+                <select
+                  value={role}
+                  onChange={(e) => setRole(e.target.value)}
+                  className="select select-bordered w-full col-span-2 2xl:col-span-3"
+                >
+                  <option value="Manager">Manager</option>
+                  <option value="Supervisor">Supervisor</option>
+                  <option value="Administrator">Administrator</option>
+                  <option value="Staff">Staff</option>
+                </select>
               </div>
             </div>
           </div>
@@ -253,14 +264,14 @@ const EditProfile = () => {
             <div className="col-span-2 flex flex-col items-start gap-5 xl:w-[240px]">
               <button
                 onClick={() =>
-                  toast('Gaboleh', {
-                    icon: '😠',
+                  toast('Microsoft integration coming soon', {
+                    icon: '🔄',
                   })
                 }
-                className="btn btn-block btn-disabled flex-nowrap justify-start"
+                className="btn btn-block flex-nowrap justify-start dark:btn-neutral"
               >
                 <img
-                  className="w-6 opacity-20"
+                  className="w-6"
                   src="/icons8-microsoft.svg"
                   alt="microsoft"
                 />
@@ -280,19 +291,19 @@ const EditProfile = () => {
               </div>
               <button
                 onClick={() =>
-                  toast('Gaboleh', {
-                    icon: '😠',
+                  toast('Apple integration coming soon', {
+                    icon: '🔄',
                   })
                 }
-                className="btn btn-block btn-disabled justify-start"
+                className="btn btn-block justify-start dark:btn-neutral"
               >
                 <img
-                  className="dark:hidden w-6 opacity-20"
+                  className="dark:hidden w-6"
                   src="/icons8-apple-black.svg"
                   alt="apple"
                 />
                 <img
-                  className="hidden dark:block w-6 opacity-20"
+                  className="hidden dark:block w-6"
                   src="/icons8-apple-white.svg"
                   alt="apple"
                 />
@@ -306,11 +317,11 @@ const EditProfile = () => {
               <button className="btn btn-ghost text-error"></button>
               <button
                 onClick={() =>
-                  toast('Gaboleh', {
-                    icon: '😠',
+                  toast('Disconnect Google account?', {
+                    icon: '❓',
                   })
                 }
-                className="btn btn-ghost btn-disabled text-error text-xs xl:text-sm"
+                className="btn btn-ghost text-error text-xs xl:text-sm"
               >
                 Disconnect
               </button>
@@ -321,7 +332,7 @@ const EditProfile = () => {
         {/* block 5 */}
         <div className="w-full flex justify-start items-center mt-10">
           <button
-            className="btn btn-disabled text-error text-xs xl:text-sm"
+            className="btn dark:btn-neutral text-error dark:text-error text-xs xl:text-sm"
             onClick={() => modalDelete.current?.showModal()}
           >
             <HiOutlineTrash className="text-lg" />
@@ -337,13 +348,13 @@ const EditProfile = () => {
                 Action Confirmation!
               </h3>
               <p className="py-4">
-                Do you want to delete your account?
+                Do you want to delete your account? This action cannot be undone.
               </p>
               <div className="modal-action mx-0 flex-col items-stretch justify-stretch gap-3">
                 <button
                   onClick={() =>
-                    toast('Lancang kamu ya!', {
-                      icon: '😠',
+                    toast('Account deletion is disabled for demo purposes', {
+                      icon: '🔒',
                     })
                   }
                   className="btn btn-error btn-block text-base-100 dark:text-white"

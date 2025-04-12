@@ -9,7 +9,11 @@ import {
   MdOutlineSignalWifiStatusbarConnectedNoInternet4,
   MdOutlineSignalWifiStatusbarNull,
   MdOutlineRefresh,
-  MdOutlineFilterAlt
+  MdOutlineFilterAlt,
+  MdOutlineDns,
+  MdOutlineSettingsEthernet,
+  MdOutlineCloud,
+  MdOutlineVpnLock
 } from 'react-icons/md';
 import { 
   LineChart, 
@@ -21,7 +25,12 @@ import {
   Legend, 
   ResponsiveContainer,
   AreaChart,
-  Area
+  Area,
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell
 } from 'recharts';
 
 const NetworkStatus = () => {
@@ -124,8 +133,46 @@ const NetworkStatus = () => {
     { store: 'Atlanta Mall', signalStrength: 90, connectedDevices: 65, bandwidth: 95, status: 'Active' },
   ];
 
+  // Network traffic by region
+  const networkTrafficByRegion = [
+    { name: 'North America', value: 45, color: '#36d399' },
+    { name: 'Europe', value: 30, color: '#3abff8' },
+    { name: 'Asia Pacific', value: 15, color: '#f87272' },
+    { name: 'Latin America', value: 7, color: '#fbbd23' },
+    { name: 'Middle East & Africa', value: 3, color: '#a991f7' }
+  ];
+
+  // WAN connection types
+  const wanConnectionTypes = [
+    { name: 'Fiber', value: 65, color: '#36d399' },
+    { name: 'Cable', value: 20, color: '#3abff8' },
+    { name: 'DSL', value: 10, color: '#f87272' },
+    { name: 'Satellite', value: 3, color: '#fbbd23' },
+    { name: 'Cellular', value: 2, color: '#a991f7' }
+  ];
+
+  // VPN connection data
+  const vpnConnectionData = [
+    { time: '00:00', connections: 120 },
+    { time: '04:00', connections: 85 },
+    { time: '08:00', connections: 210 },
+    { time: '12:00', connections: 310 },
+    { time: '16:00', connections: 290 },
+    { time: '20:00', connections: 180 },
+    { time: '23:59', connections: 120 },
+  ];
+
+  // Network equipment status
+  const networkEquipmentData = [
+    { type: 'Routers', total: 85, operational: 82, warning: 2, critical: 1 },
+    { type: 'Switches', total: 210, operational: 205, warning: 3, critical: 2 },
+    { type: 'Firewalls', total: 45, operational: 44, warning: 1, critical: 0 },
+    { type: 'Access Points', total: 320, operational: 310, warning: 7, critical: 3 },
+    { type: 'Load Balancers', total: 12, operational: 12, warning: 0, critical: 0 },
+  ];
+
   // Get status icon based on status
-  const getStatusIcon = (status) => {
+  const getStatusIcon = (status: string) => {
     switch(status) {
       case 'Active':
         return <MdOutlineSignalWifiStatusbar4Bar className="text-success text-xl" />;
@@ -250,6 +297,9 @@ const NetworkStatus = () => {
               <p className="text-sm">
                 <span className="font-semibold">Average Bandwidth Usage:</span> {networkStatusData.avgBandwidthUsage}%
               </p>
+              <p className="text-sm">
+                <span className="font-semibold">Peak Bandwidth Usage:</span> 80%
+              </p>
             </div>
           </div>
         </div>
@@ -276,8 +326,9 @@ const NetworkStatus = () => {
                     type="monotone" 
                     dataKey="uptime" 
                     name="Uptime (%)" 
-                    stroke="#a991f7" 
-                    fill="#a991f7" 
+                    stroke="#36d399" 
+                    fill="#36d39944" 
+                    activeDot={{ r: 8 }} 
                   />
                 </AreaChart>
               </ResponsiveContainer>
@@ -289,17 +340,174 @@ const NetworkStatus = () => {
               <p className="text-sm">
                 <span className="font-semibold">SLA Target:</span> 99.9%
               </p>
+              <p className="text-sm">
+                <span className="font-semibold">Last Outage:</span> 3 days ago (15 minutes)
+              </p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Network Issues Table */}
+      {/* Network Distribution */}
+      <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        {/* Traffic by Region */}
+        <div className="card bg-base-100 shadow-xl">
+          <div className="card-body">
+            <h2 className="card-title">
+              <MdOutlineSettingsEthernet className="text-xl" />
+              Network Traffic by Region
+            </h2>
+            <div className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={networkTrafficByRegion}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    outerRadius={80}
+                    fill="#8884d8"
+                    dataKey="value"
+                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                  >
+                    {networkTrafficByRegion.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </div>
+
+        {/* WAN Connection Types */}
+        <div className="card bg-base-100 shadow-xl">
+          <div className="card-body">
+            <h2 className="card-title">
+              <MdOutlineRouter className="text-xl" />
+              WAN Connection Types
+            </h2>
+            <div className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={wanConnectionTypes}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    outerRadius={80}
+                    fill="#8884d8"
+                    dataKey="value"
+                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                  >
+                    {wanConnectionTypes.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* VPN Connections */}
+      <div className="card bg-base-100 shadow-xl mb-6">
+        <div className="card-body">
+          <h2 className="card-title">
+            <MdOutlineVpnLock className="text-xl" />
+            VPN Connections
+          </h2>
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart
+                data={vpnConnectionData}
+                margin={{ top: 20, right: 30, left: 20, bottom: 10 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="time" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Area 
+                  type="monotone" 
+                  dataKey="connections" 
+                  name="Active VPN Connections" 
+                  stroke="#3abff8" 
+                  fill="#3abff844" 
+                  activeDot={{ r: 8 }} 
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="mt-4">
+            <p className="text-sm">
+              <span className="font-semibold">Peak Connections:</span> 310
+            </p>
+            <p className="text-sm">
+              <span className="font-semibold">Current Connections:</span> 185
+            </p>
+            <p className="text-sm">
+              <span className="font-semibold">VPN Capacity:</span> 500 concurrent connections
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Network Equipment Status */}
+      <div className="card bg-base-100 shadow-xl mb-6">
+        <div className="card-body">
+          <h2 className="card-title">
+            <MdOutlineRouter className="text-xl" />
+            Network Equipment Status
+          </h2>
+          <div className="overflow-x-auto">
+            <table className="table table-zebra">
+              <thead>
+                <tr>
+                  <th>Equipment Type</th>
+                  <th>Total</th>
+                  <th>Operational</th>
+                  <th>Warning</th>
+                  <th>Critical</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {networkEquipmentData.map((equipment, index) => (
+                  <tr key={index}>
+                    <td>{equipment.type}</td>
+                    <td>{equipment.total}</td>
+                    <td>{equipment.operational}</td>
+                    <td>{equipment.warning}</td>
+                    <td>{equipment.critical}</td>
+                    <td>
+                      <progress 
+                        className={`progress ${
+                          (equipment.operational / equipment.total) > 0.95 ? 'progress-success' : 
+                          (equipment.operational / equipment.total) > 0.9 ? 'progress-warning' : 
+                          'progress-error'
+                        } w-20`} 
+                        value={equipment.operational} 
+                        max={equipment.total}
+                      ></progress>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      {/* Network Issues */}
       <div className="card bg-base-100 shadow-xl mb-6">
         <div className="card-body">
           <h2 className="card-title">
             <MdOutlineWarning className="text-xl" />
-            Current Network Issues
+            Active Network Issues
           </h2>
           <div className="overflow-x-auto">
             <table className="table table-zebra">
@@ -365,46 +573,42 @@ const NetworkStatus = () => {
                 </tr>
               </thead>
               <tbody>
-                {wifiStatusData.map((store, index) => (
+                {wifiStatusData.map((wifi, index) => (
                   <tr key={index}>
-                    <td>{store.store}</td>
-                    <td className="flex items-center gap-2">
-                      {getStatusIcon(store.status)}
-                      <span className={
-                        store.status === 'Active' ? 'text-success' : 
-                        store.status === 'Warning' ? 'text-warning' : 
-                        'text-error'
-                      }>
-                        {store.status}
-                      </span>
-                    </td>
+                    <td>{wifi.store}</td>
                     <td>
                       <div className="flex items-center gap-2">
-                        <progress 
-                          className={`progress ${
-                            store.signalStrength >= 70 ? 'progress-success' : 
-                            store.signalStrength >= 50 ? 'progress-warning' : 
-                            'progress-error'
-                          }`} 
-                          value={store.signalStrength} 
-                          max="100"
-                        ></progress>
-                        <span>{store.signalStrength}%</span>
+                        {getStatusIcon(wifi.status)}
+                        <span>{wifi.status}</span>
                       </div>
                     </td>
-                    <td>{store.connectedDevices}</td>
                     <td>
                       <div className="flex items-center gap-2">
                         <progress 
                           className={`progress ${
-                            store.bandwidth < 80 ? 'progress-success' : 
-                            store.bandwidth < 90 ? 'progress-warning' : 
+                            wifi.signalStrength > 70 ? 'progress-success' : 
+                            wifi.signalStrength > 50 ? 'progress-warning' : 
                             'progress-error'
-                          }`} 
-                          value={store.bandwidth} 
+                          } w-20`} 
+                          value={wifi.signalStrength} 
                           max="100"
                         ></progress>
-                        <span>{store.bandwidth}%</span>
+                        <span>{wifi.signalStrength}%</span>
+                      </div>
+                    </td>
+                    <td>{wifi.connectedDevices}</td>
+                    <td>
+                      <div className="flex items-center gap-2">
+                        <progress 
+                          className={`progress ${
+                            wifi.bandwidth < 70 ? 'progress-success' : 
+                            wifi.bandwidth < 90 ? 'progress-warning' : 
+                            'progress-error'
+                          } w-20`} 
+                          value={wifi.bandwidth} 
+                          max="100"
+                        ></progress>
+                        <span>{wifi.bandwidth}%</span>
                       </div>
                     </td>
                   </tr>
@@ -414,62 +618,8 @@ const NetworkStatus = () => {
           </div>
         </div>
       </div>
-
-      {/* Network Status by Region */}
-      <div className="card bg-base-100 shadow-xl mb-6">
-        <div className="card-body">
-          <h2 className="card-title">
-            <MdOutlineRouter className="text-xl" />
-            Network Status by Region
-          </h2>
-          <div className="overflow-x-auto">
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>Region</th>
-                  <th>Active</th>
-                  <th>Warning</th>
-                  <th>Critical</th>
-                  <th>Total</th>
-                  <th>Health</th>
-                </tr>
-              </thead>
-              <tbody>
-                {networkStatusData.regions.map((region, index) => {
-                  const total = region.active + region.warning + region.critical;
-                  const healthPercentage = Math.round((region.active / total) * 100);
-                  
-                  return (
-                    <tr key={index}>
-                      <td>{region.name}</td>
-                      <td className="text-success">{region.active}</td>
-                      <td className="text-warning">{region.warning}</td>
-                      <td className="text-error">{region.critical}</td>
-                      <td>{total}</td>
-                      <td>
-                        <div className="flex items-center gap-2">
-                          <progress 
-                            className={`progress ${
-                              healthPercentage >= 90 ? 'progress-success' : 
-                              healthPercentage >= 75 ? 'progress-warning' : 
-                              'progress-error'
-                            }`} 
-                            value={healthPercentage} 
-                            max="100"
-                          ></progress>
-                          <span>{healthPercentage}%</span>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
     </div>
   );
 };
 
-export default NetworkStatus;
+export default NetworkStatus; 

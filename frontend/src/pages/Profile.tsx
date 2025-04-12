@@ -2,6 +2,7 @@ import React from 'react';
 import toast from 'react-hot-toast';
 import { HiOutlinePencil, HiOutlineTrash } from 'react-icons/hi2';
 import { useNavigate } from 'react-router-dom';
+import { MdOutlineEmail, MdOutlinePhone, MdOutlineLocationOn, MdOutlineWork, MdOutlineCalendarToday } from 'react-icons/md';
 
 const Profile = () => {
   const modalDelete = React.useRef<HTMLDialogElement>(null);
@@ -25,20 +26,44 @@ const Profile = () => {
           </button>
         </div>
         {/* block 2 */}
-        <div className="flex items-center gap-3 xl:gap-8 xl:mb-4">
+        <div className="flex flex-col md:flex-row items-center md:items-start gap-6 xl:gap-8 xl:mb-4">
           <div className="avatar">
             <div className="w-24 xl:w-36 2xl:w-48 rounded-full">
               <img
                 src="https://avatars.githubusercontent.com/u/74099030?v=4"
-                alt="foto-cowok-ganteng"
+                alt="user-avatar"
               />
             </div>
           </div>
-          <div className="flex flex-col items-start gap-1">
-            <h3 className="font-semibold text-xl xl:text-3xl">
-              Frans AHW
-            </h3>
-            <span className="font-normal text-base">Supervisor</span>
+          <div className="flex flex-col items-center md:items-start gap-4">
+            <div className="flex flex-col items-center md:items-start gap-1">
+              <h3 className="font-semibold text-xl xl:text-3xl">
+                Alex Johnson
+              </h3>
+              <span className="font-normal text-base">Store Operations Manager</span>
+            </div>
+            <div className="flex flex-col gap-2 text-sm">
+              <div className="flex items-center gap-2">
+                <MdOutlineEmail className="text-primary" />
+                <span>alex.johnson@marx-technology.com</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <MdOutlinePhone className="text-primary" />
+                <span>+1 (555) 123-4567</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <MdOutlineLocationOn className="text-primary" />
+                <span>New York, USA</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <MdOutlineWork className="text-primary" />
+                <span>5 years at Marx Technology</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <MdOutlineCalendarToday className="text-primary" />
+                <span>Joined: January 15, 2019</span>
+              </div>
+            </div>
           </div>
         </div>
         {/* block 3 */}
@@ -58,13 +83,13 @@ const Profile = () => {
               <div className="col-span-1 flex flex-col items-start xl:gap-5">
                 <span>First Name*</span>
                 <span>Last Name*</span>
-                <span>Nickname</span>
+                <span>Department</span>
               </div>
               {/* column 1 text */}
               <div className="col-span-2 flex flex-col items-start xl:gap-5">
-                <span className="font-semibold">Frans</span>
-                <span className="font-semibold">AHW</span>
-                <span className="font-semibold">Frans</span>
+                <span className="font-semibold">Alex</span>
+                <span className="font-semibold">Johnson</span>
+                <span className="font-semibold">Store Operations</span>
               </div>
             </div>
             {/* column 2 */}
@@ -78,11 +103,11 @@ const Profile = () => {
               {/* column 2 text */}
               <div className="col-span-2 flex flex-col items-start xl:gap-5">
                 <span className="font-semibold">
-                  franswinata6@gmail.com
+                  alex.johnson@marx-technology.com
                 </span>
-                <span className="font-semibold">081-234-5678</span>
+                <span className="font-semibold">+1 (555) 123-4567</span>
                 <span className="font-semibold">
-                  Suite 948 Jl. Gajahmada No. 91, Malang, SM 74810
+                  350 Fifth Avenue, New York, NY 10118
                 </span>
               </div>
             </div>
@@ -91,12 +116,16 @@ const Profile = () => {
               {/* column 3 label */}
               <div className="col-span-1 flex flex-col items-start xl:gap-5">
                 <span>Password</span>
+                <span>Role</span>
+                <span>Status</span>
               </div>
               {/* column 3 text */}
               <div className="col-span-2 flex flex-col items-start xl:gap-5">
                 <span className="link no-underline link-primary font-semibold">
                   Change Password
                 </span>
+                <span className="font-semibold">Manager</span>
+                <span className="badge badge-success">Active</span>
               </div>
             </div>
           </div>
@@ -122,8 +151,8 @@ const Profile = () => {
             <div className="col-span-2 flex flex-col items-start gap-5 xl:w-[240px]">
               <button
                 onClick={() =>
-                  toast('Gaboleh', {
-                    icon: '😠',
+                  toast('Microsoft integration coming soon', {
+                    icon: '🔄',
                   })
                 }
                 className="btn btn-block flex-nowrap justify-start dark:btn-neutral"
@@ -149,8 +178,8 @@ const Profile = () => {
               </div>
               <button
                 onClick={() =>
-                  toast('Gaboleh', {
-                    icon: '😠',
+                  toast('Apple integration coming soon', {
+                    icon: '🔄',
                   })
                 }
                 className="btn btn-block justify-start dark:btn-neutral"
@@ -175,8 +204,8 @@ const Profile = () => {
               <button className="btn btn-ghost text-error"></button>
               <button
                 onClick={() =>
-                  toast('Gaboleh', {
-                    icon: '😠',
+                  toast('Disconnect Google account?', {
+                    icon: '❓',
                   })
                 }
                 className="btn btn-ghost text-error text-xs xl:text-sm"
@@ -206,13 +235,13 @@ const Profile = () => {
                 Action Confirmation!
               </h3>
               <p className="py-4">
-                Do you want to delete your account?
+                Do you want to delete your account? This action cannot be undone.
               </p>
               <div className="modal-action mx-0 flex-col items-stretch justify-stretch gap-3">
                 <button
                   onClick={() =>
-                    toast('Lancang kamu ya!', {
-                      icon: '😠',
+                    toast('Account deletion is disabled for demo purposes', {
+                      icon: '🔒',
                     })
                   }
                   className="btn btn-error btn-block text-base-100 dark:text-white"
