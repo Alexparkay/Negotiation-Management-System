@@ -10,6 +10,9 @@ import {
   HiOutlineArrowLeftOnRectangle,
   HiOutlineShieldCheck,
   HiOutlineChartBar,
+  HiOutlineChatBubbleLeftRight,
+  HiOutlineScale,
+  HiOutlineArchiveBox,
 } from 'react-icons/hi2';
 import { 
   MdOutlineStorefront, 
@@ -33,6 +36,16 @@ import {
   MdOutlineInsights,
   MdOutlineIntegrationInstructions,
   MdOutlineAdminPanelSettings,
+  MdOutlineCompare,
+  MdOutlineTrendingUp,
+  MdOutlineHistory,
+  MdOutlineCategory,
+  MdOutlineEmail,
+  MdOutlineTimeline,
+  MdOutlineAutoGraph,
+  MdOutlineHandshake,
+  MdOutlineViewTimeline,
+  MdOutlinePriceChange,
 } from 'react-icons/md';
 // import { IoSettingsOutline } from 'react-icons/io5';
 
@@ -49,101 +62,112 @@ export const menu = [
     ],
   },
   {
-    catalog: 'supplier management',
+    catalog: 'negotiations',
     listItems: [
       {
         isLink: true,
-        url: '/suppliers',
-        icon: HiOutlineUsers,
-        label: 'suppliers',
+        url: '/active-negotiations',
+        icon: MdOutlineHandshake,
+        label: 'active negotiations',
       },
       {
         isLink: true,
-        url: '/supplier-performance',
-        icon: MdOutlineAnalytics,
-        label: 'performance analytics',
+        url: '/vendor-comparison',
+        icon: MdOutlineCompare,
+        label: 'vendor comparison',
       },
       {
         isLink: true,
-        url: '/supplier-onboarding',
-        icon: MdOutlineAddBusiness,
-        label: 'onboarding',
+        url: '/communication-hub',
+        icon: MdOutlineEmail,
+        label: 'communication hub',
       },
       {
         isLink: true,
-        url: '/supplier-compliance',
-        icon: HiOutlineClipboardDocumentList,
-        label: 'compliance',
+        url: '/negotiation-history',
+        icon: MdOutlineHistory,
+        label: 'negotiation history',
       },
       {
         isLink: true,
-        url: '/supplier-risk',
-        icon: MdOutlineWarning,
-        label: 'risk management',
-      },
-    ],
-  },
-  {
-    catalog: 'procurement',
-    listItems: [
-      {
-        isLink: true,
-        url: '/procurement',
-        icon: MdOutlineShoppingCart,
-        label: 'purchase orders',
-      },
-      {
-        isLink: true,
-        url: '/invoices',
-        icon: MdOutlineAttachMoney,
-        label: 'invoices & payments',
-      },
-      {
-        isLink: true,
-        url: '/spend-analysis',
-        icon: HiOutlineChartBar,
-        label: 'spend analysis',
-      },
-      {
-        isLink: true,
-        url: '/demand-forecasting',
-        icon: MdOutlineInsights,
-        label: 'demand forecasting',
-      },
-    ],
-  },
-  {
-    catalog: 'system',
-    listItems: [
-      {
-        isLink: true,
-        url: '/incident-management',
-        icon: MdOutlineWarning,
-        label: 'incident management',
-      },
-      {
-        isLink: true,
-        url: '/integrations',
-        icon: MdOutlineIntegrationInstructions,
-        label: 'integrations',
-      },
-      {
-        isLink: true,
-        url: '/admin',
-        icon: MdOutlineAdminPanelSettings,
-        label: 'security & admin',
-      },
-      {
-        isLink: true,
-        url: '/calendar',
+        url: '/negotiation-calendar',
         icon: HiOutlineCalendarDays,
-        label: 'calendar',
+        label: 'negotiation calendar',
       },
+    ],
+  },
+  {
+    catalog: 'market analytics',
+    listItems: [
+      {
+        isLink: true,
+        url: '/price-tracker',
+        icon: MdOutlinePriceChange,
+        label: 'price tracker',
+      },
+      {
+        isLink: true,
+        url: '/market-trends',
+        icon: MdOutlineTrendingUp,
+        label: 'market trends',
+      },
+      {
+        isLink: true,
+        url: '/product-categories',
+        icon: MdOutlineCategory,
+        label: 'product categories',
+      },
+      {
+        isLink: true,
+        url: '/price-forecasting',
+        icon: MdOutlineInsights,
+        label: 'price forecasting',
+      },
+    ],
+  },
+  {
+    catalog: 'vendor management',
+    listItems: [
+      {
+        isLink: true,
+        url: '/vendors',
+        icon: HiOutlineUsers,
+        label: 'vendor directory',
+      },
+      {
+        isLink: true,
+        url: '/vendor-performance',
+        icon: MdOutlineAnalytics,
+        label: 'performance ratings',
+      },
+      {
+        isLink: true,
+        url: '/contracts',
+        icon: HiOutlineDocumentText,
+        label: 'contracts',
+      },
+    ],
+  },
+  {
+    catalog: 'tools',
+    listItems: [
       {
         isLink: true,
         url: '/notes',
         icon: HiOutlinePencilSquare,
         label: 'notes',
+      },
+      {
+        isLink: true,
+        url: '/document-repository',
+        icon: HiOutlineArchiveBox,
+        label: 'document repository',
+      },
+      {
+        isLink: true,
+        url: '/admin',
+        icon: MdOutlineAdminPanelSettings,
+        label: 'settings',
       },
     ],
   },

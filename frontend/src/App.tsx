@@ -9,7 +9,6 @@ import Home from './pages/Home';
 import Users from './pages/Users';
 import Products from './pages/Products';
 import Navbar from './components/Navbar';
-import Footer from './components/Footer';
 import Menu from './components/menu/Menu';
 import Error from './pages/Error';
 import Profile from './pages/Profile';
@@ -37,6 +36,7 @@ import ITHardware from './pages/ITHardware';
 import POSSystems from './pages/POSSystems';
 import Charts from './pages/Charts';
 import Logs from './pages/Logs';
+import VendorDetail from './pages/VendorDetail';
 
 // Supplier Management Pages
 import Suppliers from './pages/Suppliers';
@@ -52,6 +52,19 @@ import IncidentManagement from './pages/IncidentManagement';
 import Integrations from './pages/Integrations';
 import Admin from './pages/Admin';
 
+// Marx Supplier Portal Pages
+import PriceForecasting from './pages/PriceForecasting';
+import ActiveNegotiations from './pages/ActiveNegotiations';
+import VendorComparison from './pages/VendorComparison';
+import CommunicationHub from './pages/CommunicationHub';
+import NegotiationHistory from './pages/NegotiationHistory';
+import NegotiationCalendar from './pages/NegotiationCalendar';
+import PriceTracker from './pages/PriceTracker';
+import MarketTrends from './pages/MarketTrends';
+import ProductCategories from './pages/ProductCategories';
+import VendorPerformance from './pages/VendorPerformance';
+import DocumentRepository from './pages/DocumentRepository';
+
 function App() {
   const Layout = () => {
     return (
@@ -61,18 +74,17 @@ function App() {
       >
         <ToasterProvider />
         <ScrollRestoration />
-        <div>
+        <div className="flex flex-col h-screen">
           <Navbar />
-          <div className="w-full flex gap-0 pt-20 xl:pt-[96px] 2xl:pt-[112px] mb-auto">
-            <div className="hidden xl:block xl:w-[250px] 2xl:w-[280px] 3xl:w-[350px] border-r-2 border-base-300 dark:border-slate-700 px-3 xl:px-4 xl:py-1">
+          <div className="w-full flex gap-0 pt-20 xl:pt-[96px] 2xl:pt-[112px] flex-grow">
+            <div className="hidden xl:block xl:w-[250px] 2xl:w-[280px] 3xl:w-[350px] border-r-2 border-base-300 dark:border-slate-700 px-3 xl:px-4 xl:py-1 sticky top-20 xl:top-[96px] 2xl:top-[112px] h-[calc(100vh-80px)] xl:h-[calc(100vh-96px)] 2xl:h-[calc(100vh-112px)] overflow-y-hidden">
               <Menu />
             </div>
-            <div className="w-full px-4 xl:px-4 2xl:px-5 xl:py-2 overflow-clip">
+            <div className="w-full px-4 xl:px-4 2xl:px-5 xl:py-2 h-[calc(100vh-80px)] xl:h-[calc(100vh-96px)] 2xl:h-[calc(100vh-112px)] overflow-y-auto">
               <Outlet />
             </div>
           </div>
         </div>
-        <Footer />
       </div>
     );
   };
@@ -175,6 +187,10 @@ function App() {
           element: <Vendors />,
         },
         {
+          path: '/vendors/:vendorId',
+          element: <VendorDetail />,
+        },
+        {
           path: '/contracts',
           element: <Contracts />,
         },
@@ -230,6 +246,52 @@ function App() {
         {
           path: '/admin',
           element: <Admin />,
+        },
+        
+        // Marx Supplier Portal Routes
+        {
+          path: '/price-forecasting',
+          element: <PriceForecasting />,
+        },
+        {
+          path: '/active-negotiations',
+          element: <ActiveNegotiations />,
+        },
+        {
+          path: '/vendor-comparison',
+          element: <VendorComparison />,
+        },
+        {
+          path: '/communication-hub',
+          element: <CommunicationHub />,
+        },
+        {
+          path: '/negotiation-history',
+          element: <NegotiationHistory />,
+        },
+        {
+          path: '/negotiation-calendar',
+          element: <NegotiationCalendar />,
+        },
+        {
+          path: '/price-tracker',
+          element: <PriceTracker />,
+        },
+        {
+          path: '/market-trends',
+          element: <MarketTrends />,
+        },
+        {
+          path: '/product-categories',
+          element: <ProductCategories />,
+        },
+        {
+          path: '/vendor-performance',
+          element: <VendorPerformance />,
+        },
+        {
+          path: '/document-repository',
+          element: <DocumentRepository />,
         },
       ],
       errorElement: <Error />,

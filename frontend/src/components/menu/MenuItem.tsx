@@ -20,8 +20,8 @@ const MenuItem: React.FC<MenuItemProps> = ({
   listItems,
 }) => {
   return (
-    <div className="w-full flex flex-col items-stretch gap-2">
-      <span className="hidden xl:block px-2 xl:text-sm 2xl:text-base 3xl:text-lg uppercase">
+    <div className="w-full flex flex-col items-stretch gap-1">
+      <span className="hidden xl:block px-2 text-xs uppercase font-medium text-base-content/70">
         {catalog}
       </span>
       {listItems.map((listItem, index) => {
@@ -33,12 +33,12 @@ const MenuItem: React.FC<MenuItemProps> = ({
               to={listItem.url || ''}
               className={({ isActive }) =>
                 isActive
-                  ? 'btn 2xl:min-h-[52px] 3xl:min-h-[64px] btn-active btn-ghost btn-block justify-start'
-                  : 'btn 2xl:min-h-[52px] 3xl:min-h-[64px] btn-ghost btn-block justify-start'
+                  ? 'btn h-auto min-h-[40px] 2xl:min-h-[42px] 3xl:min-h-[48px] py-1 btn-active btn-ghost btn-block justify-start'
+                  : 'btn h-auto min-h-[40px] 2xl:min-h-[42px] 3xl:min-h-[48px] py-1 btn-ghost btn-block justify-start'
               }
             >
-              <listItem.icon className="xl:text-2xl 2xl:text-3xl 3xl:text-4xl" />
-              <span className="xl:text-sm 2xl:text-base 3xl:text-lg capitalize">
+              <listItem.icon className="text-lg xl:text-xl 2xl:text-2xl" />
+              <span className="text-xs xl:text-sm 2xl:text-base capitalize">
                 {listItem.label}
               </span>
             </NavLink>
@@ -48,10 +48,10 @@ const MenuItem: React.FC<MenuItemProps> = ({
             <button
               key={index}
               onClick={listItem.onClick}
-              className="btn 2xl:min-h-[52px] 3xl:min-h-[64px] btn-ghost btn-block justify-start"
+              className="btn h-auto min-h-[40px] 2xl:min-h-[42px] 3xl:min-h-[48px] py-1 btn-ghost btn-block justify-start"
             >
-              <listItem.icon className="xl:text-2xl 2xl:text-3xl 3xl:text-4xl" />
-              <span className="xl:text-sm 2xl:text-base 3xl:text-lg capitalize">
+              <listItem.icon className="text-lg xl:text-xl 2xl:text-2xl" />
+              <span className="text-xs xl:text-sm 2xl:text-base capitalize">
                 {listItem.label}
               </span>
             </button>

@@ -77,10 +77,10 @@ const Navbar = () => {
                 <MdStore className="text-3xl sm:text-4xl xl:text-4xl 2xl:text-6xl text-primary" />
                 <div>
                   <span className="text-[16px] leading-[1.2] sm:text-lg xl:text-xl 2xl:text-2xl font-semibold text-base-content dark:text-neutral-200 block">
-                    Marx Technology - Supplier Portal
+                    Aldi Negotiation Management System
                   </span>
                   <span className="text-xs sm:text-sm text-base-content/70 dark:text-neutral-400">
-                    Supplier Relationship Management
+                    Vendor & Market Intelligence
                   </span>
                 </div>
               </Link>
@@ -101,10 +101,10 @@ const Navbar = () => {
           <MdStore className="text-3xl sm:text-4xl xl:text-4xl 2xl:text-6xl text-primary" />
           <div>
             <span className="text-[16px] leading-[1.2] sm:text-lg xl:text-xl 2xl:text-2xl font-semibold text-base-content dark:text-neutral-200 block">
-              Marx Technology - Supplier Portal
+              Aldi Negotiation Management System
             </span>
             <span className="text-xs sm:text-sm text-base-content/70 dark:text-neutral-400 hidden sm:block">
-              Supplier Relationship Management
+              Vendor & Market Intelligence
             </span>
           </div>
         </Link>

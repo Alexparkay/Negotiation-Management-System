@@ -13,415 +13,790 @@ import {
   MdOutlineInsights,
   MdOutlineInventory,
   MdOutlineArrowForward,
-  MdOutlineSearch,
-  MdSend,
+  MdOutlineAssignment,
+  MdOutlineMoreHoriz,
+  MdOutlineAnnouncement, 
+  MdOutlineTrendingUp,
+  MdOutlineFlag,
+  MdOutlineStackedLineChart,
+  MdOutlineLocalShipping,
+  MdOutlineAccessTime,
+  MdOutlineVerified,
+  MdOutlineErrorOutline,
+  MdOutlineCompare,
+  MdOutlineEmail,
+  MdOutlineHistory,
+  MdOutlineCategory,
+  MdOutlinePriceChange,
+  MdOutlineHandshake,
+  MdOutlineStorefront
 } from 'react-icons/md';
-import { HiOutlineUsers, HiOutlineClipboardDocumentList, HiOutlineShieldCheck } from 'react-icons/hi2';
-import { ResponsiveContainer, LineChart, Line, AreaChart, Area, XAxis, YAxis, Tooltip, PieChart, Pie, Cell } from 'recharts';
+import { HiOutlineUsers, HiOutlineClipboardDocumentList, HiOutlineShieldCheck, HiOutlineDocumentText, HiOutlineCalendarDays } from 'react-icons/hi2';
+import { 
+  ResponsiveContainer, 
+  LineChart, 
+  Line, 
+  AreaChart, 
+  Area, 
+  XAxis, 
+  YAxis, 
+  Tooltip, 
+  PieChart, 
+  Pie, 
+  Cell, 
+  BarChart, 
+  Bar, 
+  CartesianGrid,
+  Legend,
+  RadarChart,
+  PolarGrid,
+  PolarAngleAxis,
+  PolarRadiusAxis,
+  Radar,
+  ComposedChart,
+  Scatter,
+  ScatterChart,
+  ZAxis
+} from 'recharts';
+import ChatPopup from '../components/ChatPopup';
 
 interface ChatMessage {
   type: 'user' | 'assistant';
   content: string;
 }
 
-// Mock supplier data for chat responses
-const mockSupplierData = {
-  'acme-corp': {
-    name: 'Acme Corporation',
-    lastOrder: {
-      id: 'PO-2024-1234',
-      status: 'In Transit',
-      expectedDelivery: '2024-03-15',
-      items: [
-        { name: 'Widget A', quantity: 1000 },
-        { name: 'Widget B', quantity: 500 }
+// Mock vendor data for chat responses
+const mockVendorData = {
+  'techvision': {
+    name: 'TechVision Inc.',
+    lastNegotiation: {
+      id: 'NEG-2024-1234',
+      status: 'In Progress',
+      deadline: '2024-03-15',
+      products: [
+        { name: 'HDMI Cables', quantity: 1000, price: 4.50 },
+        { name: 'USB-C Adapters', quantity: 500, price: 8.75 }
       ]
     },
     performance: {
-      onTimeDelivery: 95,
-      qualityScore: 92,
+      deliveryRating: 95,
+      qualityRating: 92,
       responseTime: '24h',
-      lastAudit: '2024-02-01'
+      lastReview: '2024-02-01'
     },
-    compliance: {
-      certifications: ['ISO 9001', 'ISO 14001'],
-      status: 'Valid',
-      nextAuditDue: '2024-08-01'
-    }
+    priceHistory: [
+      { date: '2023-09', price: 4.75 },
+      { date: '2023-12', price: 4.60 },
+      { date: '2024-01', price: 4.50 }
+    ]
   },
-  'globex-inc': {
-    name: 'Globex Inc',
-    lastOrder: {
-      id: 'PO-2024-1235',
-      status: 'Processing',
-      expectedDelivery: '2024-03-20',
-      items: [
-        { name: 'Component X', quantity: 2000 },
-        { name: 'Component Y', quantity: 1500 }
+  'netware': {
+    name: 'NetWare Solutions',
+    lastNegotiation: {
+      id: 'NEG-2024-1235',
+      status: 'Scheduled',
+      deadline: '2024-03-20',
+      products: [
+        { name: 'Cat6 Cables', quantity: 2000, price: 5.25 },
+        { name: 'RJ45 Connectors', quantity: 1500, price: 0.30 }
       ]
     },
     performance: {
-      onTimeDelivery: 88,
-      qualityScore: 95,
+      deliveryRating: 88,
+      qualityRating: 95,
       responseTime: '48h',
-      lastAudit: '2024-01-15'
+      lastReview: '2024-01-15'
     },
-    compliance: {
-      certifications: ['ISO 9001'],
-      status: 'Expiring Soon',
-      nextAuditDue: '2024-04-15'
-    }
+    priceHistory: [
+      { date: '2023-09', price: 5.50 },
+      { date: '2023-12', price: 5.35 },
+      { date: '2024-01', price: 5.25 }
+    ]
   }
 };
 
+// Mock data for negotiation metrics
+const negotiationMetrics = {
+  activeNegotiations: 24,
+  pendingReviews: 8,
+  upcomingDeadlines: 5,
+  avgSavingsRate: 12.4,
+  totalVendors: 189,
+  priceAlerts: 15,
+};
+
+// Mock data for price trends
+const priceTrendData = [
+  { month: 'Jan', average: 4.84, market: 5.20, negotiated: 4.50 },
+  { month: 'Feb', average: 4.86, market: 5.25, negotiated: 4.55 },
+  { month: 'Mar', average: 4.85, market: 5.30, negotiated: 4.50 },
+  { month: 'Apr', average: 4.88, market: 5.40, negotiated: 4.60 },
+  { month: 'May', average: 4.92, market: 5.45, negotiated: 4.65 },
+  { month: 'Jun', average: 4.97, market: 5.50, negotiated: 4.75 },
+];
+
+// Mock data for category price variations
+const categoryPriceData = [
+  { month: 'Jan', cables: 220000, peripherals: 150000, accessories: 50000, total: 420000 },
+  { month: 'Feb', cables: 190000, peripherals: 140000, accessories: 50000, total: 380000 },
+  { month: 'Mar', cables: 230000, peripherals: 160000, accessories: 60000, total: 450000 },
+  { month: 'Apr', cables: 200000, peripherals: 150000, accessories: 60000, total: 410000 },
+  { month: 'May', cables: 180000, peripherals: 150000, accessories: 60000, total: 390000 },
+  { month: 'Jun', cables: 240000, peripherals: 160000, accessories: 60000, total: 460000 },
+];
+
+// Vendor comparison data
+const vendorComparisonData = [
+  { name: 'TechVision Inc.', price: 4.50, quality: 92, delivery: 95 },
+  { name: 'NetWare Solutions', price: 5.25, quality: 95, delivery: 88 },
+  { name: 'DataSphere Systems', price: 4.75, quality: 85, delivery: 92 },
+  { name: 'GlobalConnect Ltd', price: 5.15, quality: 90, delivery: 94 },
+  { name: 'FiberTech', price: 4.85, quality: 87, delivery: 90 },
+];
+
+// Communication activity
+const communicationData = [
+  { name: 'Emails', value: 65, color: '#3B82F6' },
+  { name: 'Calls', value: 15, color: '#10B981' },
+  { name: 'Meetings', value: 20, color: '#F59E0B' },
+];
+
+// Negotiation phase distribution
+const negotiationPhaseData = [
+  { name: 'Initial', value: 8, color: '#8B5CF6' },
+  { name: 'Discussion', value: 12, color: '#3B82F6' },
+  { name: 'Proposal', value: 10, color: '#F59E0B' },
+  { name: 'Final', value: 4, color: '#10B981' },
+  { name: 'Completed', value: 16, color: '#6B7280' },
+];
+
+// Market trend comparison
+const marketTrendData = [
+  { product: 'HDMI Cables', market: 5.50, negotiated: 4.75, savings: 0.75 },
+  { product: 'USB-C Adapters', market: 9.25, negotiated: 8.75, savings: 0.50 },
+  { product: 'Cat6 Cables', market: 6.00, negotiated: 5.25, savings: 0.75 },
+  { product: 'Wireless Mice', market: 12.50, negotiated: 11.00, savings: 1.50 },
+  { product: 'Keyboards', market: 22.00, negotiated: 19.50, savings: 2.50 },
+];
+
+// Upcoming negotiation deadlines
+const upcomingDeadlines = [
+  { 
+    id: 1, 
+    vendor: 'TechVision Inc.', 
+    product: 'HDMI Cables',
+    deadline: '2024-03-15',
+    importance: 'high',
+    color: '#EF4444' 
+  },
+  { 
+    id: 2, 
+    vendor: 'NetWare Solutions', 
+    product: 'Cat6 Cables',
+    deadline: '2024-03-20',
+    importance: 'medium',
+    color: '#F59E0B' 
+  },
+  { 
+    id: 3, 
+    vendor: 'DataSphere Systems', 
+    product: 'Wireless Mice',
+    deadline: '2024-03-28',
+    importance: 'medium',
+    color: '#F59E0B' 
+  },
+  { 
+    id: 4, 
+    vendor: 'FiberTech', 
+    product: 'Fiber Optic Cables',
+    deadline: '2024-04-05',
+    importance: 'low',
+    color: '#10B981' 
+  },
+];
+
+// Recent communications
+const recentCommunications = [
+  { 
+    id: 1, 
+    type: 'email', 
+    subject: 'Price negotiation for Q2 HDMI cable orders', 
+    vendor: 'TechVision Inc.',
+    time: '2 hours ago',
+    icon: MdOutlineEmail, 
+    color: '#3B82F6' 
+  },
+  { 
+    id: 2, 
+    type: 'meeting', 
+    subject: 'Quarterly review with NetWare Solutions', 
+    vendor: 'NetWare Solutions',
+    time: '5 hours ago',
+    icon: MdOutlineHandshake, 
+    color: '#F59E0B' 
+  },
+  { 
+    id: 3, 
+    type: 'email', 
+    subject: 'Updated price list for peripherals', 
+    vendor: 'GlobalConnect Ltd',
+    time: 'Yesterday',
+    icon: MdOutlineEmail, 
+    color: '#3B82F6' 
+  },
+  { 
+    id: 4, 
+    type: 'email', 
+    subject: 'Price increase notification for USB-C adapters', 
+    vendor: 'DataSphere Systems',
+    time: 'Yesterday',
+    icon: MdOutlinePriceChange, 
+    color: '#EF4444' 
+  },
+];
+
+// Top negotiated products
+const topNegotiatedProducts = [
+  { name: 'HDMI Cables', savingsRate: 16.5, volume: 28500 },
+  { name: 'Cat6 Cables', savingsRate: 14.2, volume: 22000 },
+  { name: 'USB-C Adapters', savingsRate: 12.8, volume: 18500 },
+  { name: 'Wireless Mice', savingsRate: 11.5, volume: 15000 },
+  { name: 'Mechanical Keyboards', savingsRate: 10.2, volume: 9500 },
+];
+
+// Custom tooltip for charts
+const CustomTooltip = ({ active, payload, label, formatter }: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="glass-panel px-4 py-2 rounded-lg">
+        <p className="text-white font-medium">{label}</p>
+        {payload.map((entry: any, index: number) => (
+          <p key={`item-${index}`} style={{ color: entry.color || entry.stroke }}>
+            {entry.name}: {formatter ? formatter(entry.value) : entry.value}
+          </p>
+        ))}
+      </div>
+    );
+  }
+  return null;
+};
+
 const Home = () => {
-  // Chat state
-  const [chatInput, setChatInput] = useState('');
-  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
-  const chatEndRef = useRef<HTMLDivElement>(null);
-
-  // Auto-scroll chat to bottom
-  useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [chatMessages]);
-
-  // Handle chat submission
-  const handleChatSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!chatInput.trim()) return;
-    
-    // Add user message
-    const newMessages = [...chatMessages, { type: 'user' as const, content: chatInput }];
-    
-    // Process query and add assistant response
-      const query = chatInput.toLowerCase();
-    let response: ChatMessage = { type: 'assistant', content: "I couldn't find specific information about that. How else can I help you?" };
-
-    if (query.includes('order') && query.includes('acme')) {
-      const orderInfo = mockSupplierData['acme-corp'].lastOrder;
-      response.content = `The latest order from Acme Corporation (${orderInfo.id}) is ${orderInfo.status}. Expected delivery date is ${orderInfo.expectedDelivery}. The order includes ${orderInfo.items.map(item => `${item.quantity} units of ${item.name}`).join(' and ')}.`;
-    } else if (query.includes('performance') && query.includes('globex')) {
-      const perfInfo = mockSupplierData['globex-inc'].performance;
-      response.content = `Globex Inc's current performance metrics: On-time delivery rate is ${perfInfo.onTimeDelivery}%, quality score is ${perfInfo.qualityScore}%, and average response time is ${perfInfo.responseTime}. Their last audit was conducted on ${perfInfo.lastAudit}.`;
-    } else if (query.includes('compliance') || query.includes('certification')) {
-      const complianceInfo = mockSupplierData['acme-corp'].compliance;
-      response.content = `Acme Corporation's compliance status is ${complianceInfo.status}. They hold ${complianceInfo.certifications.join(' and ')} certifications. Next audit is due on ${complianceInfo.nextAuditDue}.`;
-    } else if (query.includes('help') || query.includes('what')) {
-      response.content = "I can help you with:\n- Checking order status (e.g., 'What's the status of Acme's latest order?')\n- Supplier performance (e.g., 'How is Globex performing?')\n- Compliance information (e.g., 'Show me Acme's compliance status')\n- General supplier queries";
-    }
-
-    setChatMessages([...newMessages, response]);
-    setChatInput('');
-  };
-
-  // Mock data for supplier overview
-  const supplierMetrics = {
-    totalSuppliers: 248,
-    activeSuppliers: 215,
-    pendingOnboarding: 18,
-    highRiskSuppliers: 15,
-    totalSpend: 5670000,
-    averagePerformance: 87,
-  };
-
-  // Mock data for performance trend
-  const performanceTrendData = [
-    { month: 'Jan', score: 84 },
-    { month: 'Feb', score: 86 },
-    { month: 'Mar', score: 85 },
-    { month: 'Apr', score: 88 },
-    { month: 'May', score: 87 },
-    { month: 'Jun', score: 89 },
-  ];
-
-  // Mock data for spend trend
-  const spendTrendData = [
-    { month: 'Jan', amount: 420000 },
-    { month: 'Feb', amount: 380000 },
-    { month: 'Mar', amount: 450000 },
-    { month: 'Apr', amount: 410000 },
-    { month: 'May', amount: 390000 },
-    { month: 'Jun', amount: 460000 },
-  ];
-
-  // Mock data for compliance status
-  const complianceData = [
-    { name: 'Valid', value: 180, color: '#10B981' },
-    { name: 'Expiring', value: 35, color: '#F59E0B' },
-    { name: 'Expired', value: 20, color: '#EF4444' },
-    { name: 'Missing', value: 13, color: '#6B7280' },
-  ];
-
-  // Mock data for risk distribution
-  const riskDistributionData = [
-    { name: 'Low Risk', value: 145, color: '#10B981' },
-    { name: 'Medium Risk', value: 68, color: '#F59E0B' },
-    { name: 'High Risk', value: 25, color: '#EF4444' },
-    { name: 'Critical', value: 10, color: '#991B1B' },
-  ];
-
+  const [activeTab, setActiveTab] = useState("overview");
+  
+  // Format currency values
+  const formatCurrency = (value: number) => `$${value.toLocaleString()}`;
+  
   return (
-    <div className="w-full">
-      {/* Chat Assistant */}
-      <div className="mb-8">
-        <div className="card bg-base-100 shadow-xl">
-          <div className="card-body">
-            <div className="chat-container h-[400px] overflow-y-auto mb-4 p-2">
-              {chatMessages.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-full text-base-content/60">
-                  <MdOutlineSearch className="text-4xl mb-2" />
-                  <p className="text-center">Ask about supplier orders, performance, or compliance.</p>
-                  <p className="text-center text-sm mt-2">Try: "What's the status of Acme's latest order?"</p>
-                </div>
-              ) : (
-                chatMessages.map((msg, index) => (
-                  <div key={index} className={`chat ${msg.type === 'user' ? 'chat-end' : 'chat-start'} mb-4`}>
-                    <div className={`chat-bubble ${msg.type === 'user' ? 'chat-bubble-primary' : 'chat-bubble-secondary'}`}>
-                      {msg.content}
-              </div>
-                </div>
-                ))
-              )}
-              <div ref={chatEndRef} />
-        </div>
-        
-            <form onSubmit={handleChatSubmit} className="flex gap-2">
-              <input
-                type="text"
-                placeholder="Ask about suppliers (e.g., 'What's the status of Acme's latest order?')"
-                className="input input-bordered flex-grow"
-                value={chatInput}
-                onChange={(e) => setChatInput(e.target.value)}
-              />
-              <button type="submit" className="btn btn-primary">
-                <MdSend />
-                </button>
-            </form>
-              </div>
-            </div>
+    <div className="w-full text-text-secondary">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-semibold text-text-primary">Negotiation Dashboard</h1>
+        <div className="flex items-center gap-4">
+          <div className="glass-panel flex">
+            <button 
+              className={`px-4 py-2 rounded-l-lg ${activeTab === "overview" ? "bg-accent-primary/20 text-accent-primary" : "text-text-secondary"}`}
+              onClick={() => setActiveTab("overview")}
+            >
+              Overview
+            </button>
+            <button 
+              className={`px-4 py-2 ${activeTab === "negotiations" ? "bg-accent-primary/20 text-accent-primary" : "text-text-secondary"}`}
+              onClick={() => setActiveTab("negotiations")}
+            >
+              Negotiations
+            </button>
+            <button 
+              className={`px-4 py-2 rounded-r-lg ${activeTab === "market" ? "bg-accent-primary/20 text-accent-primary" : "text-text-secondary"}`}
+              onClick={() => setActiveTab("market")}
+            >
+              Market
+            </button>
           </div>
-          
-      <h1 className="text-2xl font-bold mb-6">Supplier Management Dashboard</h1>
-
-      {/* Quick Access Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-6">
-        <Link to="/suppliers" className="bg-white dark:bg-slate-800 p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Total Suppliers</p>
-              <h3 className="text-2xl font-bold">{supplierMetrics.totalSuppliers}</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                {supplierMetrics.activeSuppliers} Active
-              </p>
-              </div>
-            <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
-              <HiOutlineUsers className="text-primary text-xl" />
-              </div>
-              </div>
-        </Link>
-
-        <Link to="/supplier-performance" className="bg-white dark:bg-slate-800 p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Avg Performance</p>
-              <h3 className="text-2xl font-bold">{supplierMetrics.averagePerformance}%</h3>
-              <p className="text-sm text-success">↑ 2.3% vs last month</p>
-              </div>
-            <div className="w-12 h-12 rounded-full bg-success/20 flex items-center justify-center">
-              <MdOutlineAnalytics className="text-success text-xl" />
-              </div>
-              </div>
-        </Link>
-
-        <Link to="/spend-analysis" className="bg-white dark:bg-slate-800 p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Total Spend YTD</p>
-              <h3 className="text-2xl font-bold">${(supplierMetrics.totalSpend / 1000000).toFixed(2)}M</h3>
-              <p className="text-sm text-error">↑ 8.5% vs budget</p>
-              </div>
-            <div className="w-12 h-12 rounded-full bg-info/20 flex items-center justify-center">
-              <MdOutlineAttachMoney className="text-info text-xl" />
-              </div>
-              </div>
-        </Link>
-
-        <Link to="/supplier-risk" className="bg-white dark:bg-slate-800 p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">High Risk Suppliers</p>
-              <h3 className="text-2xl font-bold">{supplierMetrics.highRiskSuppliers}</h3>
-              <p className="text-sm text-error">Requires attention</p>
+          <button className="btn btn-sm btn-primary">
+            <MdOutlineInsights className="mr-1" /> Generate Report
+          </button>
         </div>
-            <div className="w-12 h-12 rounded-full bg-error/20 flex items-center justify-center">
-              <MdOutlineWarning className="text-error text-xl" />
       </div>
-            </div>
-        </Link>
-          </div>
-          
-      {/* Key Process Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-        <Link to="/supplier-onboarding" className="bg-white dark:bg-slate-800 p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-          <div className="flex items-center gap-3 mb-3">
-            <MdOutlineBusinessCenter className="text-primary text-xl" />
-            <h3 className="font-semibold">Supplier Onboarding</h3>
-            </div>
-          <div className="flex justify-between items-center">
-            <div>
-              <p className="text-2xl font-bold">{supplierMetrics.pendingOnboarding}</p>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Pending Approval</p>
-          </div>
-            <MdOutlineArrowForward className="text-gray-400" />
-            </div>
-        </Link>
 
-        <Link to="/procurement" className="bg-white dark:bg-slate-800 p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-          <div className="flex items-center gap-3 mb-3">
-            <MdOutlineShoppingCart className="text-primary text-xl" />
-            <h3 className="font-semibold">Purchase Orders</h3>
+      {/* KPI Summary - Top Row Cards */}
+      <section className="mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+          {/* Active Negotiations */}
+          <div className="glass-panel p-5 rounded-xl hover:shadow-lg transition-all duration-300">
+            <div className="flex items-center justify-between mb-3">
+              <div>
+                <p className="text-sm text-text-muted mb-1">Active Negotiations</p>
+                <h3 className="text-3xl font-bold text-text-primary">{negotiationMetrics.activeNegotiations}</h3>
+              </div>
+              <div className="w-12 h-12 rounded-full bg-accent-primary/20 flex items-center justify-center">
+                <MdOutlineHandshake className="text-accent-primary text-2xl" />
+              </div>
             </div>
-          <div className="flex justify-between items-center">
-            <div>
-              <p className="text-2xl font-bold">127</p>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Open Orders</p>
+            <div className="flex items-center text-xs">
+              <span className="flex items-center text-accent-secondary"><MdOutlineTrendingUp /> +3</span>
+              <span className="text-text-muted ml-2">vs last month</span>
+            </div>
           </div>
-            <MdOutlineArrowForward className="text-gray-400" />
+
+          {/* Upcoming Deadlines */}
+          <div className="glass-panel p-5 rounded-xl hover:shadow-lg transition-all duration-300">
+            <div className="flex items-center justify-between mb-3">
+              <div>
+                <p className="text-sm text-text-muted mb-1">Upcoming Deadlines</p>
+                <h3 className="text-3xl font-bold text-accent-warning">{negotiationMetrics.upcomingDeadlines}</h3>
+              </div>
+              <div className="w-12 h-12 rounded-full bg-accent-warning/20 flex items-center justify-center">
+                <HiOutlineCalendarDays className="text-accent-warning text-2xl" />
+              </div>
+            </div>
+            <div className="flex items-center text-xs">
+              <span className="flex items-center text-accent-warning"><MdOutlineTrendingUp /> +2</span>
+              <span className="text-text-muted ml-2">due this week</span>
+            </div>
+          </div>
+
+          {/* Average Savings Rate */}
+          <div className="glass-panel p-5 rounded-xl hover:shadow-lg transition-all duration-300">
+            <div className="flex items-center justify-between mb-3">
+              <div>
+                <p className="text-sm text-text-muted mb-1">Avg. Savings Rate</p>
+                <h3 className="text-3xl font-bold text-text-primary">{negotiationMetrics.avgSavingsRate}%</h3>
+              </div>
+              <div className="w-12 h-12 rounded-full bg-accent-secondary/20 flex items-center justify-center">
+                <MdOutlineAttachMoney className="text-accent-secondary text-2xl" />
+              </div>
+            </div>
+            <div className="flex items-center text-xs">
+              <span className="flex items-center text-accent-secondary"><MdOutlineTrendingUp /> +1.2%</span>
+              <span className="text-text-muted ml-2">vs last quarter</span>
+            </div>
+          </div>
+
+          {/* Price Alerts */}
+          <div className="glass-panel p-5 rounded-xl hover:shadow-lg transition-all duration-300">
+            <div className="flex items-center justify-between mb-3">
+              <div>
+                <p className="text-sm text-text-muted mb-1">Price Alerts</p>
+                <h3 className="text-3xl font-bold text-text-primary">{negotiationMetrics.priceAlerts}</h3>
+              </div>
+              <div className="w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center">
+                <MdOutlinePriceChange className="text-red-500 text-2xl" />
+              </div>
+            </div>
+            <div className="flex items-center text-xs">
+              <span className="flex items-center text-red-500"><MdOutlineTrendingUp /> +5</span>
+              <span className="text-text-muted ml-2">new market changes</span>
+            </div>
+          </div>
         </div>
-        </Link>
+      </section>
 
-        <Link to="/invoices" className="bg-white dark:bg-slate-800 p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-          <div className="flex items-center gap-3 mb-3">
-            <MdOutlineDescription className="text-primary text-xl" />
-            <h3 className="font-semibold">Invoices & Payments</h3>
-            </div>
-          <div className="flex justify-between items-center">
-            <div>
-              <p className="text-2xl font-bold">43</p>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Pending Approval</p>
+      {/* Main Dashboard Content */}
+      {activeTab === "overview" && (
+        <>
+          {/* Main Content Area - Dual Columns */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            {/* Left Column - 2/3 Width */}
+            <div className="lg:col-span-2 grid grid-cols-1 gap-6">
+              {/* Negotiated vs Market Price Trend */}
+              <div className="glass-panel p-6 rounded-xl">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-text-primary">Negotiated vs Market Price Trend</h3>
+                  <Link to="/price-tracker" className="text-accent-primary hover:underline text-sm flex items-center gap-1">
+                    Price Tracker <MdOutlineArrowForward />
+                  </Link>
                 </div>
-            <MdOutlineArrowForward className="text-gray-400" />
+                <div className="h-80">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <ComposedChart data={priceTrendData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+                      <defs>
+                        <linearGradient id="negotiatedGradient" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#10B981" stopOpacity={0.8}/>
+                          <stop offset="95%" stopColor="#10B981" stopOpacity={0.1}/>
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+                      <XAxis dataKey="month" stroke="#666666" fontSize={12} />
+                      <YAxis stroke="#666666" fontSize={12} />
+                      <Tooltip 
+                        contentStyle={{ 
+                          backgroundColor: 'rgba(26, 26, 26, 0.8)', 
+                          backdropFilter: 'blur(12px)',
+                          border: '1px solid rgba(255, 255, 255, 0.1)', 
+                          borderRadius: '8px' 
+                        }}
+                        formatter={(value: number) => [`$${value.toFixed(2)}`, '']}
+                      />
+                      <Legend />
+                      <Line 
+                        type="monotone" 
+                        dataKey="market" 
+                        stroke="#EF4444" 
+                        strokeWidth={2}
+                        dot={{ r: 5, strokeWidth: 2, fill: '#1A1A1A', stroke: '#EF4444' }}
+                        name="Market Price"
+                      />
+                      <Line 
+                        type="monotone" 
+                        dataKey="average" 
+                        stroke="#F59E0B" 
+                        strokeWidth={2}
+                        strokeDasharray="5 5"
+                        dot={false}
+                        name="Industry Average"
+                      />
+                      <Line
+                        type="monotone"
+                        dataKey="negotiated"
+                        name="Negotiated Price"
+                        stroke="#10B981"
+                        strokeWidth={3}
+                        dot={{ r: 6, strokeWidth: 2, fill: '#1A1A1A', stroke: '#10B981' }}
+                        activeDot={{ r: 8, strokeWidth: 0, fill: '#10B981' }}
+                      />
+                      <Area 
+                        type="monotone" 
+                        dataKey="negotiated" 
+                        fillOpacity={1} 
+                        fill="url(#negotiatedGradient)" 
+                        strokeWidth={0}
+                      />
+                    </ComposedChart>
+                  </ResponsiveContainer>
                 </div>
-        </Link>
               </div>
 
-      {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        {/* Performance Trend */}
-        <div className="bg-white dark:bg-slate-800 p-4 rounded-lg shadow-md">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold">Performance Trend</h3>
-            <Link to="/supplier-performance" className="text-primary hover:underline text-sm flex items-center gap-1">
-              View Details <MdOutlineArrowForward />
-            </Link>
+              {/* Vendor Comparison */}
+              <div className="glass-panel p-6 rounded-xl">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-text-primary">Vendor Comparison (HDMI Cables)</h3>
+                  <Link to="/vendor-comparison" className="text-accent-primary hover:underline text-sm flex items-center gap-1">
+                    Detailed Comparison <MdOutlineArrowForward />
+                  </Link>
                 </div>
-          <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={performanceTrendData}>
-                <XAxis dataKey="month" />
-                <YAxis domain={[80, 100]} />
-                  <Tooltip />
-                  <Line 
-                  type="monotone"
-                  dataKey="score"
-                  stroke="#8884d8"
-                  strokeWidth={2}
-                  dot={{ r: 4 }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
+                <div className="h-80">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <ScatterChart margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+                      <XAxis 
+                        type="number" 
+                        dataKey="price" 
+                        name="Price" 
+                        domain={[4, 6]} 
+                        stroke="#666666" 
+                        fontSize={12}
+                        label={{ value: 'Price ($)', position: 'insideBottom', offset: -5, fill: '#666666' }}
+                      />
+                      <YAxis 
+                        type="number" 
+                        dataKey="quality" 
+                        name="Quality" 
+                        domain={[80, 100]} 
+                        stroke="#666666" 
+                        fontSize={12}
+                        label={{ value: 'Quality', angle: -90, position: 'insideLeft', fill: '#666666' }}
+                      />
+                      <ZAxis 
+                        type="number" 
+                        dataKey="delivery" 
+                        range={[50, 200]} 
+                        name="Delivery Score" 
+                      />
+                      <Tooltip 
+                        cursor={{ strokeDasharray: '3 3' }}
+                        contentStyle={{ 
+                          backgroundColor: 'rgba(26, 26, 26, 0.8)', 
+                          backdropFilter: 'blur(12px)',
+                          border: '1px solid rgba(255, 255, 255, 0.1)', 
+                          borderRadius: '8px' 
+                        }}
+                        formatter={(value: number, name: string) => {
+                          if (name === 'Price') return [`$${value.toFixed(2)}`, name];
+                          return [value, name];
+                        }}
+                      />
+                      <Legend />
+                      <Scatter 
+                        name="Vendors" 
+                        data={vendorComparisonData} 
+                        fill="#3B82F6" 
+                        shape="circle"
+                        label={({ name, index }) => index === 0 ? name : ''}
+                      />
+                    </ScatterChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
             </div>
+
+            {/* Right Column - 1/3 Width */}
+            <div className="grid grid-cols-1 gap-6">
+              {/* Upcoming Deadlines */}
+              <div className="glass-panel p-6 rounded-xl">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-text-primary">Upcoming Deadlines</h3>
+                  <Link to="/negotiation-calendar" className="text-accent-primary hover:underline text-sm flex items-center gap-1">
+                    View Calendar <MdOutlineArrowForward />
+                  </Link>
+                </div>
+                <div className="flow-root">
+                  <ul role="list" className="divide-y divide-base-300">
+                    {upcomingDeadlines.map((deadline) => (
+                      <li key={deadline.id} className="py-3">
+                        <div className="flex items-start">
+                          <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center`} style={{ backgroundColor: `${deadline.color}20` }}>
+                            <HiOutlineCalendarDays className="text-lg" style={{ color: deadline.color }} />
+                          </div>
+                          <div className="ml-3 flex-1">
+                            <p className="text-sm font-medium text-text-primary">{deadline.vendor}</p>
+                            <p className="text-xs text-text-secondary">{deadline.product}</p>
+                            <p className="text-xs text-text-muted mt-1">Due {deadline.deadline}</p>
+                          </div>
+                          <div className={`px-2 py-1 rounded text-xs`} style={{ backgroundColor: `${deadline.color}20`, color: deadline.color }}>
+                            {deadline.importance}
+                          </div>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
 
-        {/* Spend Analysis */}
-        <div className="bg-white dark:bg-slate-800 p-4 rounded-lg shadow-md">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold">Monthly Spend</h3>
-            <Link to="/spend-analysis" className="text-primary hover:underline text-sm flex items-center gap-1">
-              View Details <MdOutlineArrowForward />
-            </Link>
-              </div>
-          <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={spendTrendData}>
-                <XAxis dataKey="month" />
-                <YAxis />
-                  <Tooltip />
-                  <Area 
-                    type="monotone" 
-                  dataKey="amount"
-                  stroke="#8884d8"
-                  fill="#8884d8"
-                  fillOpacity={0.2}
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-              </div>
-              </div>
-
-      {/* Risk & Compliance Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Compliance Status */}
-        <div className="bg-white dark:bg-slate-800 p-4 rounded-lg shadow-md">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold">Compliance Status</h3>
-            <Link to="/supplier-compliance" className="text-primary hover:underline text-sm flex items-center gap-1">
-              View Details <MdOutlineArrowForward />
-            </Link>
-            </div>
-          <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={complianceData}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  outerRadius={80}
-                  dataKey="value"
-                  label={({ name, value }) => `${name} (${value})`}
-                >
-                  {complianceData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                  <Tooltip />
-              </PieChart>
-              </ResponsiveContainer>
-            </div>
+              {/* Recent Communications */}
+              <div className="glass-panel p-6 rounded-xl">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-text-primary">Recent Communications</h3>
+                  <Link to="/communication-hub" className="text-accent-primary hover:underline text-sm flex items-center gap-1">
+                    View All <MdOutlineArrowForward />
+                  </Link>
+                </div>
+                <div className="flow-root">
+                  <ul role="list" className="divide-y divide-base-300">
+                    {recentCommunications.map((comm) => (
+                      <li key={comm.id} className="py-3">
+                        <div className="flex items-start">
+                          <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center`} style={{ backgroundColor: `${comm.color}20` }}>
+                            <comm.icon className="text-lg" style={{ color: comm.color }} />
+                          </div>
+                          <div className="ml-3 flex-1">
+                            <p className="text-sm font-medium text-text-primary">{comm.subject}</p>
+                            <p className="text-xs text-text-secondary">{comm.vendor}</p>
+                            <p className="text-xs text-text-muted mt-1">{comm.time}</p>
+                          </div>
+                          <button className="ml-2 text-text-muted hover:text-text-primary">
+                            <MdOutlineMoreHoriz />
+                          </button>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
 
-        {/* Risk Distribution */}
-        <div className="bg-white dark:bg-slate-800 p-4 rounded-lg shadow-md">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold">Risk Distribution</h3>
-            <Link to="/supplier-risk" className="text-primary hover:underline text-sm flex items-center gap-1">
-              View Details <MdOutlineArrowForward />
-            </Link>
-            </div>
-            <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={riskDistributionData}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  outerRadius={80}
-                  dataKey="value"
-                  label={({ name, value }) => `${name} (${value})`}
-                >
-                  {riskDistributionData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                  <Tooltip />
-              </PieChart>
-              </ResponsiveContainer>
-            </div>
+              {/* Negotiation Phases */}
+              <div className="glass-panel p-6 rounded-xl">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-text-primary">Negotiation Phases</h3>
+                  <Link to="/active-negotiations" className="text-accent-primary hover:underline text-sm flex items-center gap-1">
+                    Details <MdOutlineArrowForward />
+                  </Link>
+                </div>
+                <div className="h-48 flex items-center justify-center">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={negotiationPhaseData}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={40}
+                        outerRadius={70}
+                        paddingAngle={3}
+                        dataKey="value"
+                        label={({ name, percent }) => `${name}`}
+                        labelLine={false}
+                      >
+                        {negotiationPhaseData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                      <Tooltip
+                        contentStyle={{ 
+                          backgroundColor: 'rgba(26, 26, 26, 0.8)', 
+                          backdropFilter: 'blur(12px)',
+                          border: '1px solid rgba(255, 255, 255, 0.1)', 
+                          borderRadius: '8px' 
+                        }}
+                      />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
               </div>
-      </div>
+            </div>
+          </div>
+
+          {/* Bottom Row - Savings & Market Trends */}
+          <section className="mb-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Communication Activity */}
+              <div className="glass-panel p-6 rounded-xl">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-text-primary">Communication Activity</h3>
+                  <Link to="/communication-hub" className="text-accent-primary hover:underline text-sm flex items-center gap-1">
+                    View All <MdOutlineArrowForward />
+                  </Link>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="h-48 flex items-center justify-center">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={communicationData}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={40}
+                          outerRadius={70}
+                          paddingAngle={3}
+                          dataKey="value"
+                        >
+                          {communicationData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.color} />
+                          ))}
+                        </Pie>
+                        <Tooltip
+                          contentStyle={{ 
+                            backgroundColor: 'rgba(26, 26, 26, 0.8)', 
+                            backdropFilter: 'blur(12px)',
+                            border: '1px solid rgba(255, 255, 255, 0.1)', 
+                            borderRadius: '8px' 
+                          }}
+                        />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                  <div className="flex flex-col justify-center">
+                    {communicationData.map((item, idx) => (
+                      <div key={idx} className="flex items-center mb-2">
+                        <div className="w-3 h-3 rounded-full mr-2" style={{ backgroundColor: item.color }}></div>
+                        <div className="flex-1 text-sm text-text-secondary">{item.name}</div>
+                        <div className="text-sm font-medium text-text-primary">{item.value}%</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Market Price Comparison */}
+              <div className="glass-panel p-6 rounded-xl">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-text-primary">Price Comparison</h3>
+                  <Link to="/market-trends" className="text-accent-primary hover:underline text-sm flex items-center gap-1">
+                    Market Details <MdOutlineArrowForward />
+                  </Link>
+                </div>
+                <div className="h-64">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart
+                      data={marketTrendData}
+                      layout="vertical"
+                      margin={{ top: 5, right: 30, left: 60, bottom: 5 }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+                      <XAxis 
+                        type="number" 
+                        stroke="#666666" 
+                        fontSize={12}
+                        tickFormatter={(value) => `$${value}`}
+                      />
+                      <YAxis 
+                        type="category" 
+                        dataKey="product" 
+                        stroke="#666666" 
+                        fontSize={12}
+                        width={110}
+                      />
+                      <Tooltip
+                        contentStyle={{ 
+                          backgroundColor: 'rgba(26, 26, 26, 0.8)', 
+                          backdropFilter: 'blur(12px)',
+                          border: '1px solid rgba(255, 255, 255, 0.1)', 
+                          borderRadius: '8px' 
+                        }}
+                        formatter={(value: number) => [`$${value.toFixed(2)}`, '']}
+                      />
+                      <Legend />
+                      <Bar 
+                        dataKey="market" 
+                        name="Market Price" 
+                        fill="#EF4444"
+                        radius={[0, 0, 0, 0]}
+                      />
+                      <Bar 
+                        dataKey="negotiated" 
+                        name="Negotiated" 
+                        fill="#10B981"
+                        radius={[0, 0, 0, 0]}
+                      />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+
+              {/* Top Negotiated Products */}
+              <div className="glass-panel p-6 rounded-xl">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-text-primary">Top Negotiated Products</h3>
+                  <Link to="/product-categories" className="text-accent-primary hover:underline text-sm flex items-center gap-1">
+                    View All <MdOutlineArrowForward />
+                  </Link>
+                </div>
+                <div className="flow-root">
+                  <ul role="list" className="divide-y divide-base-300">
+                    {topNegotiatedProducts.map((product, idx) => (
+                      <li key={idx} className="py-3 flex items-center justify-between">
+                        <div className="flex items-center">
+                          <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-500 font-medium">
+                            {idx + 1}
+                          </div>
+                          <span className="ml-3 text-sm text-text-primary">{product.name}</span>
+                        </div>
+                        <div className="flex flex-col items-end">
+                          <span className="text-sm font-medium text-accent-secondary">
+                            {product.savingsRate}% savings
+                          </span>
+                          <span className="text-xs text-text-muted">
+                            {product.volume.toLocaleString()} units
+                          </span>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </section>
+        </>
+      )}
+
+      {/* Negotiations Tab Content (simplified) */}
+      {activeTab === "negotiations" && (
+        <div className="glass-panel p-8 rounded-xl text-center">
+          <h2 className="text-2xl font-semibold text-text-primary mb-4">Active Negotiations Management</h2>
+          <p className="text-text-secondary mb-6">Detailed negotiation tracking and management will be displayed here.</p>
+          <button className="btn btn-primary">View Negotiations</button>
+        </div>
+      )}
+
+      {/* Market Tab Content (simplified) */}
+      {activeTab === "market" && (
+        <div className="glass-panel p-8 rounded-xl text-center">
+          <h2 className="text-2xl font-semibold text-text-primary mb-4">Market Analysis</h2>
+          <p className="text-text-secondary mb-6">Market trends, price analysis, and forecasting will be displayed here.</p>
+          <button className="btn btn-primary">View Market Analysis</button>
+        </div>
+      )}
+      
+      {/* Add the ChatPopup component here */}
+      <ChatPopup />
     </div>
   );
 };
