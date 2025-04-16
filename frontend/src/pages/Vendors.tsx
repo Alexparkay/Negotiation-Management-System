@@ -482,7 +482,7 @@ const Vendors = () => {
               <span className="text-text-muted ml-2">vs last year</span>
             </div>
           </div>
-
+          
           <div className="glass-panel p-6 rounded-xl hover:shadow-lg transition-all duration-300">
             <div className="flex items-center justify-between mb-3">
               <div>
@@ -535,7 +535,7 @@ const Vendors = () => {
               </ResponsiveContainer>
             </div>
           </div>
-
+          
           <div className="glass-panel p-6 rounded-xl">
             <h3 className="text-lg font-semibold text-text-primary mb-4">Vendors by Status</h3>
             <div className="h-64">
@@ -588,32 +588,32 @@ const Vendors = () => {
             <div className="flex gap-4 flex-wrap">
               <div className="flex gap-2 items-center bg-base-300/30 px-3 py-2 rounded-lg">
                 <MdOutlineFilterList className="text-xl text-text-muted" />
-                <select 
+            <select 
                   className="select select-ghost w-full max-w-xs focus:outline-none focus:bg-transparent text-sm" 
-                  value={selectedStatus}
-                  onChange={(e) => setSelectedStatus(e.target.value)}
-                >
-                  {statusOptions.map(status => (
-                    <option key={status} value={status}>
-                      {status === 'all' ? 'All Statuses' : status.charAt(0).toUpperCase() + status.slice(1)}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              
+              value={selectedStatus}
+              onChange={(e) => setSelectedStatus(e.target.value)}
+            >
+              {statusOptions.map(status => (
+                <option key={status} value={status}>
+                  {status === 'all' ? 'All Statuses' : status.charAt(0).toUpperCase() + status.slice(1)}
+                </option>
+              ))}
+            </select>
+          </div>
+          
               <div className="flex gap-2 items-center bg-base-300/30 px-3 py-2 rounded-lg">
                 <MdOutlineCategory className="text-xl text-text-muted" />
-                <select 
+            <select 
                   className="select select-ghost w-full max-w-xs focus:outline-none focus:bg-transparent text-sm" 
-                  value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                >
-                  {categories.map(category => (
-                    <option key={category} value={category}>
-                      {category === 'all' ? 'All Categories' : category}
-                    </option>
-                  ))}
-                </select>
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+            >
+              {categories.map(category => (
+                <option key={category} value={category}>
+                  {category === 'all' ? 'All Categories' : category}
+                </option>
+              ))}
+            </select>
               </div>
               
               <div className="flex gap-3">
@@ -642,19 +642,19 @@ const Vendors = () => {
         ) : (
           <div className="overflow-x-auto mb-6">
             <table className="table w-full glass-panel rounded-xl">
-              <thead>
-                <tr>
+            <thead>
+              <tr>
                   <th>Vendor</th>
-                  <th>Category</th>
+                <th>Category</th>
                   <th>Contact</th>
-                  <th>Status</th>
+                <th>Status</th>
                   <th>Performance</th>
                   <th>Spend (2023)</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredVendors.map(vendor => (
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredVendors.map(vendor => (
                   <tr key={vendor.id} className="hover">
                     <td>
                       <div className="flex items-center gap-3">
@@ -702,10 +702,10 @@ const Vendors = () => {
                       </div>
                     </td>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+              ))}
+            </tbody>
+          </table>
+        </div>
         )}
       </div>
       <ChatPopup />

@@ -58,6 +58,7 @@ import {
   ScatterChart,
   ZAxis
 } from 'recharts';
+import { motion } from 'framer-motion';
 import ChatPopup from '../components/ChatPopup';
 
 interface ChatMessage {
@@ -125,17 +126,16 @@ const negotiationMetrics = {
   priceAlerts: 15,
 };
 
-// Mock data for price trends
+// Enhanced mock data for charts
 const priceTrendData = [
-  { month: 'Jan', average: 4.84, market: 5.20, negotiated: 4.50 },
-  { month: 'Feb', average: 4.86, market: 5.25, negotiated: 4.55 },
-  { month: 'Mar', average: 4.85, market: 5.30, negotiated: 4.50 },
-  { month: 'Apr', average: 4.88, market: 5.40, negotiated: 4.60 },
-  { month: 'May', average: 4.92, market: 5.45, negotiated: 4.65 },
-  { month: 'Jun', average: 4.97, market: 5.50, negotiated: 4.75 },
+  { month: 'Jan', average: 4.84, market: 5.20, negotiated: 4.50, savings: 0.70 },
+  { month: 'Feb', average: 4.86, market: 5.25, negotiated: 4.55, savings: 0.70 },
+  { month: 'Mar', average: 4.85, market: 5.30, negotiated: 4.50, savings: 0.80 },
+  { month: 'Apr', average: 4.88, market: 5.40, negotiated: 4.60, savings: 0.80 },
+  { month: 'May', average: 4.92, market: 5.45, negotiated: 4.65, savings: 0.80 },
+  { month: 'Jun', average: 4.97, market: 5.50, negotiated: 4.75, savings: 0.75 },
 ];
 
-// Mock data for category price variations
 const categoryPriceData = [
   { month: 'Jan', cables: 220000, peripherals: 150000, accessories: 50000, total: 420000 },
   { month: 'Feb', cables: 190000, peripherals: 140000, accessories: 50000, total: 380000 },
@@ -145,23 +145,20 @@ const categoryPriceData = [
   { month: 'Jun', cables: 240000, peripherals: 160000, accessories: 60000, total: 460000 },
 ];
 
-// Vendor comparison data
 const vendorComparisonData = [
-  { name: 'TechVision Inc.', price: 4.50, quality: 92, delivery: 95 },
-  { name: 'NetWare Solutions', price: 5.25, quality: 95, delivery: 88 },
-  { name: 'DataSphere Systems', price: 4.75, quality: 85, delivery: 92 },
-  { name: 'GlobalConnect Ltd', price: 5.15, quality: 90, delivery: 94 },
-  { name: 'FiberTech', price: 4.85, quality: 87, delivery: 90 },
+  { name: 'TechVision Inc.', price: 4.50, quality: 92, delivery: 95, reliability: 94, sustainability: 88 },
+  { name: 'NetWare Solutions', price: 5.25, quality: 95, delivery: 88, reliability: 90, sustainability: 92 },
+  { name: 'DataSphere Systems', price: 4.75, quality: 85, delivery: 92, reliability: 88, sustainability: 85 },
+  { name: 'GlobalConnect Ltd', price: 5.15, quality: 90, delivery: 94, reliability: 92, sustainability: 90 },
+  { name: 'FiberTech', price: 4.85, quality: 87, delivery: 90, reliability: 89, sustainability: 86 },
 ];
 
-// Communication activity
 const communicationData = [
   { name: 'Emails', value: 65, color: '#3B82F6' },
   { name: 'Calls', value: 15, color: '#10B981' },
   { name: 'Meetings', value: 20, color: '#F59E0B' },
 ];
 
-// Negotiation phase distribution
 const negotiationPhaseData = [
   { name: 'Initial', value: 8, color: '#8B5CF6' },
   { name: 'Discussion', value: 12, color: '#3B82F6' },
@@ -170,16 +167,14 @@ const negotiationPhaseData = [
   { name: 'Completed', value: 16, color: '#6B7280' },
 ];
 
-// Market trend comparison
 const marketTrendData = [
-  { product: 'HDMI Cables', market: 5.50, negotiated: 4.75, savings: 0.75 },
-  { product: 'USB-C Adapters', market: 9.25, negotiated: 8.75, savings: 0.50 },
-  { product: 'Cat6 Cables', market: 6.00, negotiated: 5.25, savings: 0.75 },
-  { product: 'Wireless Mice', market: 12.50, negotiated: 11.00, savings: 1.50 },
-  { product: 'Keyboards', market: 22.00, negotiated: 19.50, savings: 2.50 },
+  { product: 'HDMI Cables', market: 5.50, negotiated: 4.75, savings: 0.75, volume: 28500 },
+  { product: 'USB-C Adapters', market: 9.25, negotiated: 8.75, savings: 0.50, volume: 18500 },
+  { product: 'Cat6 Cables', market: 6.00, negotiated: 5.25, savings: 0.75, volume: 22000 },
+  { product: 'Wireless Mice', market: 12.50, negotiated: 11.00, savings: 1.50, volume: 15000 },
+  { product: 'Keyboards', market: 22.00, negotiated: 19.50, savings: 2.50, volume: 9500 },
 ];
 
-// Upcoming negotiation deadlines
 const upcomingDeadlines = [
   { 
     id: 1, 
@@ -187,7 +182,9 @@ const upcomingDeadlines = [
     product: 'HDMI Cables',
     deadline: '2024-03-15',
     importance: 'high',
-    color: '#EF4444' 
+    color: '#EF4444',
+    value: 125000,
+    status: 'In Progress'
   },
   { 
     id: 2, 
@@ -195,7 +192,9 @@ const upcomingDeadlines = [
     product: 'Cat6 Cables',
     deadline: '2024-03-20',
     importance: 'medium',
-    color: '#F59E0B' 
+    color: '#F59E0B',
+    value: 85000,
+    status: 'Pending Review'
   },
   { 
     id: 3, 
@@ -203,7 +202,9 @@ const upcomingDeadlines = [
     product: 'Wireless Mice',
     deadline: '2024-03-28',
     importance: 'medium',
-    color: '#F59E0B' 
+    color: '#F59E0B',
+    value: 65000,
+    status: 'In Progress'
   },
   { 
     id: 4, 
@@ -211,11 +212,12 @@ const upcomingDeadlines = [
     product: 'Fiber Optic Cables',
     deadline: '2024-04-05',
     importance: 'low',
-    color: '#10B981' 
+    color: '#10B981',
+    value: 95000,
+    status: 'Scheduled'
   },
 ];
 
-// Recent communications
 const recentCommunications = [
   { 
     id: 1, 
@@ -224,7 +226,9 @@ const recentCommunications = [
     vendor: 'TechVision Inc.',
     time: '2 hours ago',
     icon: MdOutlineEmail, 
-    color: '#3B82F6' 
+    color: '#3B82F6',
+    priority: 'high',
+    status: 'unread'
   },
   { 
     id: 2, 
@@ -233,7 +237,9 @@ const recentCommunications = [
     vendor: 'NetWare Solutions',
     time: '5 hours ago',
     icon: MdOutlineHandshake, 
-    color: '#F59E0B' 
+    color: '#F59E0B',
+    priority: 'medium',
+    status: 'read'
   },
   { 
     id: 3, 
@@ -242,7 +248,9 @@ const recentCommunications = [
     vendor: 'GlobalConnect Ltd',
     time: 'Yesterday',
     icon: MdOutlineEmail, 
-    color: '#3B82F6' 
+    color: '#3B82F6',
+    priority: 'low',
+    status: 'read'
   },
   { 
     id: 4, 
@@ -251,17 +259,18 @@ const recentCommunications = [
     vendor: 'DataSphere Systems',
     time: 'Yesterday',
     icon: MdOutlinePriceChange, 
-    color: '#EF4444' 
+    color: '#EF4444',
+    priority: 'high',
+    status: 'unread'
   },
 ];
 
-// Top negotiated products
 const topNegotiatedProducts = [
-  { name: 'HDMI Cables', savingsRate: 16.5, volume: 28500 },
-  { name: 'Cat6 Cables', savingsRate: 14.2, volume: 22000 },
-  { name: 'USB-C Adapters', savingsRate: 12.8, volume: 18500 },
-  { name: 'Wireless Mice', savingsRate: 11.5, volume: 15000 },
-  { name: 'Mechanical Keyboards', savingsRate: 10.2, volume: 9500 },
+  { name: 'HDMI Cables', savingsRate: 16.5, volume: 28500, trend: 'up', value: 125000 },
+  { name: 'Cat6 Cables', savingsRate: 14.2, volume: 22000, trend: 'up', value: 85000 },
+  { name: 'USB-C Adapters', savingsRate: 12.8, volume: 18500, trend: 'down', value: 65000 },
+  { name: 'Wireless Mice', savingsRate: 11.5, volume: 15000, trend: 'up', value: 95000 },
+  { name: 'Mechanical Keyboards', savingsRate: 10.2, volume: 9500, trend: 'stable', value: 75000 },
 ];
 
 // Custom tooltip for charts
@@ -283,6 +292,8 @@ const CustomTooltip = ({ active, payload, label, formatter }: any) => {
 
 const Home = () => {
   const [activeTab, setActiveTab] = useState("overview");
+  const [timeRange, setTimeRange] = useState('month');
+  const [selectedCategory, setSelectedCategory] = useState('all');
   
   // Format currency values
   const formatCurrency = (value: number) => `$${value.toLocaleString()}`;
@@ -290,7 +301,7 @@ const Home = () => {
   return (
     <div className="w-full text-text-secondary">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-semibold text-text-primary">Negotiation Dashboard</h1>
+        <h1 className="text-3xl font-semibold text-text-primary">Supplier Portal Dashboard</h1>
         <div className="flex items-center gap-4">
           <div className="glass-panel flex">
             <button 
@@ -322,72 +333,88 @@ const Home = () => {
       <section className="mb-8">
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
           {/* Active Negotiations */}
-          <div className="glass-panel p-5 rounded-xl hover:shadow-lg transition-all duration-300">
+          <motion.div 
+            className="glass-panel p-5 rounded-xl hover:shadow-lg transition-all duration-300"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+          >
             <div className="flex items-center justify-between mb-3">
               <div>
                 <p className="text-sm text-text-muted mb-1">Active Negotiations</p>
                 <h3 className="text-3xl font-bold text-text-primary">{negotiationMetrics.activeNegotiations}</h3>
+                <div className="flex items-center text-xs text-accent-secondary mt-1">
+                  <MdOutlineTrendingUp className="mr-1" /> +3 vs last month
+                </div>
               </div>
               <div className="w-12 h-12 rounded-full bg-accent-primary/20 flex items-center justify-center">
                 <MdOutlineHandshake className="text-accent-primary text-2xl" />
               </div>
             </div>
-            <div className="flex items-center text-xs">
-              <span className="flex items-center text-accent-secondary"><MdOutlineTrendingUp /> +3</span>
-              <span className="text-text-muted ml-2">vs last month</span>
-            </div>
-          </div>
+          </motion.div>
 
           {/* Upcoming Deadlines */}
-          <div className="glass-panel p-5 rounded-xl hover:shadow-lg transition-all duration-300">
+          <motion.div 
+            className="glass-panel p-5 rounded-xl hover:shadow-lg transition-all duration-300"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+          >
             <div className="flex items-center justify-between mb-3">
               <div>
                 <p className="text-sm text-text-muted mb-1">Upcoming Deadlines</p>
                 <h3 className="text-3xl font-bold text-accent-warning">{negotiationMetrics.upcomingDeadlines}</h3>
+                <div className="flex items-center text-xs text-accent-warning mt-1">
+                  <MdOutlineTrendingUp className="mr-1" /> +2 due this week
+                </div>
               </div>
               <div className="w-12 h-12 rounded-full bg-accent-warning/20 flex items-center justify-center">
                 <HiOutlineCalendarDays className="text-accent-warning text-2xl" />
               </div>
             </div>
-            <div className="flex items-center text-xs">
-              <span className="flex items-center text-accent-warning"><MdOutlineTrendingUp /> +2</span>
-              <span className="text-text-muted ml-2">due this week</span>
-            </div>
-          </div>
+          </motion.div>
 
           {/* Average Savings Rate */}
-          <div className="glass-panel p-5 rounded-xl hover:shadow-lg transition-all duration-300">
+          <motion.div 
+            className="glass-panel p-5 rounded-xl hover:shadow-lg transition-all duration-300"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+          >
             <div className="flex items-center justify-between mb-3">
               <div>
                 <p className="text-sm text-text-muted mb-1">Avg. Savings Rate</p>
                 <h3 className="text-3xl font-bold text-text-primary">{negotiationMetrics.avgSavingsRate}%</h3>
+                <div className="flex items-center text-xs text-accent-secondary mt-1">
+                  <MdOutlineTrendingUp className="mr-1" /> +1.2% vs last quarter
+                </div>
               </div>
               <div className="w-12 h-12 rounded-full bg-accent-secondary/20 flex items-center justify-center">
                 <MdOutlineAttachMoney className="text-accent-secondary text-2xl" />
               </div>
             </div>
-            <div className="flex items-center text-xs">
-              <span className="flex items-center text-accent-secondary"><MdOutlineTrendingUp /> +1.2%</span>
-              <span className="text-text-muted ml-2">vs last quarter</span>
-            </div>
-          </div>
+          </motion.div>
 
           {/* Price Alerts */}
-          <div className="glass-panel p-5 rounded-xl hover:shadow-lg transition-all duration-300">
+          <motion.div 
+            className="glass-panel p-5 rounded-xl hover:shadow-lg transition-all duration-300"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+          >
             <div className="flex items-center justify-between mb-3">
               <div>
                 <p className="text-sm text-text-muted mb-1">Price Alerts</p>
                 <h3 className="text-3xl font-bold text-text-primary">{negotiationMetrics.priceAlerts}</h3>
+                <div className="flex items-center text-xs text-red-500 mt-1">
+                  <MdOutlineTrendingUp className="mr-1" /> +5 new market changes
+                </div>
               </div>
               <div className="w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center">
                 <MdOutlinePriceChange className="text-red-500 text-2xl" />
               </div>
             </div>
-            <div className="flex items-center text-xs">
-              <span className="flex items-center text-red-500"><MdOutlineTrendingUp /> +5</span>
-              <span className="text-text-muted ml-2">new market changes</span>
-            </div>
-          </div>
+          </motion.div>
         </div>
       </section>
 
@@ -399,12 +426,29 @@ const Home = () => {
             {/* Left Column - 2/3 Width */}
             <div className="lg:col-span-2 grid grid-cols-1 gap-6">
               {/* Negotiated vs Market Price Trend */}
-              <div className="glass-panel p-6 rounded-xl">
+              <motion.div 
+                className="glass-panel p-6 rounded-xl"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 }}
+              >
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg font-semibold text-text-primary">Negotiated vs Market Price Trend</h3>
-                  <Link to="/price-tracker" className="text-accent-primary hover:underline text-sm flex items-center gap-1">
-                    Price Tracker <MdOutlineArrowForward />
-                  </Link>
+                  <div className="flex items-center gap-4">
+                    <select
+                      className="bg-background-accent text-white pl-3 pr-8 py-2 rounded-lg border border-white/10 hover:border-white/20 transition-colors"
+                      value={timeRange}
+                      onChange={(e) => setTimeRange(e.target.value)}
+                    >
+                      <option value="week">Last Week</option>
+                      <option value="month">Last Month</option>
+                      <option value="quarter">Last Quarter</option>
+                      <option value="year">Last Year</option>
+                    </select>
+                    <Link to="/price-tracker" className="text-accent-primary hover:underline text-sm flex items-center gap-1">
+                      Price Tracker <MdOutlineArrowForward />
+                    </Link>
+                  </div>
                 </div>
                 <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
@@ -464,75 +508,91 @@ const Home = () => {
                     </ComposedChart>
                   </ResponsiveContainer>
                 </div>
-              </div>
+              </motion.div>
 
               {/* Vendor Comparison */}
-              <div className="glass-panel p-6 rounded-xl">
+              <motion.div 
+                className="glass-panel p-6 rounded-xl"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6 }}
+              >
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-text-primary">Vendor Comparison (HDMI Cables)</h3>
-                  <Link to="/vendor-comparison" className="text-accent-primary hover:underline text-sm flex items-center gap-1">
-                    Detailed Comparison <MdOutlineArrowForward />
-                  </Link>
+                  <h3 className="text-lg font-semibold text-text-primary">Vendor Performance Comparison</h3>
+                  <div className="flex items-center gap-4">
+                    <select
+                      className="bg-background-accent text-white pl-3 pr-8 py-2 rounded-lg border border-white/10 hover:border-white/20 transition-colors"
+                      value={selectedCategory}
+                      onChange={(e) => setSelectedCategory(e.target.value)}
+                    >
+                      <option value="all">All Categories</option>
+                      <option value="raw_materials">Raw Materials</option>
+                      <option value="electronics">Electronics</option>
+                      <option value="services">Services</option>
+                    </select>
+                    <Link to="/vendor-comparison" className="text-accent-primary hover:underline text-sm flex items-center gap-1">
+                      Detailed Comparison <MdOutlineArrowForward />
+                    </Link>
+                  </div>
                 </div>
                 <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
-                    <ScatterChart margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-                      <XAxis 
-                        type="number" 
-                        dataKey="price" 
-                        name="Price" 
-                        domain={[4, 6]} 
-                        stroke="#666666" 
-                        fontSize={12}
-                        label={{ value: 'Price ($)', position: 'insideBottom', offset: -5, fill: '#666666' }}
-                      />
-                      <YAxis 
-                        type="number" 
-                        dataKey="quality" 
-                        name="Quality" 
-                        domain={[80, 100]} 
-                        stroke="#666666" 
-                        fontSize={12}
-                        label={{ value: 'Quality', angle: -90, position: 'insideLeft', fill: '#666666' }}
-                      />
-                      <ZAxis 
-                        type="number" 
-                        dataKey="delivery" 
-                        range={[50, 200]} 
-                        name="Delivery Score" 
-                      />
+                    <RadarChart data={vendorComparisonData}>
+                      <PolarGrid stroke="rgba(255,255,255,0.1)" />
+                      <PolarAngleAxis dataKey="name" stroke="#666666" />
+                      <PolarRadiusAxis angle={30} domain={[0, 100]} stroke="#666666" />
                       <Tooltip 
-                        cursor={{ strokeDasharray: '3 3' }}
                         contentStyle={{ 
                           backgroundColor: 'rgba(26, 26, 26, 0.8)', 
                           backdropFilter: 'blur(12px)',
                           border: '1px solid rgba(255, 255, 255, 0.1)', 
                           borderRadius: '8px' 
                         }}
-                        formatter={(value: number, name: string) => {
-                          if (name === 'Price') return [`$${value.toFixed(2)}`, name];
-                          return [value, name];
-                        }}
+                      />
+                      <Radar 
+                        name="Quality" 
+                        dataKey="quality" 
+                        stroke="#3B82F6" 
+                        fill="#3B82F6" 
+                        fillOpacity={0.6} 
+                      />
+                      <Radar 
+                        name="Delivery" 
+                        dataKey="delivery" 
+                        stroke="#10B981" 
+                        fill="#10B981" 
+                        fillOpacity={0.6} 
+                      />
+                      <Radar 
+                        name="Reliability" 
+                        dataKey="reliability" 
+                        stroke="#F59E0B" 
+                        fill="#F59E0B" 
+                        fillOpacity={0.6} 
+                      />
+                      <Radar 
+                        name="Sustainability" 
+                        dataKey="sustainability" 
+                        stroke="#8B5CF6" 
+                        fill="#8B5CF6" 
+                        fillOpacity={0.6} 
                       />
                       <Legend />
-                      <Scatter 
-                        name="Vendors" 
-                        data={vendorComparisonData} 
-                        fill="#3B82F6" 
-                        shape="circle"
-                        label={({ name, index }) => index === 0 ? name : ''}
-                      />
-                    </ScatterChart>
+                    </RadarChart>
                   </ResponsiveContainer>
                 </div>
-              </div>
+              </motion.div>
             </div>
 
             {/* Right Column - 1/3 Width */}
             <div className="grid grid-cols-1 gap-6">
               {/* Upcoming Deadlines */}
-              <div className="glass-panel p-6 rounded-xl">
+              <motion.div 
+                className="glass-panel p-6 rounded-xl"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.7 }}
+              >
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg font-semibold text-text-primary">Upcoming Deadlines</h3>
                   <Link to="/negotiation-calendar" className="text-accent-primary hover:underline text-sm flex items-center gap-1">
@@ -551,19 +611,25 @@ const Home = () => {
                             <p className="text-sm font-medium text-text-primary">{deadline.vendor}</p>
                             <p className="text-xs text-text-secondary">{deadline.product}</p>
                             <p className="text-xs text-text-muted mt-1">Due {deadline.deadline}</p>
+                            <p className="text-xs text-text-muted">Value: {formatCurrency(deadline.value)}</p>
                           </div>
                           <div className={`px-2 py-1 rounded text-xs`} style={{ backgroundColor: `${deadline.color}20`, color: deadline.color }}>
-                            {deadline.importance}
+                            {deadline.status}
                           </div>
                         </div>
                       </li>
                     ))}
                   </ul>
                 </div>
-              </div>
+              </motion.div>
 
               {/* Recent Communications */}
-              <div className="glass-panel p-6 rounded-xl">
+              <motion.div 
+                className="glass-panel p-6 rounded-xl"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.8 }}
+              >
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg font-semibold text-text-primary">Recent Communications</h3>
                   <Link to="/communication-hub" className="text-accent-primary hover:underline text-sm flex items-center gap-1">
@@ -583,18 +649,28 @@ const Home = () => {
                             <p className="text-xs text-text-secondary">{comm.vendor}</p>
                             <p className="text-xs text-text-muted mt-1">{comm.time}</p>
                           </div>
-                          <button className="ml-2 text-text-muted hover:text-text-primary">
-                            <MdOutlineMoreHoriz />
-                          </button>
+                          <div className="flex items-center gap-2">
+                            {comm.status === 'unread' && (
+                              <span className="w-2 h-2 rounded-full bg-accent-primary"></span>
+                            )}
+                            <button className="text-text-muted hover:text-text-primary">
+                              <MdOutlineMoreHoriz />
+                            </button>
+                          </div>
                         </div>
                       </li>
                     ))}
                   </ul>
                 </div>
-              </div>
+              </motion.div>
 
               {/* Negotiation Phases */}
-              <div className="glass-panel p-6 rounded-xl">
+              <motion.div 
+                className="glass-panel p-6 rounded-xl"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.9 }}
+              >
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg font-semibold text-text-primary">Negotiation Phases</h3>
                   <Link to="/active-negotiations" className="text-accent-primary hover:underline text-sm flex items-center gap-1">
@@ -630,7 +706,7 @@ const Home = () => {
                     </PieChart>
                   </ResponsiveContainer>
                 </div>
-              </div>
+              </motion.div>
             </div>
           </div>
 
@@ -638,7 +714,12 @@ const Home = () => {
           <section className="mb-8">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Communication Activity */}
-              <div className="glass-panel p-6 rounded-xl">
+              <motion.div 
+                className="glass-panel p-6 rounded-xl"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.0 }}
+              >
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg font-semibold text-text-primary">Communication Activity</h3>
                   <Link to="/communication-hub" className="text-accent-primary hover:underline text-sm flex items-center gap-1">
@@ -683,10 +764,15 @@ const Home = () => {
                     ))}
                   </div>
                 </div>
-              </div>
+              </motion.div>
 
               {/* Market Price Comparison */}
-              <div className="glass-panel p-6 rounded-xl">
+              <motion.div 
+                className="glass-panel p-6 rounded-xl"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.1 }}
+              >
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg font-semibold text-text-primary">Price Comparison</h3>
                   <Link to="/market-trends" className="text-accent-primary hover:underline text-sm flex items-center gap-1">
@@ -739,10 +825,15 @@ const Home = () => {
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
-              </div>
+              </motion.div>
 
               {/* Top Negotiated Products */}
-              <div className="glass-panel p-6 rounded-xl">
+              <motion.div 
+                className="glass-panel p-6 rounded-xl"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.2 }}
+              >
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg font-semibold text-text-primary">Top Negotiated Products</h3>
                   <Link to="/product-categories" className="text-accent-primary hover:underline text-sm flex items-center gap-1">
@@ -764,14 +855,14 @@ const Home = () => {
                             {product.savingsRate}% savings
                           </span>
                           <span className="text-xs text-text-muted">
-                            {product.volume.toLocaleString()} units
+                            {formatCurrency(product.value)}
                           </span>
                         </div>
                       </li>
                     ))}
                   </ul>
                 </div>
-              </div>
+              </motion.div>
             </div>
           </section>
         </>
