@@ -38,6 +38,7 @@ import POSSystems from './pages/POSSystems';
 import Charts from './pages/Charts';
 import Logs from './pages/Logs';
 import VendorDetail from './pages/VendorDetail';
+import ChatPopup from './components/ChatPopup';
 
 // Supplier Management Pages
 import Suppliers from './pages/Suppliers';
@@ -69,7 +70,7 @@ import Dashboard from './pages/Dashboard';
 import Chat from './pages/Chat';
 
 function App() {
-  const [isMenuCollapsed, setIsMenuCollapsed] = useState(false);
+  const [isMenuCollapsed, setIsMenuCollapsed] = useState(true);
   
   const toggleMenu = () => {
     setIsMenuCollapsed(!isMenuCollapsed);
@@ -94,6 +95,8 @@ function App() {
             </div>
           </div>
         </div>
+        {/* AI Chat Popup - available on all pages */}
+        <ChatPopup />
       </div>
     );
   };
