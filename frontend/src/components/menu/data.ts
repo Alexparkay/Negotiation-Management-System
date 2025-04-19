@@ -46,128 +46,139 @@ import {
   MdOutlineHandshake,
   MdOutlineViewTimeline,
   MdOutlinePriceChange,
+  MdOutlineChat,
 } from 'react-icons/md';
 // import { IoSettingsOutline } from 'react-icons/io5';
 
 export const menu = [
   {
-    catalog: 'main',
+    catalog: 'Main',
     listItems: [
       {
         isLink: true,
         url: '/',
         icon: MdOutlineDashboard,
-        label: 'dashboard',
+        label: 'Dashboard',
+      },
+      {
+        isLink: true,
+        url: '/chat',
+        icon: MdOutlineChat,
+        label: 'AI Chat',
       },
     ],
   },
+  
   {
-    catalog: 'negotiations',
+    catalog: 'Negotiations',
     listItems: [
       {
         isLink: true,
         url: '/active-negotiations',
         icon: MdOutlineHandshake,
-        label: 'active negotiations',
-      },
-      {
-        isLink: true,
-        url: '/vendor-comparison',
-        icon: MdOutlineCompare,
-        label: 'vendor comparison',
+        label: 'Active Negotiations',
       },
       {
         isLink: true,
         url: '/communication-hub',
         icon: MdOutlineEmail,
-        label: 'communication hub',
+        label: 'Communication Hub',
       },
       {
         isLink: true,
         url: '/negotiation-history',
         icon: MdOutlineHistory,
-        label: 'negotiation history',
+        label: 'Negotiation History',
       },
       {
         isLink: true,
         url: '/negotiation-calendar',
         icon: HiOutlineCalendarDays,
-        label: 'negotiation calendar',
+        label: 'Negotiation Calendar',
       },
     ],
   },
+  
   {
-    catalog: 'market analytics',
-    listItems: [
-      {
-        isLink: true,
-        url: '/price-tracker',
-        icon: MdOutlinePriceChange,
-        label: 'price tracker',
-      },
-      {
-        isLink: true,
-        url: '/market-trends',
-        icon: MdOutlineTrendingUp,
-        label: 'market trends',
-      },
-      {
-        isLink: true,
-        url: '/product-categories',
-        icon: MdOutlineCategory,
-        label: 'product categories',
-      },
-      {
-        isLink: true,
-        url: '/price-forecasting',
-        icon: MdOutlineInsights,
-        label: 'price forecasting',
-      },
-    ],
-  },
-  {
-    catalog: 'vendor management',
+    catalog: 'Vendor Management',
     listItems: [
       {
         isLink: true,
         url: '/vendors',
         icon: HiOutlineUsers,
-        label: 'vendor directory',
+        label: 'Vendor Directory',
+      },
+      {
+        isLink: true,
+        url: '/vendor-comparison',
+        icon: MdOutlineCompare,
+        label: 'Vendor Comparison',
       },
       {
         isLink: true,
         url: '/vendor-performance',
         icon: MdOutlineAnalytics,
-        label: 'performance ratings',
+        label: 'Performance Ratings',
       },
       {
         isLink: true,
         url: '/contracts',
         icon: HiOutlineDocumentText,
-        label: 'contracts',
+        label: 'Contracts',
       },
     ],
   },
+  
   {
-    catalog: 'tools',
+    catalog: 'Market Analytics',
+    listItems: [
+      {
+        isLink: true,
+        url: '/price-tracker',
+        icon: MdOutlinePriceChange,
+        label: 'Price Tracker',
+      },
+      {
+        isLink: true,
+        url: '/market-trends',
+        icon: MdOutlineTrendingUp,
+        label: 'Market Trends',
+      },
+      {
+        isLink: true,
+        url: '/product-categories',
+        icon: MdOutlineCategory,
+        label: 'Product Categories',
+      },
+      {
+        isLink: true,
+        url: '/price-forecasting',
+        icon: MdOutlineInsights,
+        label: 'Price Forecasting',
+      },
+    ],
+  },
+  
+  {
+    catalog: 'Tools',
     listItems: [
       {
         isLink: true,
         url: '/notes',
         icon: HiOutlinePencilSquare,
-        label: 'notes',
+        label: 'Notes',
       },
       {
         isLink: true,
         url: '/document-repository',
         icon: HiOutlineArchiveBox,
-        label: 'document repository',
+        label: 'Document Repository',
       },
       {
         isLink: true,
         url: '/admin',
         icon: MdOutlineAdminPanelSettings,
-        label: 'settings',
+        label: 'Settings',
       },
     ],
   },

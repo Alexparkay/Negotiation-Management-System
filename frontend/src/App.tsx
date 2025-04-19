@@ -1,4 +1,5 @@
 // import React from 'react';
+import { useState } from 'react';
 import {
   createBrowserRouter,
   RouterProvider,
@@ -64,23 +65,31 @@ import MarketTrends from './pages/MarketTrends';
 import ProductCategories from './pages/ProductCategories';
 import VendorPerformance from './pages/VendorPerformance';
 import DocumentRepository from './pages/DocumentRepository';
+import Dashboard from './pages/Dashboard';
+import Chat from './pages/Chat';
 
 function App() {
+  const [isMenuCollapsed, setIsMenuCollapsed] = useState(false);
+  
+  const toggleMenu = () => {
+    setIsMenuCollapsed(!isMenuCollapsed);
+  };
+
   const Layout = () => {
     return (
       <div
         id="rootContainer"
-        className="w-full p-0 m-0 overflow-visible min-h-screen flex flex-col justify-between"
+        className="w-full p-0 m-0 overflow-visible min-h-screen flex flex-col justify-between bg-background-primary"
       >
         <ToasterProvider />
         <ScrollRestoration />
         <div className="flex flex-col h-screen">
           <Navbar />
-          <div className="w-full flex gap-0 pt-20 xl:pt-[96px] 2xl:pt-[112px] flex-grow">
-            <div className="hidden xl:block xl:w-[250px] 2xl:w-[280px] 3xl:w-[350px] border-r-2 border-base-300 dark:border-slate-700 px-3 xl:px-4 xl:py-1 sticky top-20 xl:top-[96px] 2xl:top-[112px] h-[calc(100vh-80px)] xl:h-[calc(100vh-96px)] 2xl:h-[calc(100vh-112px)] overflow-y-hidden">
-              <Menu />
+          <div className="w-full flex gap-0 pt-[60px] flex-grow">
+            <div className={`hidden xl:block transition-all duration-300 ease-in-out overflow-hidden ${isMenuCollapsed ? 'w-[80px]' : 'w-[280px]'} border-r border-black/5 sticky top-[64px] h-[calc(100vh-64px)] z-10`}>
+              <Menu isCollapsed={isMenuCollapsed} onToggleCollapse={toggleMenu} />
             </div>
-            <div className="w-full px-4 xl:px-4 2xl:px-5 xl:py-2 h-[calc(100vh-80px)] xl:h-[calc(100vh-96px)] 2xl:h-[calc(100vh-112px)] overflow-y-auto">
+            <div className="w-full px-4 py-4 h-[calc(100vh-60px)] overflow-y-auto">
               <Outlet />
             </div>
           </div>
@@ -96,7 +105,11 @@ function App() {
       children: [
         {
           path: '/',
-          element: <Home />,
+          element: <Dashboard />,
+        },
+        {
+          path: '/chat',
+          element: <Chat />,
         },
         {
           path: '/profile',
@@ -198,7 +211,6 @@ function App() {
           path: '/procurement',
           element: <Procurement />,
         },
-        // New Supplier Management Routes
         {
           path: '/suppliers',
           element: <Suppliers />,
@@ -216,6 +228,14 @@ function App() {
           element: <SupplierOnboarding />,
         },
         {
+          path: '/supplier-compliance',
+          element: <SupplierCompliance />,
+        },
+        {
+          path: '/supplier-risk',
+          element: <SupplierRisk />,
+        },
+        {
           path: '/invoices',
           element: <Invoices />,
         },
@@ -226,14 +246,6 @@ function App() {
         {
           path: '/demand-forecasting',
           element: <DemandForecasting />,
-        },
-        {
-          path: '/supplier-compliance',
-          element: <SupplierCompliance />,
-        },
-        {
-          path: '/supplier-risk',
-          element: <SupplierRisk />,
         },
         {
           path: '/incident-management',
@@ -247,8 +259,6 @@ function App() {
           path: '/admin',
           element: <Admin />,
         },
-        
-        // Marx Supplier Portal Routes
         {
           path: '/price-forecasting',
           element: <PriceForecasting />,

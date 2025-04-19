@@ -1,25 +1,53 @@
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useContext } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { HiBars3CenterLeft } from 'react-icons/hi2';
-import { MdStore, MdOutlineSearch, MdOutlineNotifications, MdOutlineSettings, MdOutlineLogout, MdOutlineHelp, MdOutlinePerson, MdOutlineEdit } from 'react-icons/md';
+import { 
+  MdOutlineSearch, 
+  MdOutlineNotifications, 
+  MdOutlineSettings,
+  MdOutlineLogout, 
+  MdOutlineHelp, 
+  MdOutlinePerson, 
+  MdOutlineEdit,
+  MdOutlineDarkMode,
+  MdOutlineLightMode 
+} from 'react-icons/md';
 import { RxEnterFullScreen, RxExitFullScreen } from 'react-icons/rx';
 import ChangeThemes from './ChangesThemes';
 import toast from 'react-hot-toast';
 import { menu } from './menu/data';
 import MenuItem from './menu/MenuItem';
+import { motion } from 'framer-motion';
+import ThemeContext from '../contexts/ThemeContext';
 
 const Navbar = () => {
-  const [isFullScreen, setIsFullScreen] = React.useState(true);
+  const themeContext = useContext(ThemeContext);
+  const theme = themeContext?.theme || 'aldi-light';
+  const toggleTheme = themeContext?.toggleTheme || (() => {});
+  
+  const [isFullScreen, setIsFullScreen] = useState(true);
+  const [isDrawerOpen, setDrawerOpen] = useState(false);
+  const [searchFocused, setSearchFocused] = useState(false);
+  
   const element = document.getElementById('root');
+  const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Get current page name for mobile only
+  const getCurrentPageName = () => {
+    const path = location.pathname;
+    
+    if (path === '/') return '';
+    
+    const pageName = path.split('/').pop() || '';
+    return pageName.charAt(0).toUpperCase() + pageName.slice(1).replace(/-/g, ' ');
+  };
 
-  const [isDrawerOpen, setDrawerOpen] = React.useState(false);
   const toggleDrawer = () => setDrawerOpen(!isDrawerOpen);
 
   const toggleFullScreen = () => {
     setIsFullScreen((prev) => !prev);
   };
-
-  const navigate = useNavigate();
 
   React.useEffect(() => {
     try {
@@ -43,191 +71,187 @@ const Navbar = () => {
 
   return (
     // navbar screen
-    <div className="fixed z-[3] top-0 left-0 right-0 bg-base-100 w-full flex justify-between px-3 xl:px-4 py-3 xl:py-5 gap-4 xl:gap-0">
-      {/* container */}
-      <div className="flex gap-3 items-center">
-        {/* for mobile */}
-        <div className="drawer w-auto p-0 mr-1 xl:hidden">
-          <input
-            id="drawer-navbar-mobile"
-            type="checkbox"
-            className="drawer-toggle"
-            checked={isDrawerOpen}
-            onChange={toggleDrawer}
-          />
-          <div className="p-0 w-auto drawer-content">
-            <label
-              htmlFor="drawer-navbar-mobile"
-              className="p-0 btn btn-ghost drawer-button"
+    <div className="fixed z-[3] top-0 left-0 right-0 w-full navbar-glass">
+      <div className="container mx-auto flex justify-between items-center px-4 py-2">
+        {/* Left Section - Logo and Hamburger */}
+        <div className="flex items-center">
+          {/* Mobile menu toggle */}
+          <div className="xl:hidden">
+            <button 
+              onClick={toggleDrawer}
+              className="p-2 rounded-full hover:bg-white/20 transition-colors"
             >
-              <HiBars3CenterLeft className="text-2xl" />
-            </label>
-          </div>
-          <div className="drawer-side z-[99]">
-            <label
-              htmlFor="drawer-navbar-mobile"
-              aria-label="close sidebar"
-              className="drawer-overlay"
-            ></label>
-            <div className="menu p-4 w-auto min-h-full bg-base-200 text-base-content">
-              <Link
-                to={'/'}
-                className="flex items-center gap-1 xl:gap-2 mt-1 mb-5"
-              >
-                <MdStore className="text-3xl sm:text-4xl xl:text-4xl 2xl:text-6xl text-primary" />
-                <div>
-                  <span className="text-[16px] leading-[1.2] sm:text-lg xl:text-xl 2xl:text-2xl font-semibold text-base-content dark:text-neutral-200 block">
-                    Aldi Negotiation Management System
-                  </span>
-                  <span className="text-xs sm:text-sm text-base-content/70 dark:text-neutral-400">
-                    Vendor & Market Intelligence
-                  </span>
-                </div>
-              </Link>
-              {menu.map((item, index) => (
-                <MenuItem
+              <HiBars3CenterLeft className="text-2xl text-white" />
+            </button>
+            
+            {/* Mobile Drawer */}
+            {isDrawerOpen && (
+              <div className="fixed inset-0 z-50 flex">
+                {/* Backdrop */}
+                <div 
+                  className="absolute inset-0 bg-black/30 backdrop-blur-sm"
                   onClick={toggleDrawer}
-                  key={index}
-                  catalog={item.catalog}
-                  listItems={item.listItems}
-                />
-              ))}
+                ></div>
+                
+                {/* Drawer content */}
+                <motion.div 
+                  className="relative w-64 max-w-[80%] h-full bg-white shadow-xl sidebar-glass"
+                  initial={{ x: -100, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  exit={{ x: -100, opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <div className="p-4">
+                    <div className="flex items-center gap-2 mb-6">
+                      <img 
+                        src="/Logo/170403-ALDI-Australia-Brand-Logo-Landscape-1024x409.png" 
+                        alt="Aldi Logo" 
+                        className="w-32 object-contain" 
+                      />
+                    </div>
+                    
+                    {menu.map((item, index) => (
+                      <MenuItem
+                        onClick={toggleDrawer}
+                        key={index}
+                        catalog={item.catalog}
+                        listItems={item.listItems}
+                      />
+                    ))}
+                  </div>
+                </motion.div>
+              </div>
+            )}
+          </div>
+          
+          {/* Logo and Page Title */}
+          <div className="flex items-center mt-1">
+            <img 
+              src="/Logo/170403-ALDI-Australia-Brand-Logo-Landscape-1024x409.png" 
+              alt="Aldi Logo" 
+              className="h-10 mr-3"
+            />
+            <div>
+              <h1 className="text-xl font-semibold text-white">Negotiation Management System</h1>
+              {getCurrentPageName() !== 'Dashboard' && (
+                <p className="text-xs text-white/80">{getCurrentPageName()}</p>
+              )}
             </div>
           </div>
         </div>
-
-        {/* navbar logo */}
-        <Link to={'/'} className="flex items-center gap-1 xl:gap-2">
-          <MdStore className="text-3xl sm:text-4xl xl:text-4xl 2xl:text-6xl text-primary" />
-          <div>
-            <span className="text-[16px] leading-[1.2] sm:text-lg xl:text-xl 2xl:text-2xl font-semibold text-base-content dark:text-neutral-200 block">
-              Aldi Negotiation Management System
-            </span>
-            <span className="text-xs sm:text-sm text-base-content/70 dark:text-neutral-400 hidden sm:block">
-              Vendor & Market Intelligence
-            </span>
-          </div>
-        </Link>
-      </div>
-
-      {/* navbar items to right */}
-      <div className="flex items-center gap-0 xl:gap-1 2xl:gap-2 3xl:gap-5">
-        {/* search */}
-        <button
-          onClick={() =>
-            toast('Global search coming soon!', {
-              icon: '🔍',
-            })
-          }
-          className="hidden sm:inline-flex btn btn-circle btn-ghost"
-        >
-          <MdOutlineSearch className="text-xl 2xl:text-2xl 3xl:text-3xl" />
-        </button>
-
-        {/* fullscreen */}
-        <button
-          onClick={toggleFullScreen}
-          className="hidden xl:inline-flex btn btn-circle btn-ghost"
-        >
-          {isFullScreen ? (
-            <RxEnterFullScreen className="xl:text-xl 2xl:text-2xl 3xl:text-3xl" />
-          ) : (
-            <RxExitFullScreen className="xl:text-xl 2xl:text-2xl 3xl:text-3xl" />
-          )}
-        </button>
-
-        {/* notification */}
-        <div className="dropdown dropdown-end">
-          <button
-            className="px-0 xl:px-auto btn btn-circle btn-ghost indicator"
-          >
-            <MdOutlineNotifications className="text-xl 2xl:text-2xl 3xl:text-3xl" />
-            <span className="indicator-item badge badge-error badge-xs">3</span>
-          </button>
-          <div className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-80 mt-4">
-            <div className="p-2 font-semibold border-b border-base-300">Notifications</div>
-            <div className="p-2 hover:bg-base-200 rounded-lg mt-1">
-              <div className="font-medium">New store task assigned</div>
-              <div className="text-xs opacity-70">Downtown Flagship Store - 10 minutes ago</div>
-            </div>
-            <div className="p-2 hover:bg-base-200 rounded-lg mt-1">
-              <div className="font-medium">Contract expiring soon</div>
-              <div className="text-xs opacity-70">Security Systems Maintenance - 1 hour ago</div>
-            </div>
-            <div className="p-2 hover:bg-base-200 rounded-lg mt-1">
-              <div className="font-medium">Store opening date updated</div>
-              <div className="text-xs opacity-70">Chicago Riverside Mall - 3 hours ago</div>
-            </div>
-            <div className="p-2 text-center text-primary text-sm mt-1 border-t border-base-300">
-              View all notifications
-            </div>
-          </div>
-        </div>
-
-        {/* theme */}
-        <div className="px-0 xl:px-auto btn btn-circle btn-ghost xl:mr-1">
-          <ChangeThemes />
-        </div>
-
-        {/* avatar dropdown */}
-        <div className="dropdown dropdown-end">
-          <div
-            tabIndex={0}
-            role="button"
-            className="btn btn-ghost btn-circle avatar"
-          >
-            <div className="w-9 rounded-full">
-              <img
-                src="https://avatars.githubusercontent.com/u/74099030?v=4"
-                alt="user-avatar"
+        
+        {/* Right Section - Search, Controls, User */}
+        <div className="flex items-center gap-2">
+          {/* Search */}
+          <div className="relative hidden md:block mr-2">
+            <div className={`flex items-center bg-white/30 rounded-full px-3 py-1.5 transition-all duration-300 ${searchFocused ? 'w-64 ring-2 ring-white/40' : 'w-44'}`}>
+              <MdOutlineSearch className="text-xl text-white" />
+              <input
+                type="text"
+                placeholder="Search..."
+                className="bg-transparent border-none outline-none text-white text-sm ml-2 w-full placeholder-white/80"
+                onFocus={() => setSearchFocused(true)}
+                onBlur={() => setSearchFocused(false)}
               />
             </div>
           </div>
-          <ul
-            tabIndex={0}
-            className="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-48"
-          >
-            <li>
-              <Link to="/profile" className="justify-between">
-                <div className="flex items-center">
-                  <MdOutlinePerson className="mr-2" />
-                  My Profile
+          
+          {/* Controls */}
+          <div className="flex items-center">
+            {/* Fullscreen */}
+            <button
+              onClick={toggleFullScreen}
+              className="p-2 rounded-full hover:bg-white/20 transition-colors hidden md:flex"
+            >
+              {isFullScreen ? (
+                <RxEnterFullScreen className="text-xl text-white" />
+              ) : (
+                <RxExitFullScreen className="text-xl text-white" />
+              )}
+            </button>
+            
+            {/* Theme Toggle */}
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-full hover:bg-white/20 transition-colors hidden md:flex"
+            >
+              {theme === 'aldi-dark' ? (
+                <MdOutlineLightMode className="text-xl text-white" />
+              ) : (
+                <MdOutlineDarkMode className="text-xl text-white" />
+              )}
+            </button>
+            
+            {/* Notifications */}
+            <div className="relative">
+              <button className="p-2 rounded-full hover:bg-white/20 transition-colors">
+                <MdOutlineNotifications className="text-xl text-white" />
+                <span className="absolute top-0 right-0 w-4 h-4 bg-[#d20002] rounded-full flex items-center justify-center text-xs text-white">
+                  3
+                </span>
+              </button>
+              
+              {/* Notification dropdown would go here */}
+            </div>
+          </div>
+          
+          {/* User Menu */}
+          <div className="relative ml-1">
+            <div className="dropdown dropdown-end">
+              <div
+                tabIndex={0}
+                role="button"
+                className="flex items-center gap-2 px-2 py-1 rounded-full hover:bg-white/20 transition-colors cursor-pointer"
+              >
+                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-[#1cbceb] to-[#021e5f] flex items-center justify-center">
+                  <span className="text-white font-medium text-sm">A</span>
                 </div>
-              </Link>
-            </li>
-            <li>
-              <Link to="/profile/edit" className="justify-between">
-                <div className="flex items-center">
-                  <MdOutlineEdit className="mr-2" />
-                  Edit Profile
+                <div className="hidden md:block">
+                  <p className="text-sm text-white">Admin User</p>
+                  <p className="text-xs text-white/80">Administrator</p>
                 </div>
-              </Link>
-            </li>
-            <li>
-              <a className="justify-between">
-                <div className="flex items-center">
-                  <MdOutlineSettings className="mr-2" />
-                  Settings
-                </div>
-              </a>
-            </li>
-            <li>
-              <a className="justify-between">
-                <div className="flex items-center">
-                  <MdOutlineHelp className="mr-2" />
-                  Help & Support
-                </div>
-              </a>
-            </li>
-            <li onClick={() => navigate('/login')}>
-              <a>
-                <div className="flex items-center">
-                  <MdOutlineLogout className="mr-2" />
-                  Log Out
-                </div>
-              </a>
-            </li>
-          </ul>
+              </div>
+              
+              <ul
+                tabIndex={0}
+                className="dropdown-content z-[1] mt-2 p-2 shadow-xl glass-panel rounded-xl w-56"
+              >
+                <li className="mb-1">
+                  <Link to="/profile" className="flex items-center gap-2 p-2 rounded-lg hover:bg-black/5 transition-colors">
+                    <MdOutlinePerson className="text-lg text-[#475569]" />
+                    <span className="text-sm text-[#1E293B]">My Profile</span>
+                  </Link>
+                </li>
+                <li className="mb-1">
+                  <Link to="/profile/edit" className="flex items-center gap-2 p-2 rounded-lg hover:bg-black/5 transition-colors">
+                    <MdOutlineEdit className="text-lg text-[#475569]" />
+                    <span className="text-sm text-[#1E293B]">Edit Profile</span>
+                  </Link>
+                </li>
+                <li className="mb-1">
+                  <button className="w-full flex items-center gap-2 p-2 rounded-lg hover:bg-black/5 transition-colors">
+                    <MdOutlineSettings className="text-lg text-[#475569]" />
+                    <span className="text-sm text-[#1E293B]">Settings</span>
+                  </button>
+                </li>
+                <li className="mb-1">
+                  <button className="w-full flex items-center gap-2 p-2 rounded-lg hover:bg-black/5 transition-colors">
+                    <MdOutlineHelp className="text-lg text-[#475569]" />
+                    <span className="text-sm text-[#1E293B]">Help & Support</span>
+                  </button>
+                </li>
+                <li className="border-t border-black/5 mt-1 pt-1">
+                  <button 
+                    onClick={() => navigate('/login')}
+                    className="w-full flex items-center gap-2 p-2 rounded-lg hover:bg-[#d20002]/10 text-[#d20002] transition-colors"
+                  >
+                    <MdOutlineLogout className="text-lg" />
+                    <span className="text-sm">Log Out</span>
+                  </button>
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
     </div>
