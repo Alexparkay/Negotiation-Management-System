@@ -104,7 +104,7 @@ const ChatPopup: React.FC = () => {
       {/* Chat toggle button - extra large size */}
       {!isOpen && (
         <motion.button
-          onClick={toggleChat}
+        onClick={toggleChat}
           className="w-24 h-24 rounded-full bg-gradient-to-r from-[#1cbceb] to-[#021e5f] text-white flex items-center justify-center shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -169,15 +169,15 @@ const ChatPopup: React.FC = () => {
                 >
                   {isMinimized ? <FiMaximize2 size={20} /> : <FiMinimize2 size={20} />}
                 </button>
-                <button 
-                  onClick={toggleChat} 
+            <button
+              onClick={toggleChat}
                   className="p-3 rounded-full hover:bg-black/5 text-[#475569] transition-colors"
                   title="Close"
-                >
+            >
                   <FiX size={20} />
-                </button>
+            </button>
               </div>
-            </div>
+          </div>
 
             {/* Chat content - only shown when not minimized */}
             {!isMinimized && (
@@ -217,8 +217,8 @@ const ChatPopup: React.FC = () => {
                               <option>Contract Management</option>
                             </select>
                           </div>
-                        </div>
-                        <div>
+                </div>
+                <div>
                           <label className="text-sm font-semibold text-[#475569] block mb-2">Enhanced Features</label>
                           <div className="grid grid-cols-2 gap-x-4 gap-y-2">
                             <div className="flex items-center">
@@ -237,8 +237,8 @@ const ChatPopup: React.FC = () => {
                               <input type="checkbox" id="historicalData" className="mr-2 w-4 h-4" />
                               <label htmlFor="historicalData" className="text-[#1E293B]">Access historical data</label>
                             </div>
-                          </div>
-                        </div>
+                </div>
+              </div>
                       </div>
                     </motion.div>
                   )}
@@ -279,8 +279,8 @@ const ChatPopup: React.FC = () => {
                                 <FiUser className="text-white" />
                               </div>
                             )}
-                          </div>
-                        </div>
+                      </div>
+                    </div>
                       </motion.div>
                     ))}
                   </div>
@@ -313,29 +313,29 @@ const ChatPopup: React.FC = () => {
                     </div>
                   </div>
                 )}
-
+                
                 {/* Input area */}
                 <div className="p-6 border-t border-black/5 bg-white/20">
                   <div className="relative">
-                    <input
-                      type="text"
+                <input 
+                  type="text" 
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
                       onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                      placeholder="Type your message..."
+                  placeholder="Type your message..." 
                       className="w-full px-5 py-4 pr-16 rounded-xl border border-black/10 focus:border-[#1cbceb]/30 focus:ring-2 focus:ring-[#1cbceb]/20 outline-none bg-white/50 backdrop-blur-sm text-lg"
-                    />
-                    <button 
+                />
+                <button 
                       onClick={handleSendMessage}
                       className="absolute right-4 top-1/2 transform -translate-y-1/2 p-3 rounded-full bg-gradient-to-r from-[#1cbceb] to-[#021e5f] text-white hover:shadow-lg transition-all"
                       disabled={!message.trim()}
                       style={{ transition: "all 0.2s ease" }}
                     >
                       <FiSend size={20} />
-                    </button>
-                  </div>
-                </div>
-              </>
+                </button>
+        </div>
+      </div>
+    </>
             )}
           </motion.div>
         )}

@@ -8,11 +8,10 @@ import {
   MdOutlineLogout, 
   MdOutlineHelp, 
   MdOutlinePerson, 
-  MdOutlineEdit,
-  MdOutlineDarkMode,
-  MdOutlineLightMode 
+  MdOutlineEdit
 } from 'react-icons/md';
 import { RxEnterFullScreen, RxExitFullScreen } from 'react-icons/rx';
+import { CgMenuLeft } from 'react-icons/cg';
 import ChangeThemes from './ChangesThemes';
 import toast from 'react-hot-toast';
 import { menu } from './menu/data';
@@ -20,10 +19,14 @@ import MenuItem from './menu/MenuItem';
 import { motion } from 'framer-motion';
 import ThemeContext from '../contexts/ThemeContext';
 
-const Navbar = () => {
+interface NavbarProps {
+  toggleMenu?: () => void;
+  isMenuCollapsed?: boolean;
+}
+
+const Navbar: React.FC<NavbarProps> = ({ toggleMenu, isMenuCollapsed = false }) => {
   const themeContext = useContext(ThemeContext);
   const theme = themeContext?.theme || 'aldi-light';
-  const toggleTheme = themeContext?.toggleTheme || (() => {});
   
   const [isFullScreen, setIsFullScreen] = useState(true);
   const [isDrawerOpen, setDrawerOpen] = useState(false);
@@ -73,9 +76,9 @@ const Navbar = () => {
     // navbar screen
     <div className="fixed z-[3] top-0 left-0 right-0 w-full navbar-glass">
       <div className="container mx-auto flex justify-between items-center px-4 py-2">
-        {/* Left Section - Logo and Hamburger */}
+        {/* Left Section - Menu toggle and mobile menu button */}
         <div className="flex items-center">
-          {/* Mobile menu toggle */}
+          {/* Mobile menu toggle - only visible on small screens */}
           <div className="xl:hidden">
             <button 
               onClick={toggleDrawer}
@@ -124,19 +127,19 @@ const Navbar = () => {
             )}
           </div>
           
-          {/* Logo and Page Title */}
-          <div className="flex items-center mt-1">
-            <img 
-              src="/Logo/170403-ALDI-Australia-Brand-Logo-Landscape-1024x409.png" 
-              alt="Aldi Logo" 
-              className="h-10 mr-3"
-            />
-            <div>
-              <h1 className="text-xl font-semibold text-white">Negotiation Management System</h1>
-              {getCurrentPageName() !== 'Dashboard' && (
-                <p className="text-xs text-white/80">{getCurrentPageName()}</p>
-              )}
-            </div>
+          {/* Desktop Menu Toggle Button */}
+          <div className="hidden xl:block">
+            <button 
+              onClick={toggleMenu}
+              className="p-2 rounded-full hover:bg-white/20 transition-colors"
+            >
+              <CgMenuLeft className="text-xl text-white" />
+            </button>
+          </div>
+          
+          {/* Current page name (mobile only) */}
+          <div className="xl:hidden ml-2">
+            <p className="text-sm text-white/80">{getCurrentPageName()}</p>
           </div>
         </div>
         
@@ -167,18 +170,6 @@ const Navbar = () => {
                 <RxEnterFullScreen className="text-xl text-white" />
               ) : (
                 <RxExitFullScreen className="text-xl text-white" />
-              )}
-            </button>
-            
-            {/* Theme Toggle */}
-            <button
-              onClick={toggleTheme}
-              className="p-2 rounded-full hover:bg-white/20 transition-colors hidden md:flex"
-            >
-              {theme === 'aldi-dark' ? (
-                <MdOutlineLightMode className="text-xl text-white" />
-              ) : (
-                <MdOutlineDarkMode className="text-xl text-white" />
               )}
             </button>
             

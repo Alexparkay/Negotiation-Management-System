@@ -8,7 +8,7 @@ import {
   MdOutlineMemory,
   MdOutlineRefresh,
   MdOutlineFilterAlt,
-  MdOutlineCheckCircle,
+  MdCheckCircleOutline,
   MdOutlineErrorOutline,
   MdOutlineUpdate,
   MdOutlineDns,
@@ -271,7 +271,7 @@ const Infrastructure = () => {
         
         <div className="stat cursor-pointer hover:bg-base-200 transition-all" onClick={() => navigate('/infrastructure')}>
           <div className="stat-figure text-success">
-            <MdOutlineCheckCircle className="text-3xl" />
+            <MdCheckCircleOutline className="text-3xl" />
           </div>
           <div className="stat-title">Avg. Uptime</div>
           <div className="stat-value text-success">{infrastructureData.avgUptime}%</div>

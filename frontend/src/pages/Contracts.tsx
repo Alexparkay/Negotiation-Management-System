@@ -20,28 +20,41 @@ const Contracts = () => {
   const [selectedType, setSelectedType] = useState('all');
   const [expandedContract, setExpandedContract] = useState<number | null>(null);
 
-  // Mock data for contracts
+  // Mock data for contracts based on Aldi tenders
   const contracts: Contract[] = [
     {
       id: 1,
-      title: 'Store Construction Agreement',
-      vendorName: 'Global Construction Ltd',
+      title: 'Coffee Supply Agreement',
+      vendorName: 'Angola Coffee Exports',
       vendorId: 1,
-      startDate: '2023-06-15',
-      endDate: '2024-12-31',
-      value: 850000,
+      startDate: '2024-04-15',
+      endDate: '2025-04-14',
+      value: 420000,
       status: 'active',
-      type: 'service',
+      type: 'product',
       renewalOption: true,
-      documents: 8
+      documents: 6
     },
     {
       id: 2,
-      title: 'Retail Fixtures Supply',
-      vendorName: 'Elite Fixtures & Fittings',
+      title: 'Health & Beauty Products - Conditioner',
+      vendorName: 'Greece Beauty Products',
       vendorId: 2,
-      startDate: '2023-08-01',
-      endDate: '2024-08-01',
+      startDate: '2024-05-01',
+      endDate: '2025-04-30',
+      value: 290000,
+      status: 'active',
+      type: 'product',
+      renewalOption: true,
+      documents: 4
+    },
+    {
+      id: 3,
+      title: 'Fresh Produce Supply - Oranges',
+      vendorName: 'Burkina Faso Fresh Produce',
+      vendorId: 3,
+      startDate: '2024-04-25',
+      endDate: '2025-04-24',
       value: 320000,
       status: 'active',
       type: 'product',
@@ -49,82 +62,69 @@ const Contracts = () => {
       documents: 5
     },
     {
-      id: 3,
-      title: 'IT Systems Implementation',
-      vendorName: 'TechPoint Systems',
-      vendorId: 3,
-      startDate: '2023-09-15',
-      endDate: '2024-09-15',
-      value: 450000,
-      status: 'active',
-      type: 'service',
-      renewalOption: true,
-      documents: 12
-    },
-    {
       id: 4,
-      title: 'Security Systems Maintenance',
-      vendorName: 'Secure Solutions Inc',
+      title: 'Organic Deodorant Supply',
+      vendorName: 'EstoniaPrime',
       vendorId: 4,
-      startDate: '2023-05-01',
-      endDate: '2024-04-30',
-      value: 120000,
-      status: 'expired',
-      type: 'maintenance',
-      renewalOption: true,
-      documents: 4
-    },
-    {
-      id: 5,
-      title: 'Cleaning Services Agreement',
-      vendorName: 'EcoClean Services',
-      vendorId: 5,
-      startDate: '2024-01-01',
-      endDate: '2024-12-31',
-      value: 75000,
+      startDate: '2024-04-12',
+      endDate: '2025-04-11',
+      value: 185000,
       status: 'active',
-      type: 'service',
+      type: 'product',
       renewalOption: false,
       documents: 3
     },
     {
+      id: 5,
+      title: 'Premium Moisturizer Contract',
+      vendorName: 'Costa Rica Cosmetics',
+      vendorId: 5,
+      startDate: '2023-04-19',
+      endDate: '2024-04-18',
+      value: 270000,
+      status: 'expired',
+      type: 'product',
+      renewalOption: false,
+      documents: 4
+    },
+    {
       id: 6,
-      title: 'Logistics & Shipping Contract',
-      vendorName: 'Precision Logistics',
+      title: 'Deli Meats - Pepperoni',
+      vendorName: 'Bosnia Meats International',
       vendorId: 6,
-      startDate: '2023-11-01',
-      endDate: '2024-10-31',
+      startDate: '2024-04-29',
+      endDate: '2025-04-28',
       value: 280000,
       status: 'active',
-      type: 'service',
+      type: 'product',
       renewalOption: true,
-      documents: 6
+      documents: 5
     },
     {
       id: 7,
-      title: 'Store Location Lease',
-      vendorName: 'Commercial Properties Inc',
-      vendorId: 8,
-      startDate: '2023-01-01',
-      endDate: '2027-12-31',
-      value: 1200000,
+      title: 'Imported Frozen Pies Supply',
+      vendorName: 'Montenegro Bakery Products',
+      vendorId: 7,
+      startDate: '2024-04-15',
+      endDate: '2025-04-14',
+      value: 240000,
       status: 'active',
-      type: 'lease',
+      type: 'product',
       renewalOption: true,
-      documents: 15
+      documents: 4
     },
     {
       id: 8,
-      title: 'Office Supplies Agreement',
-      vendorName: 'Faulty Supplies Co',
-      vendorId: 7,
-      startDate: '2023-03-15',
-      endDate: '2023-09-15',
-      value: 35000,
+      title: 'Health & Beauty - Shampoo Supply',
+      vendorName: 'Cambodia Essential Supplies',
+      vendorId: 8,
+      startDate: '2023-10-03',
+      endDate: '2024-04-02',
+      value: 180000,
       status: 'terminated',
       type: 'product',
       renewalOption: false,
-      documents: 2
+      documents: 3
     }
   ];
 

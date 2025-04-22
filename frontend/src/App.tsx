@@ -68,9 +68,10 @@ import VendorPerformance from './pages/VendorPerformance';
 import DocumentRepository from './pages/DocumentRepository';
 import Dashboard from './pages/Dashboard';
 import Chat from './pages/Chat';
+import FormComponents from './pages/FormComponents';
 
 function App() {
-  const [isMenuCollapsed, setIsMenuCollapsed] = useState(true);
+  const [isMenuCollapsed, setIsMenuCollapsed] = useState(false);
   
   const toggleMenu = () => {
     setIsMenuCollapsed(!isMenuCollapsed);
@@ -84,13 +85,16 @@ function App() {
       >
         <ToasterProvider />
         <ScrollRestoration />
-        <div className="flex flex-col h-screen">
-          <Navbar />
-          <div className="w-full flex gap-0 pt-[60px] flex-grow">
-            <div className={`hidden xl:block transition-all duration-300 ease-in-out overflow-hidden ${isMenuCollapsed ? 'w-[80px]' : 'w-[280px]'} border-r border-black/5 sticky top-[64px] h-[calc(100vh-64px)] z-10`}>
-              <Menu isCollapsed={isMenuCollapsed} onToggleCollapse={toggleMenu} />
-            </div>
-            <div className="w-full px-4 py-4 h-[calc(100vh-60px)] overflow-y-auto">
+        <div className="flex h-screen">
+          {/* Menu - Now positioned absolute and goes full height */}
+          <div className={`hidden xl:block fixed left-0 top-0 h-screen transition-all duration-300 ease-in-out overflow-hidden z-20 ${isMenuCollapsed ? 'w-[80px]' : 'w-[280px]'} bg-white shadow-md`}>
+            <Menu isCollapsed={isMenuCollapsed} onToggleCollapse={toggleMenu} />
+          </div>
+          
+          {/* Main content area */}
+          <div className={`flex-1 flex flex-col ${isMenuCollapsed ? 'xl:ml-[80px]' : 'xl:ml-[280px]'}`}>
+            <Navbar toggleMenu={toggleMenu} isMenuCollapsed={isMenuCollapsed} />
+            <div className="w-full px-4 py-4 h-[calc(100vh-60px)] overflow-y-auto mt-[60px]">
               <Outlet />
             </div>
           </div>
@@ -305,6 +309,10 @@ function App() {
         {
           path: '/document-repository',
           element: <DocumentRepository />,
+        },
+        {
+          path: '/form-components',
+          element: <FormComponents />,
         },
       ],
       errorElement: <Error />,

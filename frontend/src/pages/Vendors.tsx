@@ -86,185 +86,523 @@ const Vendors = () => {
   const vendors: Vendor[] = [
     {
       id: 1,
-      name: 'TechVision Inc.',
-      category: 'Electronics',
-      contactPerson: 'John Richards',
-      email: 'jrichards@techvision.com',
-      phone: '+1-555-123-4567',
-      country: 'USA',
+      name: 'Angola Coffee Exports',
+      category: 'Drinks',
+      contactPerson: 'Carlos Machado',
+      email: 'c.machado@angolacoffee.com',
+      phone: '+244-923-555-7890',
+      country: 'Angola',
       status: 'active',
-      contractCount: 12,
-      totalSpend: 1250000,
-      logoUrl: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/apple/apple-original.svg',
-      products: ['HDMI Cables', 'USB-C Adapters', 'Power Supplies'],
-      savingsRate: 16.5,
-      onTimeDelivery: 95,
+      contractCount: 3,
+      totalSpend: 450000,
+      logoUrl: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons@6.6.6/flags/4x3/ao.svg',
+      products: ['Coffee', 'Tea'],
+      savingsRate: 11.1,
+      onTimeDelivery: 94,
       qualityScore: 92,
-      responseTime: '24h',
-      lastNegotiation: '2024-02-15',
+      responseTime: '36h',
+      lastNegotiation: '2025-04-20',
       yearlySpendData: [
-        {year: '2020', spend: 850000},
-        {year: '2021', spend: 920000},
-        {year: '2022', spend: 1100000},
-        {year: '2023', spend: 1250000}
+        {year: '2022', spend: 320000},
+        {year: '2023', spend: 380000},
+        {year: '2024', spend: 420000},
+        {year: '2025', spend: 450000}
       ],
-      tags: ['Preferred', 'High Volume', 'Reliable']
+      tags: ['Imported', 'Fair Trade', 'Reliable']
     },
     {
       id: 2,
-      name: 'NetWare Solutions',
-      category: 'Networking',
-      contactPerson: 'Sarah Connors',
-      email: 'sconnors@netware.com',
-      phone: '+44-20-1234-5678',
-      country: 'UK',
+      name: 'Greece Beauty Products',
+      category: 'Health & Beauty',
+      contactPerson: 'Elena Papadopoulos',
+      email: 'elena@greecebeauty.com',
+      phone: '+30-21-0555-6789',
+      country: 'Greece',
       status: 'active',
-      contractCount: 8,
-      totalSpend: 980000,
-      logoUrl: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cisco/cisco-original.svg',
-      products: ['Ethernet Cables', 'RJ45 Connectors', 'Network Switches'],
-      savingsRate: 12.8,
-      onTimeDelivery: 88,
-      qualityScore: 95,
-      responseTime: '48h',
-      lastNegotiation: '2024-01-20',
+      contractCount: 4,
+      totalSpend: 580000,
+      logoUrl: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons@6.6.6/flags/4x3/gr.svg',
+      products: ['Conditioner', 'Shampoo', 'Moisturizer'],
+      savingsRate: 8.3,
+      onTimeDelivery: 96,
+      qualityScore: 90,
+      responseTime: '24h',
+      lastNegotiation: '2025-04-23',
       yearlySpendData: [
-        {year: '2020', spend: 720000},
-        {year: '2021', spend: 790000},
-        {year: '2022', spend: 850000},
-        {year: '2023', spend: 980000}
+        {year: '2022', spend: 410000},
+        {year: '2023', spend: 465000},
+        {year: '2024', spend: 520000},
+        {year: '2025', spend: 580000}
       ],
-      tags: ['Technical Expertise', 'Premium Quality']
+      tags: ['Value', 'Premium Quality']
     },
     {
       id: 3,
-      name: 'DataSphere Systems',
-      category: 'Computer Hardware',
-      contactPerson: 'Michael Chen',
-      email: 'mchen@datasphere.com',
-      phone: '+1-555-987-6543',
-      country: 'USA',
+      name: 'Burkina Faso Fresh Produce',
+      category: 'Fruits & Vegetables',
+      contactPerson: 'Ibrahim Ouédraogo',
+      email: 'i.ouedraogo@bffresh.com',
+      phone: '+226-70-123-4567',
+      country: 'Burkina Faso',
       status: 'active',
-      contractCount: 15,
-      totalSpend: 1650000,
-      logoUrl: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg',
-      products: ['Hard Drives', 'SSDs', 'Memory Modules'],
-      savingsRate: 14.2,
-      onTimeDelivery: 92,
+      contractCount: 2,
+      totalSpend: 320000,
+      logoUrl: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons@6.6.6/flags/4x3/bf.svg',
+      products: ['Oranges', 'Bananas', 'Mangoes'],
+      savingsRate: 12.5,
+      onTimeDelivery: 87,
       qualityScore: 85,
-      responseTime: '36h',
-      lastNegotiation: '2024-03-01',
+      responseTime: '48h',
+      lastNegotiation: '2025-04-04',
       yearlySpendData: [
-        {year: '2020', spend: 1200000},
-        {year: '2021', spend: 1350000},
-        {year: '2022', spend: 1500000},
-        {year: '2023', spend: 1650000}
+        {year: '2022', spend: 0},
+        {year: '2023', spend: 180000},
+        {year: '2024', spend: 260000},
+        {year: '2025', spend: 320000}
       ],
-      tags: ['High Volume', 'Hardware Specialist']
+      tags: ['Value', 'Seasonal', 'Organic']
     },
     {
       id: 4,
-      name: 'GlobalConnect Ltd',
-      category: 'Peripherals',
-      contactPerson: 'Robert Wilson',
-      email: 'rwilson@globalconnect.com',
-      phone: '+61-2-9876-5432',
-      country: 'Australia',
-      status: 'inactive',
+      name: 'EstoniaPrime',
+      category: 'Health & Beauty',
+      contactPerson: 'Kristiina Tamm',
+      email: 'k.tamm@estoniaprime.ee',
+      phone: '+372-5555-7890',
+      country: 'Estonia',
+      status: 'active',
       contractCount: 5,
-      totalSpend: 520000,
-      logoUrl: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/firefox/firefox-original.svg',
-      products: ['Keyboards', 'Mice', 'Monitors'],
-      savingsRate: 10.5,
+      totalSpend: 740000,
+      logoUrl: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons@6.6.6/flags/4x3/ee.svg',
+      products: ['Deodorant', 'Shampoo', 'Prosciutto'],
+      savingsRate: 12.1,
       onTimeDelivery: 94,
-      qualityScore: 90,
-      responseTime: '72h',
-      lastNegotiation: '2023-11-15',
+      qualityScore: 93,
+      responseTime: '24h',
+      lastNegotiation: '2025-04-07',
       yearlySpendData: [
-        {year: '2020', spend: 380000},
-        {year: '2021', spend: 420000},
-        {year: '2022', spend: 480000},
-        {year: '2023', spend: 520000}
+        {year: '2022', spend: 550000},
+        {year: '2023', spend: 620000},
+        {year: '2024', spend: 680000},
+        {year: '2025', spend: 740000}
       ],
-      tags: ['International', 'Wide Range']
+      tags: ['Organic', 'Premium', 'Reliable']
     },
     {
       id: 5,
-      name: 'FiberTech',
-      category: 'Networking',
-      contactPerson: 'Lisa Green',
-      email: 'lgreen@fibertech.com',
-      phone: '+1-555-789-0123',
-      country: 'Canada',
+      name: 'Costa Rica Cosmetics',
+      category: 'Health & Beauty',
+      contactPerson: 'Maria Hernandez',
+      email: 'mhernandez@crcosmetics.co.cr',
+      phone: '+506-2555-7890',
+      country: 'Costa Rica',
       status: 'pending',
-      contractCount: 3,
-      totalSpend: 350000,
-      logoUrl: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/digitalocean/digitalocean-original.svg',
-      products: ['Fiber Optic Cables', 'Connector Assemblies', 'Patch Panels'],
-      savingsRate: 9.8,
-      onTimeDelivery: 90,
-      qualityScore: 87,
+      contractCount: 2,
+      totalSpend: 290000,
+      logoUrl: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons@6.6.6/flags/4x3/cr.svg',
+      products: ['Moisturizer', 'Face Masks'],
+      savingsRate: 0,
+      onTimeDelivery: 88,
+      qualityScore: 91,
       responseTime: '48h',
-      lastNegotiation: '2024-02-28',
+      lastNegotiation: '2025-04-14',
       yearlySpendData: [
-        {year: '2020', spend: 0},
-        {year: '2021', spend: 180000},
-        {year: '2022', spend: 260000},
-        {year: '2023', spend: 350000}
+        {year: '2022', spend: 0},
+        {year: '2023', spend: 150000},
+        {year: '2024', spend: 250000},
+        {year: '2025', spend: 290000}
       ],
-      tags: ['New Partner', 'Fiber Specialist']
+      tags: ['Premium', 'Natural Ingredients', 'New Partner']
     },
     {
       id: 6,
-      name: 'SecureIT Solutions',
-      category: 'Security',
-      contactPerson: 'David Rivera',
-      email: 'drivera@secureit.com',
-      phone: '+49-30-1234-5678',
-      country: 'Germany',
+      name: 'Bosnia Meats International',
+      category: 'Deli & Chilled Meats',
+      contactPerson: 'Adnan Begić',
+      email: 'a.begic@bosniameats.ba',
+      phone: '+387-33-555-123',
+      country: 'Bosnia and Herzegovina',
       status: 'active',
-      contractCount: 7,
-      totalSpend: 880000,
-      logoUrl: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/azure/azure-original.svg',
-      products: ['Security Cameras', 'Access Control Systems', 'Alarm Systems'],
-      savingsRate: 11.2,
-      onTimeDelivery: 96,
-      qualityScore: 91,
-      responseTime: '24h',
-      lastNegotiation: '2023-12-10',
+      contractCount: 3,
+      totalSpend: 520000,
+      logoUrl: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons@6.6.6/flags/4x3/ba.svg',
+      products: ['Pepperoni', 'Salami', 'Smoked Meats'],
+      savingsRate: 10.0,
+      onTimeDelivery: 91,
+      qualityScore: 89,
+      responseTime: '36h',
+      lastNegotiation: '2025-04-24',
       yearlySpendData: [
-        {year: '2020', spend: 620000},
-        {year: '2021', spend: 700000},
-        {year: '2022', spend: 790000},
-        {year: '2023', spend: 880000}
+        {year: '2022', spend: 360000},
+        {year: '2023', spend: 420000},
+        {year: '2024', spend: 480000},
+        {year: '2025', spend: 520000}
       ],
-      tags: ['Security Certified', 'Reliable']
+      tags: ['Value', 'Quality Control', 'Traditional']
     },
     {
       id: 7,
-      name: 'Quantum Supplies',
-      category: 'Cables',
-      contactPerson: 'Mark Johnson',
-      email: 'mjohnson@quantumsupplies.com',
-      phone: '+1-555-456-7890',
-      country: 'USA',
+      name: 'Cambodia Essential Supplies',
+      category: 'Health & Beauty',
+      contactPerson: 'Sokha Prak',
+      email: 'sokha@cambodiaessentials.com.kh',
+      phone: '+855-23-123-4567',
+      country: 'Cambodia',
       status: 'blacklisted',
-      contractCount: 2,
-      totalSpend: 155000,
-      logoUrl: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/facebook/facebook-original.svg',
-      products: ['USB Cables', 'Display Cables', 'Audio Cables'],
-      savingsRate: 0,
+      contractCount: 1,
+      totalSpend: 180000,
+      logoUrl: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons@6.6.6/flags/4x3/kh.svg',
+      products: ['Shampoo'],
+      savingsRate: 5.1,
       onTimeDelivery: 65,
       qualityScore: 58,
       responseTime: '96h',
-      lastNegotiation: '2023-09-05',
+      lastNegotiation: '2025-03-29',
       yearlySpendData: [
-        {year: '2020', spend: 0},
-        {year: '2021', spend: 0},
-        {year: '2022', spend: 95000},
-        {year: '2023', spend: 155000}
+        {year: '2022', spend: 0},
+        {year: '2023', spend: 0},
+        {year: '2024', spend: 120000},
+        {year: '2025', spend: 180000}
       ],
-      tags: ['Quality Issues', 'Late Deliveries']
+      tags: ['Imported', 'Quality Issues', 'Late Deliveries']
+    },
+    {
+      id: 8,
+      name: 'Somalia Fresh Produce',
+      category: 'Fruits & Vegetables',
+      contactPerson: 'Zahra Hassan',
+      email: 'zhassan@somaliafresh.so',
+      phone: '+252-61-555-7890',
+      country: 'Somalia',
+      status: 'active',
+      contractCount: 2,
+      totalSpend: 280000,
+      logoUrl: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons@6.6.6/flags/4x3/so.svg',
+      products: ['Tomatoes', 'Peppers', 'Onions'],
+      savingsRate: 12.2,
+      onTimeDelivery: 89,
+      qualityScore: 84,
+      responseTime: '48h',
+      lastNegotiation: '2025-04-06',
+      yearlySpendData: [
+        {year: '2022', spend: 0},
+        {year: '2023', spend: 160000},
+        {year: '2024', spend: 230000},
+        {year: '2025', spend: 280000}
+      ],
+      tags: ['Value', 'Seasonal', 'Direct Farm']
+    },
+    {
+      id: 9,
+      name: 'Micronesia Dairy Products',
+      category: 'Dairy, Eggs & Fridge',
+      contactPerson: 'David Nakamura',
+      email: 'd.nakamura@micronesiadairy.fm',
+      phone: '+691-320-1234',
+      country: 'Micronesia',
+      status: 'active',
+      contractCount: 3,
+      totalSpend: 310000,
+      logoUrl: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons@6.6.6/flags/4x3/fm.svg',
+      products: ['Yogurt', 'Cheese', 'Butter'],
+      savingsRate: 9.8,
+      onTimeDelivery: 92,
+      qualityScore: 90,
+      responseTime: '36h',
+      lastNegotiation: '2025-04-23',
+      yearlySpendData: [
+        {year: '2022', spend: 210000},
+        {year: '2023', spend: 250000},
+        {year: '2024', spend: 290000},
+        {year: '2025', spend: 310000}
+      ],
+      tags: ['Premium', 'Organic', 'Cold Chain Certified']
+    },
+    {
+      id: 10,
+      name: 'Equatorial Guinea Foods',
+      category: 'Freezer',
+      contactPerson: 'Elena Mba',
+      email: 'e.mba@eqguineafoods.gq',
+      phone: '+240-222-123-456',
+      country: 'Equatorial Guinea',
+      status: 'active',
+      contractCount: 2,
+      totalSpend: 260000,
+      logoUrl: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons@6.6.6/flags/4x3/gq.svg',
+      products: ['Frozen Pies', 'Ice Cream', 'Frozen Vegetables'],
+      savingsRate: 7.5,
+      onTimeDelivery: 86,
+      qualityScore: 88,
+      responseTime: '48h',
+      lastNegotiation: '2025-03-31',
+      yearlySpendData: [
+        {year: '2022', spend: 0},
+        {year: '2023', spend: 180000},
+        {year: '2024', spend: 230000},
+        {year: '2025', spend: 260000}
+      ],
+      tags: ['Premium', 'Commercial Scale', 'Imported']
+    },
+    {
+      id: 11,
+      name: 'Togo Fruit Exporters',
+      category: 'Fruits & Vegetables',
+      contactPerson: 'Kofi Mensah',
+      email: 'k.mensah@togoexport.tg',
+      phone: '+228-90-123-456',
+      country: 'Togo',
+      status: 'active',
+      contractCount: 3,
+      totalSpend: 215000,
+      logoUrl: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons@6.6.6/flags/4x3/tg.svg',
+      products: ['Bananas', 'Plantains', 'Tropical Fruits'],
+      savingsRate: 11.3,
+      onTimeDelivery: 90,
+      qualityScore: 87,
+      responseTime: '24h',
+      lastNegotiation: '2025-04-07',
+      yearlySpendData: [
+        {year: '2022', spend: 0},
+        {year: '2023', spend: 120000},
+        {year: '2024', spend: 180000},
+        {year: '2025', spend: 215000}
+      ],
+      tags: ['Imported', 'Organic', 'Fair Trade']
+    },
+    {
+      id: 12,
+      name: 'Armenia Pharmaceuticals',
+      category: 'Health & Beauty',
+      contactPerson: 'Anna Hakobyan',
+      email: 'a.hakobyan@armeniapharma.am',
+      phone: '+374-10-555-789',
+      country: 'Armenia',
+      status: 'pending',
+      contractCount: 1,
+      totalSpend: 195000,
+      logoUrl: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons@6.6.6/flags/4x3/am.svg',
+      products: ['Pain Relievers', 'First Aid Kits', 'Vitamins'],
+      savingsRate: 6.8,
+      onTimeDelivery: 82,
+      qualityScore: 92,
+      responseTime: '36h',
+      lastNegotiation: '2025-04-20',
+      yearlySpendData: [
+        {year: '2022', spend: 0},
+        {year: '2023', spend: 0},
+        {year: '2024', spend: 150000},
+        {year: '2025', spend: 195000}
+      ],
+      tags: ['Imported', 'FDA Approved', 'New Partner']
+    },
+    {
+      id: 13,
+      name: 'Egypt Beauty Supplies',
+      category: 'Health & Beauty',
+      contactPerson: 'Amira Mahmoud',
+      email: 'a.mahmoud@egyptbeauty.eg',
+      phone: '+20-2-1234-5678',
+      country: 'Egypt',
+      status: 'inactive',
+      contractCount: 2,
+      totalSpend: 145000,
+      logoUrl: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons@6.6.6/flags/4x3/eg.svg',
+      products: ['Conditioner', 'Hair Care', 'Skin Care'],
+      savingsRate: 5.5,
+      onTimeDelivery: 78,
+      qualityScore: 83,
+      responseTime: '72h',
+      lastNegotiation: '2025-04-05',
+      yearlySpendData: [
+        {year: '2022', spend: 120000},
+        {year: '2023', spend: 135000},
+        {year: '2024', spend: 145000},
+        {year: '2025', spend: 0}
+      ],
+      tags: ['Premium', 'Natural Ingredients', 'Contract Ended']
+    },
+    {
+      id: 14,
+      name: 'France Gourmet Foods',
+      category: 'Deli & Chilled Meats',
+      contactPerson: 'Pierre Dubois',
+      email: 'p.dubois@francegourmet.fr',
+      phone: '+33-1-2345-6789',
+      country: 'France',
+      status: 'active',
+      contractCount: 4,
+      totalSpend: 480000,
+      logoUrl: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons@6.6.6/flags/4x3/fr.svg',
+      products: ['Roast Chicken', 'Pâté', 'Charcuterie'],
+      savingsRate: 7.2,
+      onTimeDelivery: 95,
+      qualityScore: 94,
+      responseTime: '24h',
+      lastNegotiation: '2025-04-20',
+      yearlySpendData: [
+        {year: '2022', spend: 360000},
+        {year: '2023', spend: 410000},
+        {year: '2024', spend: 450000},
+        {year: '2025', spend: 480000}
+      ],
+      tags: ['Premium', 'Imported', 'Award-Winning']
+    },
+    {
+      id: 15,
+      name: 'Cambodia Poultry Farms',
+      category: 'Dairy, Eggs & Fridge',
+      contactPerson: 'Sopheap Kim',
+      email: 's.kim@cambodiapoultry.kh',
+      phone: '+855-23-987-6543',
+      country: 'Cambodia',
+      status: 'active',
+      contractCount: 2,
+      totalSpend: 240000,
+      logoUrl: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons@6.6.6/flags/4x3/kh.svg',
+      products: ['Eggs', 'Poultry', 'Duck Products'],
+      savingsRate: 9.5,
+      onTimeDelivery: 88,
+      qualityScore: 85,
+      responseTime: '48h',
+      lastNegotiation: '2025-04-10',
+      yearlySpendData: [
+        {year: '2022', spend: 0},
+        {year: '2023', spend: 180000},
+        {year: '2024', spend: 220000},
+        {year: '2025', spend: 240000}
+      ],
+      tags: ['Value', 'Free Range', 'Sustainable']
+    },
+    {
+      id: 16,
+      name: 'Sao Tome Health Products',
+      category: 'Health & Beauty',
+      contactPerson: 'Miguel Santos',
+      email: 'm.santos@saotomehealth.st',
+      phone: '+239-222-1234',
+      country: 'Sao Tome and Principe',
+      status: 'pending',
+      contractCount: 1,
+      totalSpend: 120000,
+      logoUrl: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons@6.6.6/flags/4x3/st.svg',
+      products: ['Pain Relievers', 'Supplements', 'Natural Remedies'],
+      savingsRate: 4.8,
+      onTimeDelivery: 75,
+      qualityScore: 80,
+      responseTime: '72h',
+      lastNegotiation: '2025-04-21',
+      yearlySpendData: [
+        {year: '2022', spend: 0},
+        {year: '2023', spend: 0},
+        {year: '2024', spend: 90000},
+        {year: '2025', spend: 120000}
+      ],
+      tags: ['Imported', 'Natural', 'New Partner']
+    },
+    {
+      id: 17,
+      name: 'Belize Organic Farms',
+      category: 'Fruits & Vegetables',
+      contactPerson: 'Juan Hernandez',
+      email: 'j.hernandez@belizeorganic.bz',
+      phone: '+501-223-4567',
+      country: 'Belize',
+      status: 'active',
+      contractCount: 2,
+      totalSpend: 190000,
+      logoUrl: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons@6.6.6/flags/4x3/bz.svg',
+      products: ['Spinach', 'Kale', 'Exotic Greens'],
+      savingsRate: 10.3,
+      onTimeDelivery: 91,
+      qualityScore: 89,
+      responseTime: '36h',
+      lastNegotiation: '2025-04-08',
+      yearlySpendData: [
+        {year: '2022', spend: 0},
+        {year: '2023', spend: 130000},
+        {year: '2024', spend: 170000},
+        {year: '2025', spend: 190000}
+      ],
+      tags: ['Premium', 'Organic Certified', 'Sustainable']
+    },
+    {
+      id: 18,
+      name: 'Belgium Gourmet Meats',
+      category: 'Deli & Chilled Meats',
+      contactPerson: 'Luc Vandenberg',
+      email: 'l.vandenberg@belgiumgourmet.be',
+      phone: '+32-2-123-4567',
+      country: 'Belgium',
+      status: 'active',
+      contractCount: 3,
+      totalSpend: 360000,
+      logoUrl: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons@6.6.6/flags/4x3/be.svg',
+      products: ['Pepperoni', 'Prosciutto', 'Specialty Meats'],
+      savingsRate: 8.7,
+      onTimeDelivery: 93,
+      qualityScore: 92,
+      responseTime: '24h',
+      lastNegotiation: '2025-04-10',
+      yearlySpendData: [
+        {year: '2022', spend: 270000},
+        {year: '2023', spend: 310000},
+        {year: '2024', spend: 340000},
+        {year: '2025', spend: 360000}
+      ],
+      tags: ['Value', 'Traditional', 'Award-Winning']
+    },
+    {
+      id: 19,
+      name: 'Martinique Pasta Co.',
+      category: 'Pantry',
+      contactPerson: 'Sophie Martin',
+      email: 's.martin@martiniquepasta.mq',
+      phone: '+596-596-123-456',
+      country: 'Martinique',
+      status: 'active',
+      contractCount: 2,
+      totalSpend: 210000,
+      logoUrl: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons@6.6.6/flags/4x3/fr.svg',
+      products: ['Pasta', 'Noodles', 'Specialty Grains'],
+      savingsRate: 7.9,
+      onTimeDelivery: 90,
+      qualityScore: 88,
+      responseTime: '36h',
+      lastNegotiation: '2025-04-19',
+      yearlySpendData: [
+        {year: '2022', spend: 0},
+        {year: '2023', spend: 150000},
+        {year: '2024', spend: 190000},
+        {year: '2025', spend: 210000}
+      ],
+      tags: ['Premium', 'Artisanal', 'Imported']
+    },
+    {
+      id: 20,
+      name: 'Estonia Cured Meats',
+      category: 'Deli & Chilled Meats',
+      contactPerson: 'Mati Kask',
+      email: 'm.kask@estoniacured.ee',
+      phone: '+372-6-123-4567',
+      country: 'Estonia',
+      status: 'active',
+      contractCount: 3,
+      totalSpend: 290000,
+      logoUrl: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons@6.6.6/flags/4x3/ee.svg',
+      products: ['Prosciutto', 'Salami', 'Smoked Meats'],
+      savingsRate: 9.3,
+      onTimeDelivery: 94,
+      qualityScore: 91,
+      responseTime: '24h',
+      lastNegotiation: '2025-04-23',
+      yearlySpendData: [
+        {year: '2022', spend: 210000},
+        {year: '2023', spend: 240000},
+        {year: '2024', spend: 270000},
+        {year: '2025', spend: 290000}
+      ],
+      tags: ['Imported', 'Traditional', 'Award-Winning']
     }
   ];
 
@@ -286,13 +624,11 @@ const Vendors = () => {
   }));
 
   const categoryColors = [
-    '#3B82F6', // blue
-    '#10B981', // green
-    '#F59E0B', // amber
-    '#EF4444', // red
-    '#8B5CF6', // purple
-    '#EC4899', // pink
-    '#6B7280', // gray
+    '#00005e', // dark blue
+    '#24bce7', // light blue
+    '#d20002', // red
+    '#f87304', // orange
+    '#f4c200', // yellow
   ];
 
   // Status distribution for chart
@@ -307,9 +643,9 @@ const Vendors = () => {
 
   const statusColors = {
     active: '#10B981',    // green
-    inactive: '#F59E0B',  // amber
-    pending: '#3B82F6',   // blue
-    blacklisted: '#EF4444' // red
+    inactive: '#f87304',  // orange
+    pending: '#24bce7',   // light blue
+    blacklisted: '#d20002' // red
   };
 
   // Filter vendors based on selected status, category, and search query
@@ -413,7 +749,7 @@ const Vendors = () => {
           <div className="h-full">
             <ResponsiveContainer width={120} height="100%">
               <BarChart data={vendor.yearlySpendData}>
-                <Bar dataKey="spend" fill="#3B82F6" />
+                <Bar dataKey="spend" fill="#00005e" />
               </BarChart>
             </ResponsiveContainer>
           </div>

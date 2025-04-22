@@ -1,0 +1,3411 @@
+import React, { useState, useEffect, useMemo } from 'react';
+import { Link } from 'react-router-dom';
+import { CircularProgress, Tooltip as MUITooltip, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { 
+  MdOutlineTrendingUp,
+  MdOutlineDownload,
+  MdOutlineInsights,
+  MdOutlineFilterList,
+  MdOutlineCategory,
+  MdOutlineSearch as MdSearch,
+  MdOutlineCalendarToday,
+  MdOutlineInfo,
+  MdOutlineWarning,
+  MdOutlineTrendingDown,
+  MdOutlineAttachMoney,
+  MdOutlineShoppingCart,
+  MdOutlineAnalytics,
+  MdOutlineCompare,
+  MdOutlineLocationOn,
+  MdOutlinePriceChange,
+  MdTimeline,
+  MdMoreHoriz,
+  MdOutlineRefresh,
+  MdOutlineFileDownload,
+  MdOutlineArrowForward,
+  MdTrendingUp,
+  MdShowChart,
+  MdInsights,
+  MdFileDownload,
+  MdBalance,
+  MdShield,
+  MdOutlineLogistics,
+  MdLightbulb,
+  MdInventory,
+  MdWarning,
+  MdCategory,
+  MdOutlineLocalShipping,
+  MdAutoGraph,
+  MdSwapHoriz,
+  MdOutlineLogout,
+  MdOutlinePolicy,
+  MdHistory,
+  MdMonitor,
+  MdOutlineInventory,
+  MdAttachMoney,
+} from 'react-icons/md';
+import { 
+  ResponsiveContainer, 
+  LineChart, 
+  Line, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  Legend,
+  AreaChart,
+  Area,
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell,
+  ComposedChart,
+  Scatter,
+  ScatterChart,
+  Radar,
+  RadarChart,
+  PolarGrid,
+  PolarAngleAxis,
+  PolarRadiusAxis,
+  ReferenceLine
+} from 'recharts';
+import ChatPopup from '../components/ChatPopup';
+import { motion } from 'framer-motion';
+import { 
+  FiTrendingUp, 
+  FiTrendingDown, 
+  FiAlertCircle, 
+  FiDollarSign, 
+  FiBarChart2, 
+  FiGlobe,
+  FiChevronDown
+} from 'react-icons/fi';
+import { loadTenderData, getUniqueCategories, getProductsByCategory, categoryMetadata } from '../utils/dataLoader';
+import { Button, IconButton } from '@/components/ui';
+import { styled } from '@mui/material/styles';
+import { TextField, InputAdornment } from '@mui/material';
+
+// Import types from dataLoader but rename to avoid conflicts
+import type { TenderData as ImportedTenderData } from '../utils/dataLoader';
+
+// Interface definitions with a different name to avoid conflicts
+interface MarketTenderData {
+  id: string;
+  vendor: string;
+  category: string;
+  product: string;
+  date: string;
+  amount: number;
+  status: string;
+}
+
+interface CategoryData {
+  id: string;
+  display: string;
+  volatility: 'low' | 'medium' | 'high';
+  trend: 'up' | 'stable' | 'down';
+}
+
+interface MarketTrendPoint {
+  month: string;
+  [key: string]: number | string;
+}
+
+interface VendorData {
+  id: string;
+  name: string;
+  reliability: number;
+  categories: string[];
+}
+
+interface DisruptionRiskPoint {
+  name: string;
+  value: number;
+  color: string;
+}
+
+interface CommodityInflationPoint {
+  name: string;
+  rate: number;
+}
+
+interface MarketInsight {
+  id: string;
+  title: string;
+  summary: string;
+  date: string;
+  impact: 'Positive' | 'Neutral' | 'Negative';
+  category?: string;
+}
+
+// Color constants for ALDI brand
+const COLORS = {
+  PRIMARY: '#031f5e',    // Dark blue
+  SECONDARY: '#1dc3f0',  // Light blue
+  ACCENT1: '#da0000',    // Red
+  ACCENT2: '#fe7300',    // Orange
+  ACCENT3: '#ffc801',    // Yellow
+  // Lighter variations
+  PRIMARY_LIGHT: '#1a34a3',
+  SECONDARY_LIGHT: '#7adff7',
+  ACCENT1_LIGHT: '#ff5252',
+  ACCENT2_LIGHT: '#ffa152',
+  ACCENT3_LIGHT: '#ffe066',
+  // Darker variations
+  PRIMARY_DARK: '#021542',
+  SECONDARY_DARK: '#0e99bd',
+  ACCENT1_DARK: '#b50000',
+  ACCENT2_DARK: '#cc5c00',
+  ACCENT3_DARK: '#d4a500',
+  // Additional variations for more data points
+  PRIMARY_20: 'rgba(3, 31, 94, 0.2)',
+  PRIMARY_40: 'rgba(3, 31, 94, 0.4)',
+  PRIMARY_60: 'rgba(3, 31, 94, 0.6)',
+  PRIMARY_80: 'rgba(3, 31, 94, 0.8)',
+  SECONDARY_20: 'rgba(29, 195, 240, 0.2)',
+  SECONDARY_40: 'rgba(29, 195, 240, 0.4)',
+  SECONDARY_60: 'rgba(29, 195, 240, 0.6)',
+  SECONDARY_80: 'rgba(29, 195, 240, 0.8)',
+  ACCENT1_20: 'rgba(218, 0, 0, 0.2)',
+  ACCENT1_40: 'rgba(218, 0, 0, 0.4)',
+  ACCENT1_60: 'rgba(218, 0, 0, 0.6)',
+  ACCENT1_80: 'rgba(218, 0, 0, 0.8)',
+  ACCENT2_20: 'rgba(254, 115, 0, 0.2)',
+  ACCENT2_40: 'rgba(254, 115, 0, 0.4)',
+  ACCENT2_60: 'rgba(254, 115, 0, 0.6)',
+  ACCENT2_80: 'rgba(254, 115, 0, 0.8)',
+  ACCENT3_20: 'rgba(255, 200, 1, 0.2)',
+  ACCENT3_40: 'rgba(255, 200, 1, 0.4)',
+  ACCENT3_60: 'rgba(255, 200, 1, 0.6)',
+  ACCENT3_80: 'rgba(255, 200, 1, 0.8)',
+};
+
+// Group tender data by category
+const groupByCategory = (data: ImportedTenderData[]) => {
+  const categoryMap = new Map<string, number>();
+  
+  data.forEach(item => {
+    const count = categoryMap.get(item.category) || 0;
+    categoryMap.set(item.category, count + 1);
+  });
+  
+  return Array.from(categoryMap.entries()).map(([category, count]) => ({
+    category,
+    count,
+    display: (categoryMetadata as any)[category]?.display || category,
+    trend: (categoryMetadata as any)[category]?.trend || 'stable',
+    volatility: (categoryMetadata as any)[category]?.volatility || 'medium'
+  }));
+};
+
+// Calculate average prices by category per month
+const calculatePricesByCategory = (data: ImportedTenderData[]) => {
+  // Mock price data by category for last 12 months
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const categories = getUniqueCategories(data);
+  
+  // Generate random price trends based on category metadata
+  return months.map(month => {
+    const result: any = { month };
+    
+    categories.forEach(category => {
+      const meta = (categoryMetadata as any)[category] || { trend: 'stable', volatility: 'medium' };
+      const baseValue = Math.floor(Math.random() * 1000) + 3000;
+      
+      // Apply trend factor
+      let trendFactor = 0;
+      if (meta.trend === 'up') {
+        trendFactor = 0.05; // 5% increase on average
+      } else if (meta.trend === 'down') {
+        trendFactor = -0.03; // 3% decrease on average
+      }
+      
+      // Apply volatility
+      let volatilityFactor = 0;
+      if (meta.volatility === 'high') {
+        volatilityFactor = Math.random() * 0.2 - 0.1; // ±10%
+      } else if (meta.volatility === 'medium') {
+        volatilityFactor = Math.random() * 0.1 - 0.05; // ±5%
+      } else {
+        volatilityFactor = Math.random() * 0.04 - 0.02; // ±2%
+      }
+      
+      // Calculate index for this month (assume months.indexOf is the time progression)
+      const monthIndex = months.indexOf(month);
+      const value = baseValue * (1 + trendFactor * monthIndex + volatilityFactor);
+      
+      // Calculate price benchmark and forecast values
+      const benchmark = value * (1 - 0.02 - Math.random() * 0.04); // Benchmark is typically 2-6% lower
+      const forecast = value * (1 + (monthIndex > 9 ? (0.01 + Math.random() * 0.05) : 0)); // Forecast for future months
+      
+      // Use category display name as the key
+      const key = (categoryMetadata as any)[category]?.display?.toLowerCase().replace(/[^a-z0-9]/g, '_') || 
+                 category.toLowerCase().replace(/[^a-z0-9]/g, '_');
+      
+      result[key] = Math.round(value);
+      result[`${key}_benchmark`] = Math.round(benchmark);
+      result[`${key}_forecast`] = Math.round(forecast);
+    });
+    
+    return result;
+  });
+};
+
+// Calculate disruption risk data
+const calculateDisruptionRisk = (data: ImportedTenderData[]) => {
+  // Count traits to assess risk factors
+  const traitCount: {[key: string]: number} = {
+    'Imported': 0,
+    'Value': 0,
+    'Premium': 0,
+    'Organic': 0
+  };
+  
+  data.forEach(item => {
+    // Check if the item has a trait property and it's one of our tracked traits
+    const trait = (item as any).trait;
+    if (trait && trait in traitCount) {
+      traitCount[trait]++;
+    }
+  });
+  
+  // Map traits to risk factors
+  const riskFactors = [
+    { 
+      name: 'Supply Chain', 
+      value: 30 + Math.floor((traitCount['Imported'] / (data.length || 1)) * 100), 
+      color: COLORS.SECONDARY,
+      prevValue: 25 + Math.floor((traitCount['Imported'] / (data.length || 1)) * 80)
+    },
+    { 
+      name: 'Geopolitical', 
+      value: 20 + Math.floor((traitCount['Premium'] / (data.length || 1)) * 50), 
+      color: COLORS.ACCENT2,
+      prevValue: 22 + Math.floor((traitCount['Premium'] / (data.length || 1)) * 40)
+    },
+    { 
+      name: 'Economic', 
+      value: 15 + Math.floor((traitCount['Value'] / (data.length || 1)) * 40), 
+      color: COLORS.ACCENT3,
+      prevValue: 18 + Math.floor((traitCount['Value'] / (data.length || 1)) * 35)
+    },
+    { 
+      name: 'Environmental', 
+      value: 10 + Math.floor((traitCount['Organic'] / (data.length || 1)) * 70), 
+      color: COLORS.ACCENT1,
+      prevValue: 8 + Math.floor((traitCount['Organic'] / (data.length || 1)) * 60)
+    },
+    { 
+      name: 'Technological', 
+      value: 5 + Math.floor(Math.random() * 10), 
+      color: COLORS.PRIMARY,
+      prevValue: 4 + Math.floor(Math.random() * 8)
+    },
+    {
+      name: 'Regulatory',
+      value: 8 + Math.floor(Math.random() * 12),
+      color: COLORS.PRIMARY_LIGHT,
+      prevValue: 6 + Math.floor(Math.random() * 10)
+    },
+    {
+      name: 'Labor',
+      value: 7 + Math.floor(Math.random() * 8),
+      color: COLORS.SECONDARY_LIGHT,
+      prevValue: 9 + Math.floor(Math.random() * 7)
+    }
+  ];
+  
+  // Normalize values to make sure they sum to 100
+  const total = riskFactors.reduce((sum, factor) => sum + factor.value, 0);
+  const prevTotal = riskFactors.reduce((sum, factor) => sum + factor.prevValue, 0);
+  
+  return riskFactors.map(factor => ({
+    ...factor,
+    value: Math.round((factor.value / total) * 100),
+    prevValue: Math.round((factor.prevValue / prevTotal) * 100)
+  }));
+};
+
+// Calculate commodity inflation based on categories
+const calculateCommodityInflation = (data: ImportedTenderData[]) => {
+  const uniqueProducts = new Map<string, { count: number, trait: string }>();
+  
+  // Count products and get their traits
+  data.forEach(item => {
+    const product = item.product;
+    const trait = (item as any).trait || 'Standard';
+    
+    const existing = uniqueProducts.get(product);
+    if (existing) {
+      existing.count++;
+    } else {
+      uniqueProducts.set(product, { count: 1, trait });
+    }
+  });
+  
+  // Generate inflation rates based on trait and randomness
+  return Array.from(uniqueProducts.entries())
+    .filter((_, index) => index < 10) // Take top 10 products
+    .map(([product, info]) => {
+      let baseRate = 0;
+      let trendDirection = Math.random() > 0.5 ? 1 : -1;
+      
+      // Different base rates by trait
+      switch (info.trait) {
+        case 'Premium':
+          baseRate = 4 + Math.random() * 3;
+          break;
+        case 'Value':
+          baseRate = 1 + Math.random() * 3;
+          break;
+        case 'Organic':
+          baseRate = 5 + Math.random() * 4;
+          break;
+        case 'Imported':
+          baseRate = 6 + Math.random() * 2;
+          break;
+        default:
+          baseRate = 2 + Math.random() * 2;
+      }
+      
+      const currentRate = parseFloat(baseRate.toFixed(1));
+      const previousRate = parseFloat((baseRate - (trendDirection * (0.5 + Math.random() * 1.5))).toFixed(1));
+      const forecastRate = parseFloat((baseRate + (trendDirection * (0.3 + Math.random() * 1.2))).toFixed(1));
+      
+      return {
+        name: product,
+        rate: currentRate,
+        prevRate: previousRate,
+        forecastRate: forecastRate,
+        trend: trendDirection > 0 ? 'up' : 'down'
+      };
+    });
+};
+
+// Generate category insights data for the pie chart
+const generateCategoryInsights = (data: ImportedTenderData[]) => {
+  const categories = getUniqueCategories(data);
+  const marketShareData = categories.map(category => {
+    const meta = (categoryMetadata as any)[category] || { display: category };
+    const baseValue = 5 + Math.floor(Math.random() * 25);
+    
+    return {
+      name: meta.display || category,
+      value: baseValue,
+      color: getColorForCategory(category, categories.indexOf(category))
+    };
+  });
+  
+  // Normalize to ensure total is 100%
+  const total = marketShareData.reduce((sum, item) => sum + item.value, 0);
+  return marketShareData.map(item => ({
+    ...item,
+    percentage: Math.round((item.value / total) * 100),
+    value: Math.round((item.value / total) * 100)
+  }));
+};
+
+// Helper function to get color for categories
+const getColorForCategory = (category: string, index: number) => {
+  const colorKeys = Object.keys(COLORS).filter(key => 
+    !key.includes('_LIGHT') && !key.includes('_DARK') && 
+    !key.includes('_20') && !key.includes('_40') && 
+    !key.includes('_60') && !key.includes('_80')
+  );
+  
+  // Cycle through the main colors
+  const colorKey = colorKeys[index % colorKeys.length];
+  return COLORS[colorKey as keyof typeof COLORS];
+};
+
+// Styled components for light-themed UI
+const GlassPanel = styled('div')({
+  background: 'rgba(255, 255, 255, 0.9)',
+  backdropFilter: 'blur(8px)',
+  border: '1px solid rgba(0, 0, 0, 0.05)',
+  boxShadow: '0 8px 20px rgba(0, 0, 0, 0.07)',
+  borderRadius: '16px',
+  padding: '24px',
+  transition: 'all 0.3s ease',
+  '&:hover': {
+    transform: 'scale(1.01)',
+    boxShadow: '0 12px 28px rgba(59, 130, 246, 0.1)',
+  }
+});
+
+const MetricCard = styled(GlassPanel)({
+  padding: '20px',
+  height: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'space-between',
+});
+
+const TabButton = styled(Button)<{ active: boolean; theme?: any }>(({ theme, active }) => ({
+  backgroundColor: active ? 'rgba(59, 130, 246, 0.1)' : 'transparent',
+  color: active ? '#3B82F6' : '#555555',
+  borderBottom: active ? '2px solid #3B82F6' : '2px solid transparent',
+  borderRadius: '4px 4px 0 0',
+  padding: '10px 16px',
+  marginRight: '8px',
+  transition: 'all 0.2s ease',
+  '&:hover': {
+    backgroundColor: 'rgba(59, 130, 246, 0.05)',
+    borderBottom: active ? '2px solid #3B82F6' : '2px solid rgba(59, 130, 246, 0.3)',
+  }
+}));
+
+const ChartContainer = styled(GlassPanel)({
+  padding: '20px',
+  height: '100%',
+  minHeight: '320px',
+});
+
+const InsightCard = styled(motion.div)({
+  background: 'rgba(255, 255, 255, 0.9)',
+  backdropFilter: 'blur(8px)',
+  border: '1px solid rgba(0, 0, 0, 0.05)',
+  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
+  borderRadius: '12px',
+  padding: '16px',
+  marginBottom: '16px',
+  cursor: 'pointer',
+  transition: 'all 0.3s ease',
+  '&:hover': {
+    transform: 'translateY(-5px)',
+    boxShadow: '0 8px 24px rgba(59, 130, 246, 0.1)',
+  }
+});
+
+// Add this custom tooltip component for the price trends chart
+const PriceTrendTooltip = ({ active, payload, label }: any) => {
+  if (active && payload && payload.length) {
+    // Get the insight for this data point
+    const getInsight = (dataKey: string) => {
+      if (!dataKey) return null;
+      
+      const category = dataKey.split('_')[0]; // Extract category from dataKey
+      
+      const insightMap: {[key: string]: {text: string, color: string}} = {
+        drinks: {
+          text: "Coffee prices surged due to supply constraints in South America. Shipping delays are affecting availability.",
+          color: COLORS.SECONDARY
+        },
+        health: {
+          text: "Increased raw material costs and packaging expenses driving up prices in this category.",
+          color: COLORS.ACCENT2
+        },
+        fruits: {
+          text: "Seasonal factors and extreme weather events in growing regions contributed to price increases.",
+          color: COLORS.ACCENT3
+        },
+        dairy: {
+          text: "Transportation costs and feed prices are the primary factors affecting dairy price trends.",
+          color: COLORS.PRIMARY
+        }
+      };
+      
+      for (const key in insightMap) {
+        if (dataKey.startsWith(key)) {
+          return insightMap[key];
+        }
+      }
+      
+      return null;
+    };
+    
+    const anyWithValue = payload.find((p: any) => p.value !== null && !p.dataKey.includes('benchmark') && !p.dataKey.includes('forecast'));
+    const insight = anyWithValue ? getInsight(anyWithValue.dataKey) : null;
+    
+    return (
+      <div className="bg-white p-3 rounded-lg shadow border border-gray-200 max-w-xs">
+        <p className="text-sm font-semibold mb-1 text-gray-800">{label}</p>
+        <div className="space-y-1.5">
+          {payload.map((entry: any, i: number) => {
+            // Skip benchmark and forecast in main listing
+            if (entry.dataKey.includes('benchmark') || entry.dataKey.includes('forecast')) return null;
+            if (entry.value === null) return null;
+            
+            // Format the series name nicely
+            let name = entry.name;
+            if (name.includes('(')) {
+              name = name.split('(')[0].trim();
+            }
+            
+            return (
+              <div key={i} className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <div className="w-3 h-3 rounded-full mr-2" style={{ backgroundColor: entry.stroke || entry.fill }}></div>
+                  <span className="text-xs text-gray-700">{name}:</span>
+                </div>
+                <span className="text-xs font-medium">${entry.value}</span>
+              </div>
+            );
+          })}
+        </div>
+        
+        {insight && (
+          <div className="mt-2 pt-2 border-t border-gray-100">
+            <div className="flex items-center">
+              <MdOutlineInfo className="text-blue-500 mr-1 flex-shrink-0" size={14} />
+              <p className="text-xs text-gray-600">{insight.text}</p>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+  return null;
+};
+
+const MarketTrends: React.FC = () => {
+  const [loading, setLoading] = useState<boolean>(true);
+  const [tenderData, setTenderData] = useState<ImportedTenderData[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [selectedVendor, setSelectedVendor] = useState<string>('all');
+  const [selectedTimeRange, setSelectedTimeRange] = useState<string>('1y');
+  const [selectedTrend, setSelectedTrend] = useState<string>('price');
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [timeRange, setTimeRange] = useState('12M');
+  const [categoryData, setCategoryData] = useState<any[]>([]);
+  const [marketTrendData, setMarketTrendData] = useState<any[]>([]);
+  const [disruptionRiskData, setDisruptionRiskData] = useState<any[]>([]);
+  const [commodityInflationData, setCommodityInflationData] = useState<any[]>([]);
+  const [activeTab, setActiveTab] = useState<string>('overview');
+  const [categoryInsightsData, setCategoryInsightsData] = useState<any[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+
+  // Helper function to get category metadata
+  const getCategoryMetadata = (category: string) => {
+    // Default metadata if category is not found
+    const defaultMetadata = { trend: 'stable', volatility: 'medium' };
+    
+    // Find the category in categoryData
+    const foundCategory = categoryData.find(cat => cat.display === category);
+    if (foundCategory) {
+      return {
+        trend: foundCategory.trend || defaultMetadata.trend,
+        volatility: foundCategory.volatility || defaultMetadata.volatility
+      };
+    }
+    
+    return defaultMetadata;
+  };
+
+  // Extract unique vendors from tender data
+  const uniqueVendors = useMemo(() => {
+    if (!tenderData || tenderData.length === 0) return [];
+    
+    // Mock vendor data based on product origins
+    const origins = Array.from(new Set(tenderData.map(item => (item as any).origin || 'Unknown')));
+    return origins.map(origin => ({
+      id: typeof origin === 'string' ? origin.toLowerCase().replace(/\s+/g, '_') : 'unknown',
+      name: origin,
+      productCount: tenderData.filter(item => (item as any).origin === origin).length,
+      reliability: Math.random() * 100,
+      categories: ['Various']
+    }));
+  }, [tenderData]);
+
+  // Load data from CSV
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const data = await loadTenderData();
+        setTenderData(data);
+        
+        // Process data for charts
+        setCategoryData(groupByCategory(data));
+        setMarketTrendData(calculatePricesByCategory(data));
+        setDisruptionRiskData(calculateDisruptionRisk(data));
+        setCommodityInflationData(calculateCommodityInflation(data));
+        setCategoryInsightsData(generateCategoryInsights(data));
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchData();
+  }, []);
+
+  // News and insights data
+  const marketInsights: MarketInsight[] = [
+    {
+      id: "1",
+      title: 'Semiconductor Shortage Expected to Ease by Q3',
+      impact: 'Positive',
+      summary: 'Industry analysts predict the global semiconductor shortage will show signs of improvement by Q3 as new production capacity comes online.',
+      date: '2023-08-15',
+    },
+    {
+      id: "2",
+      title: 'Rising Shipping Costs Impact Global Supply Chains',
+      impact: 'Negative',
+      summary: 'Container shipping rates have increased by 45% since January, affecting procurement costs across multiple categories.',
+      date: '2023-08-12',
+    },
+    {
+      id: "3",
+      title: 'New Trade Agreement to Reduce Tariffs on Electronics',
+      impact: 'Positive',
+      summary: 'A newly signed trade agreement between major economies will reduce tariffs on electronic components by up to 18% starting next quarter.',
+      date: '2023-08-08',
+    },
+    {
+      id: "4",
+      title: 'Aluminum Production Disruption Due to Energy Crisis',
+      impact: 'Negative',
+      summary: 'Several major aluminum producers have reduced output by 30% due to ongoing energy shortages in key manufacturing regions.',
+      date: '2023-08-05',
+    },
+  ];
+
+  // Animation variants
+  const cardVariants = {
+    hidden: { 
+      opacity: 0,
+      y: 20
+    },
+    visible: (i: number) => ({ 
+      opacity: 1,
+      y: 0,
+      transition: {
+        delay: i * 0.1,
+        duration: 0.5,
+        ease: "easeOut"
+      }
+    })
+  };
+
+  // Render functions for different tabs
+  const renderOverview = () => {
+    if (loading) {
+      return (
+        <div className="flex justify-center items-center h-64">
+          <CircularProgress color="primary" size={60} />
+        </div>
+      );
+    }
+    
+    return (
+      <div className="flex flex-col gap-6">
+        {/* Key Metrics Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <motion.div 
+            custom={0} 
+            variants={cardVariants} 
+            initial="hidden" 
+            animate="visible"
+          >
+            <MetricCard>
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center">
+                  <MdOutlinePriceChange className="text-blue-600 mr-2" size={24} />
+                  <h3 className="text-xl font-semibold text-gray-800">Market Price Index</h3>
+                </div>
+                <MUITooltip title="Overall market price index based on weighted average of all categories">
+                  <IconButton size="small">
+                    <MdOutlineInfo className="text-gray-500" />
+                  </IconButton>
+                </MUITooltip>
+              </div>
+              
+              <div className="mt-2">
+                <div className="flex items-baseline">
+                  <span className="text-3xl font-bold text-gray-800">127.8</span>
+                  <span className="ml-2 px-2 py-1 bg-green-100 text-green-600 rounded text-sm font-medium flex items-center">
+                    <FiTrendingUp className="mr-1" /> +12.4% YTD
+                  </span>
+                </div>
+                <p className="text-gray-600 mt-2 text-sm">
+                  Base 100 (Jan 2023) | Last updated: June 2024
+                </p>
+              </div>
+            </MetricCard>
+          </motion.div>
+          
+          <motion.div 
+            custom={1} 
+            variants={cardVariants} 
+            initial="hidden" 
+            animate="visible"
+          >
+            <MetricCard>
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center">
+                  <FiBarChart2 className="text-orange-500 mr-2" size={24} />
+                  <h3 className="text-xl font-semibold text-gray-800">Price Volatility</h3>
+                </div>
+                <MUITooltip title="Overall market volatility measured across all categories">
+                  <IconButton size="small">
+                    <MdOutlineInfo className="text-gray-500" />
+                  </IconButton>
+                </MUITooltip>
+              </div>
+              
+              <div className="mt-2">
+                <div className="flex items-baseline">
+                  <span className="text-3xl font-bold text-orange-500">Medium</span>
+                </div>
+                <p className="text-gray-600 mt-2 text-sm">
+                  Increased volatility in Drinks, Fruits & Vegetables
+                </p>
+                <div className="flex items-center mt-3">
+                  <span className="flex items-center text-xs bg-red-100 text-red-600 px-2 py-1 rounded mr-2">
+                    Drinks
+                  </span>
+                  <span className="flex items-center text-xs bg-red-100 text-red-600 px-2 py-1 rounded">
+                    Fruits & Veg
+                  </span>
+                </div>
+              </div>
+            </MetricCard>
+          </motion.div>
+          
+          <motion.div 
+            custom={2} 
+            variants={cardVariants} 
+            initial="hidden" 
+            animate="visible"
+          >
+            <MetricCard>
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center">
+                  <FiAlertCircle className="text-purple-600 mr-2" size={24} />
+                  <h3 className="text-xl font-semibold text-gray-800">Supply Risk Score</h3>
+                </div>
+                <MUITooltip title="Aggregate supply risk based on high volatility categories">
+                  <IconButton size="small">
+                    <MdOutlineInfo className="text-gray-500" />
+                  </IconButton>
+                </MUITooltip>
+              </div>
+              
+              <div className="mt-2">
+                <div className="flex items-baseline">
+                  <span className="text-5xl font-bold text-gray-800">6.2</span>
+                  <span className="text-xl font-medium text-gray-500 ml-1">/10</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2.5 mt-3">
+                  <div className="bg-purple-600 h-2.5 rounded-full" style={{ width: '62%' }}></div>
+                </div>
+                <p className="text-gray-600 mt-2 text-sm">
+                  Moderate risk with increased concerns in coffee and fresh produce
+                </p>
+              </div>
+            </MetricCard>
+          </motion.div>
+          
+          <motion.div 
+            custom={3} 
+            variants={cardVariants} 
+            initial="hidden" 
+            animate="visible"
+          >
+            <MetricCard>
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center">
+                  <MdOutlineCompare className="text-green-600 mr-2" size={24} />
+                  <h3 className="text-xl font-semibold text-gray-800">Active Tenders</h3>
+                </div>
+                <MUITooltip title="Currently active procurement tenders across all categories">
+                  <IconButton size="small">
+                    <MdOutlineInfo className="text-gray-500" />
+                  </IconButton>
+                </MUITooltip>
+              </div>
+              
+              <div className="mt-2">
+                <div className="flex items-baseline">
+                  <span className="text-3xl font-bold text-gray-800">7</span>
+                  <span className="ml-2 px-2 py-1 bg-blue-100 text-blue-600 rounded text-sm font-medium">
+                    5 vendors
+                  </span>
+                </div>
+                <p className="text-gray-600 mt-2 text-sm">
+                  Across 5 categories and 7 suppliers
+                </p>
+                <button className="mt-3 text-sm text-blue-600 hover:text-blue-700 flex items-center">
+                  View all tenders <MdOutlineAnalytics className="ml-1" />
+                </button>
+              </div>
+            </MetricCard>
+          </motion.div>
+        </div>
+
+        {/* Chart section with price trend */}
+        <ChartContainer>
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h3 className="text-2xl font-semibold text-gray-800">Price Trends by Category</h3>
+              <p className="text-gray-600 mt-1">Indexed prices (Base 100 = Jan 2023)</p>
+            </div>
+            <div className="flex items-center">
+              <div className="flex space-x-2 mr-4">
+                <button className="px-3 py-1 text-sm border border-gray-200 rounded bg-white text-gray-700 hover:bg-gray-50">3M</button>
+                <button className="px-3 py-1 text-sm border border-blue-500 rounded bg-blue-50 text-blue-600">6M</button>
+                <button className="px-3 py-1 text-sm border border-gray-200 rounded bg-white text-gray-700 hover:bg-gray-50">12M</button>
+              </div>
+              <IconButton className="text-gray-600 hover:text-blue-600">
+                <MdOutlineDownload />
+              </IconButton>
+            </div>
+          </div>
+          
+          <div className="h-80">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart
+                data={marketTrendData}
+                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.1)" />
+                <XAxis 
+                  dataKey="month" 
+                  tick={{ fill: '#555555' }} 
+                  axisLine={{ stroke: 'rgba(0,0,0,0.2)' }} 
+                />
+                <YAxis 
+                  tick={{ fill: '#555555' }} 
+                  axisLine={{ stroke: 'rgba(0,0,0,0.2)' }} 
+                  domain={[90, 140]} 
+                  ticks={[90, 100, 110, 120, 130, 140]}
+                />
+                <Tooltip 
+                  content={<PriceTrendTooltip />}
+                  wrapperStyle={{ zIndex: 1000 }}
+                />
+                <Legend 
+                  verticalAlign="top" 
+                  wrapperStyle={{ paddingBottom: '10px' }} 
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="drinks" 
+                  name="Drinks"
+                  stroke={COLORS.SECONDARY} 
+                  strokeWidth={2}
+                  dot={false}
+                  activeDot={{ r: 6 }}
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="drinks_benchmark" 
+                  name="Drinks (Benchmark)"
+                  stroke={COLORS.SECONDARY_DARK} 
+                  strokeWidth={2}
+                  strokeDasharray="5 5"
+                  dot={false}
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="drinks_forecast" 
+                  name="Drinks (Forecast)"
+                  stroke={COLORS.SECONDARY}
+                  strokeWidth={2}
+                  strokeDasharray="2 2"
+                  dot={false}
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="health_beauty" 
+                  name="Health & Beauty"
+                  stroke={COLORS.ACCENT2} 
+                  strokeWidth={2}
+                  dot={false}
+                  activeDot={{ r: 6 }}
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="fruits_vegetables" 
+                  name="Fruits & Vegetables"
+                  stroke={COLORS.ACCENT3} 
+                  strokeWidth={2}
+                  dot={false}
+                  activeDot={{ r: 6 }}
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="dairy" 
+                  name="Dairy"
+                  stroke={COLORS.PRIMARY} 
+                  strokeWidth={2}
+                  dot={false}
+                  activeDot={{ r: 6 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </ChartContainer>
+
+        {/* Insights & Top Movers */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <ChartContainer>
+            <h3 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+              <MdOutlineInsights className="mr-2 text-blue-600" size={20} />
+              Key Insights
+            </h3>
+            <div className="space-y-4">
+              <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                <div className="flex items-center mb-2">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
+                  <h4 className="text-blue-600 font-medium">Price Trend Analysis</h4>
+                </div>
+                <p className="text-gray-700 text-sm">Drinks category showing steepest price increases at +30% YoY, primarily driven by coffee prices.</p>
+              </div>
+              
+              <div className="p-3 bg-orange-50 border border-orange-200 rounded-lg">
+                <div className="flex items-center mb-2">
+                  <div className="w-2 h-2 bg-orange-500 rounded-full mr-2"></div>
+                  <h4 className="text-orange-600 font-medium">Supply Concerns</h4>
+                </div>
+                <p className="text-gray-700 text-sm">3 major suppliers have indicated potential delivery delays for Q3 due to logistics challenges.</p>
+              </div>
+              
+              <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+                <div className="flex items-center mb-2">
+                  <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                  <h4 className="text-green-600 font-medium">Opportunity Alerts</h4>
+                </div>
+                <p className="text-gray-700 text-sm">Freezer category showing price declines of 5% - potential opportunity for long-term contracts.</p>
+              </div>
+            </div>
+          </ChartContainer>
+          
+          <ChartContainer>
+            <h3 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+              <MdTimeline className="mr-2 text-purple-600" size={20} />
+              Top Movers (Last 30 Days)
+            </h3>
+            
+            <div className="space-y-3">
+              <div className="flex items-center justify-between p-3 bg-red-50 rounded-lg border border-red-200">
+                <div className="flex items-center">
+                  <MdOutlineTrendingUp className="text-red-600 mr-3" size={20} />
+                  <div>
+                    <h4 className="text-gray-800 font-medium">Coffee</h4>
+                    <p className="text-gray-600 text-xs">Drinks Category</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <span className="text-red-600 font-bold">+8.2%</span>
+                  <p className="text-gray-600 text-xs">Supply constraints</p>
+                </div>
+              </div>
+              
+              <div className="flex items-center justify-between p-3 bg-red-50 rounded-lg border border-red-200">
+                <div className="flex items-center">
+                  <MdOutlineTrendingUp className="text-red-600 mr-3" size={20} />
+                  <div>
+                    <h4 className="text-gray-800 font-medium">Oranges</h4>
+                    <p className="text-gray-600 text-xs">Fruits & Vegetables</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <span className="text-red-600 font-bold">+7.1%</span>
+                  <p className="text-gray-600 text-xs">Weather disruptions</p>
+                </div>
+              </div>
+              
+              <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-200">
+                <div className="flex items-center">
+                  <MdOutlineTrendingDown className="text-green-600 mr-3" size={20} />
+                  <div>
+                    <h4 className="text-gray-800 font-medium">Frozen Vegetables</h4>
+                    <p className="text-gray-600 text-xs">Freezer Category</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <span className="text-green-600 font-bold">-3.2%</span>
+                  <p className="text-gray-600 text-xs">Increased availability</p>
+                </div>
+              </div>
+              
+              <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-200">
+                <div className="flex items-center">
+                  <MdOutlineTrendingDown className="text-green-600 mr-3" size={20} />
+                  <div>
+                    <h4 className="text-gray-800 font-medium">Rice</h4>
+                    <p className="text-gray-600 text-xs">Grains Category</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <span className="text-green-600 font-bold">-2.1%</span>
+                  <p className="text-gray-600 text-xs">Good harvest season</p>
+                </div>
+              </div>
+            </div>
+          </ChartContainer>
+        </div>
+        
+        {/* Risk Analysis & Commodity Inflation */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <ChartContainer>
+            <h3 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+              <MdOutlineWarning className="mr-2 text-orange-600" size={20} />
+              Supply Chain Risk Factors
+            </h3>
+            
+            <div className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={disruptionRiskData}
+                  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                  layout="vertical"
+                  barGap={0}
+                  barCategoryGap="20%"
+                >
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.1)" />
+                  <XAxis type="number" domain={[0, 30]} tick={{ fill: "#555555" }} />
+                  <YAxis type="category" dataKey="name" tick={{ fill: "#555555" }} width={100} />
+                  <Tooltip
+                    cursor={{ fill: 'rgba(0,0,0,0.05)' }}
+                    contentStyle={{
+                      backgroundColor: 'rgba(255,255,255,0.95)',
+                      border: '1px solid #e0e0e0',
+                      borderRadius: '8px'
+                    }}
+                    formatter={(value, name, props) => {
+                      if (name === "Current Risk") {
+                        return [`${value}%`, "Current Risk"];
+                      }
+                      return [`${value}%`, "Previous Period"];
+                    }}
+                  />
+                  <Legend />
+                  <Bar 
+                    dataKey="prevValue" 
+                    name="Previous Period" 
+                    fill={COLORS.PRIMARY_40}
+                    radius={[0, 0, 0, 0]}
+                  />
+                  <Bar 
+                    dataKey="value" 
+                    name="Current Risk" 
+                    fill={COLORS.ACCENT2}
+                    radius={[0, 4, 4, 0]}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+            
+            <div className="mt-2 text-sm text-gray-600">
+              <p>Supply chain disruptions remain the largest risk factor at 31%, followed by geopolitical tensions at 24%.</p>
+            </div>
+          </ChartContainer>
+          
+          <ChartContainer>
+            <h3 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+              <FiDollarSign className="mr-2 text-green-600" size={20} />
+              Commodity Inflation Rates (%, YoY)
+            </h3>
+            
+            <div className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={commodityInflationData}
+                  layout="vertical"
+                  margin={{ top: 5, right: 30, left: 80, bottom: 5 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.1)" />
+                  <XAxis 
+                    type="number"
+                    domain={[0, 10]}
+                    tick={{ fill: '#555555' }} 
+                    axisLine={{ stroke: 'rgba(0,0,0,0.2)' }} 
+                  />
+                  <YAxis 
+                    dataKey="name" 
+                    type="category"
+                    tick={{ fill: '#555555' }} 
+                    axisLine={{ stroke: 'rgba(0,0,0,0.2)' }} 
+                  />
+                  <Tooltip
+                    contentStyle={{ 
+                      backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                      border: '1px solid #e0e0e0',
+                      borderRadius: '8px',
+                      boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+                    }}
+                    formatter={(value) => [`${value}%`, 'Inflation Rate']}
+                  />
+                  <Bar dataKey="rate" name="Current Rate" radius={[0, 4, 4, 0]}>
+                    {commodityInflationData.map((entry, index) => (
+                      <Cell 
+                        key={`cell-${index}`} 
+                        fill={entry.rate > 5 ? COLORS.ACCENT1 : entry.rate > 3 ? COLORS.ACCENT2 : COLORS.SECONDARY} 
+                      />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+            
+            <div className="mt-2 text-sm text-gray-600">
+              <p>Coffee and citrus fruits continue to experience high inflation, while dairy and grains have stabilized.</p>
+            </div>
+          </ChartContainer>
+        </div>
+
+        {/* Category Insights Chart */}
+        <ChartContainer>
+          <h3 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+            <MdOutlineCategory className="mr-2 text-blue-600" size={20} />
+            Category Insights
+          </h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={categoryInsightsData}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    outerRadius={80}
+                    fill="#8884d8"
+                    dataKey="value"
+                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                  >
+                    {categoryInsightsData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color || getColorForCategory('default', index)} />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    formatter={(value) => [`${value}%`, 'Market Share']}
+                    contentStyle={{
+                      backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                      border: '1px solid #e0e0e0',
+                      borderRadius: '8px'
+                    }}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            
+            <div className="flex flex-col justify-center">
+              <h4 className="text-lg font-medium text-gray-800 mb-4">Category Market Share</h4>
+              <div className="space-y-3">
+                {categoryInsightsData.slice(0, 5).map((category, index) => (
+                  <div key={index} className="flex items-center">
+                    <div className="w-3 h-3 rounded-full mr-2" style={{ backgroundColor: category.color }}></div>
+                    <div className="flex-1">
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-700">{category.name}</span>
+                        <span className="font-medium">{category.percentage}%</span>
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-1.5 mt-1">
+                        <div className="h-1.5 rounded-full" style={{ width: `${category.percentage}%`, backgroundColor: category.color }}></div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                {categoryInsightsData.length > 5 && (
+                  <button className="text-sm text-blue-600 hover:text-blue-700 mt-2 flex items-center">
+                    Show more categories <MdMoreHoriz className="ml-1" />
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        </ChartContainer>
+      </div>
+    );
+  };
+  
+  const renderPriceAnalytics = () => {
+    if (loading) {
+      return (
+        <div className="flex justify-center items-center h-64">
+          <CircularProgress color="primary" size={60} />
+        </div>
+      );
+    }
+    
+    // Mock data for price analytics
+    const detailedPriceData = useMemo(() => {
+      // Generate a more granular dataset for price analytics
+      const weeks = Array.from({ length: 52 }, (_, i) => `W${i+1}`);
+      const categories = getUniqueCategories(tenderData);
+      
+      return weeks.map(week => {
+        const result: any = { week };
+        const weekIndex = parseInt(week.substring(1)) - 1;
+        
+        categories.forEach(category => {
+          const meta = (categoryMetadata as any)[category] || { trend: 'stable', volatility: 'medium' };
+          const key = (categoryMetadata as any)[category]?.display?.toLowerCase().replace(/[^a-z0-9]/g, '_') || 
+                     category.toLowerCase().replace(/[^a-z0-9]/g, '_');
+          
+          // Base value with some randomness
+          const baseValue = 4000 + (meta.trend === 'up' ? weekIndex * 20 : 
+                                  meta.trend === 'down' ? -weekIndex * 15 : 0);
+          
+          // Apply volatility
+          const volatilityFactor = meta.volatility === 'high' ? 0.05 : 
+                                  meta.volatility === 'medium' ? 0.03 : 0.01;
+          
+          const randomFactor = (Math.random() * 2 - 1) * volatilityFactor;
+          const value = baseValue * (1 + randomFactor);
+          
+          result[key] = Math.round(value);
+        });
+        
+        return result;
+      });
+    }, [tenderData]);
+    
+    return (
+      <div className="flex flex-col gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <ChartContainer>
+            <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+              <MdOutlinePriceChange className="mr-2 text-blue-600" size={20} />
+              Year-to-Date Price Change
+            </h3>
+            <div className="h-60">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={categoryData.map(cat => ({
+                    name: cat.display,
+                    change: cat.trend === 'up' ? Math.random() * 15 + 5 : 
+                             cat.trend === 'down' ? -(Math.random() * 10 + 3) : 
+                             (Math.random() * 6 - 3),
+                    color: cat.trend === 'up' ? COLORS.ACCENT1 :
+                            cat.trend === 'down' ? COLORS.SECONDARY :
+                            COLORS.ACCENT3
+                  }))}
+                  margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.1)" />
+                  <XAxis dataKey="name" />
+                  <YAxis 
+                    tickFormatter={(value) => `${value}%`}
+                    domain={[-15, 20]}
+                  />
+                  <Tooltip 
+                    formatter={(value) => [`${value.toFixed(1)}%`, 'Price Change']}
+                    contentStyle={{ 
+                      backgroundColor: 'rgba(255, 255, 255, 0.95)', 
+                      border: '1px solid #e0e0e0',
+                      borderRadius: '8px'
+                    }}
+                  />
+                  <Bar dataKey="change" radius={[4, 4, 0, 0]}>
+                    {categoryData.map((entry, index) => (
+                      <Cell 
+                        key={`cell-${index}`} 
+                        fill={entry.trend === 'up' ? COLORS.ACCENT1 :
+                              entry.trend === 'down' ? COLORS.SECONDARY :
+                              COLORS.ACCENT3} 
+                      />
+                    ))}
+                  </Bar>
+                  <ReferenceLine y={0} stroke="#000" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </ChartContainer>
+          
+          <ChartContainer>
+            <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+              <MdOutlineInsights className="mr-2 text-purple-600" size={20} />
+              Price Volatility
+            </h3>
+            <div className="h-60">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={categoryData.map(cat => ({
+                    name: cat.display,
+                    volatility: cat.volatility === 'high' ? Math.random() * 20 + 15 : 
+                                cat.volatility === 'medium' ? Math.random() * 10 + 8 : 
+                                Math.random() * 5 + 3
+                  }))}
+                  margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                  layout="vertical"
+                >
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.1)" />
+                  <XAxis type="number" />
+                  <YAxis dataKey="name" type="category" width={100} />
+                  <Tooltip 
+                    formatter={(value) => [`${value.toFixed(1)}%`, 'Volatility']}
+                    contentStyle={{ 
+                      backgroundColor: 'rgba(255, 255, 255, 0.95)', 
+                      border: '1px solid #e0e0e0',
+                      borderRadius: '8px'
+                    }}
+                  />
+                  <Bar dataKey="volatility" fill={COLORS.ACCENT2} radius={[0, 4, 4, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </ChartContainer>
+          
+          <ChartContainer>
+            <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+              <MdOutlineTrendingUp className="mr-2 text-green-600" size={20} />
+              Price-to-Volume Correlation
+            </h3>
+            <div className="h-60">
+              <ResponsiveContainer width="100%" height="100%">
+                <ScatterChart
+                  margin={{ top: 20, right: 30, left: 20, bottom: 10 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.1)" />
+                  <XAxis 
+                    type="number" 
+                    dataKey="price" 
+                    name="Price" 
+                    domain={['auto', 'auto']}
+                    label={{ value: 'Price Change %', position: 'insideBottom', offset: -5 }}
+                  />
+                  <YAxis 
+                    type="number" 
+                    dataKey="volume" 
+                    name="Volume" 
+                    label={{ value: 'Volume Change %', angle: -90, position: 'insideLeft' }}
+                  />
+                  <Tooltip 
+                    cursor={{ strokeDasharray: '3 3' }} 
+                    formatter={(value, name) => [`${value.toFixed(1)}%`, name]}
+                    contentStyle={{ 
+                      backgroundColor: 'rgba(255, 255, 255, 0.95)', 
+                      border: '1px solid #e0e0e0',
+                      borderRadius: '8px'
+                    }}
+                  />
+                  <Scatter 
+                    name="Categories" 
+                    data={categoryData.map(cat => ({
+                      name: cat.display,
+                      price: cat.trend === 'up' ? Math.random() * 15 + 5 : 
+                             cat.trend === 'down' ? -(Math.random() * 10 + 3) : 
+                             (Math.random() * 6 - 3),
+                      volume: cat.trend === 'up' ? Math.random() * 10 + 2 : 
+                              cat.trend === 'down' ? -(Math.random() * 8 + 2) : 
+                              (Math.random() * 4 - 2)
+                    }))} 
+                    fill={COLORS.PRIMARY}
+                  />
+                </ScatterChart>
+              </ResponsiveContainer>
+            </div>
+          </ChartContainer>
+          
+          <ChartContainer>
+            <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+              <MdOutlineAttachMoney className="mr-2 text-blue-600" size={20} />
+              Price Index Forecast
+            </h3>
+            <div className="h-60">
+              <ResponsiveContainer width="100%" height="100%">
+                <ComposedChart
+                  data={[
+                    { month: 'Jan', actual: 100 },
+                    { month: 'Feb', actual: 102 },
+                    { month: 'Mar', actual: 105 },
+                    { month: 'Apr', actual: 108 },
+                    { month: 'May', actual: 112 },
+                    { month: 'Jun', actual: 118 },
+                    { month: 'Jul', forecast: 120 },
+                    { month: 'Aug', forecast: 123 },
+                    { month: 'Sep', forecast: 126 },
+                    { month: 'Oct', forecast: 129 },
+                    { month: 'Nov', forecast: 132 },
+                    { month: 'Dec', forecast: 135 }
+                  ]}
+                  margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.1)" />
+                  <XAxis dataKey="month" />
+                  <YAxis domain={[90, 140]} />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: 'rgba(255, 255, 255, 0.95)', 
+                      border: '1px solid #e0e0e0',
+                      borderRadius: '8px'
+                    }}
+                  />
+                  <Legend />
+                  <Area 
+                    type="monotone" 
+                    dataKey="forecast" 
+                    fill={COLORS.PRIMARY_20} 
+                    stroke={COLORS.PRIMARY}
+                    name="Forecast"
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="actual" 
+                    stroke={COLORS.ACCENT1} 
+                    strokeWidth={2}
+                    name="Actual"
+                    dot={{ fill: COLORS.ACCENT1 }}
+                  />
+                  <ReferenceLine x="Jun" stroke="rgba(0,0,0,0.3)" strokeDasharray="3 3" label="Current" />
+                </ComposedChart>
+              </ResponsiveContainer>
+            </div>
+          </ChartContainer>
+        </div>
+        
+        <ChartContainer>
+          <div className="flex justify-between items-center mb-6">
+            <div>
+              <h3 className="text-xl font-semibold text-gray-800">Detailed Price Analysis</h3>
+              <p className="text-gray-600 mt-1">Weekly price trends by category (52-week view)</p>
+            </div>
+            <div className="flex items-center">
+              <select 
+                className="select select-bordered mr-2 bg-white"
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+              >
+                <option value="all">All Categories</option>
+                {categoryData.map(cat => (
+                  <option key={cat.category} value={cat.category}>{cat.display}</option>
+                ))}
+              </select>
+              <div className="flex space-x-2 mr-4">
+                <button className="px-3 py-1 text-sm border border-blue-500 rounded bg-blue-50 text-blue-600">YTD</button>
+                <button className="px-3 py-1 text-sm border border-gray-200 rounded bg-white text-gray-700 hover:bg-gray-50">12M</button>
+                <button className="px-3 py-1 text-sm border border-gray-200 rounded bg-white text-gray-700 hover:bg-gray-50">24M</button>
+              </div>
+              <IconButton className="text-gray-600 hover:text-blue-600">
+                <MdOutlineDownload />
+              </IconButton>
+            </div>
+          </div>
+          
+          <div className="h-96">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart
+                data={detailedPriceData}
+                margin={{ top: 5, right: 30, left: 20, bottom: 20 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.1)" />
+                <XAxis 
+                  dataKey="week" 
+                  tick={{ fill: '#555555' }}
+                  axisLine={{ stroke: 'rgba(0,0,0,0.2)' }}
+                  interval={4} // Show every 4th label
+                />
+                <YAxis 
+                  tick={{ fill: '#555555' }}
+                  axisLine={{ stroke: 'rgba(0,0,0,0.2)' }}
+                  domain={['auto', 'auto']}
+                />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: 'rgba(255, 255, 255, 0.95)', 
+                    border: '1px solid #e0e0e0',
+                    borderRadius: '8px'
+                  }}
+                  formatter={(value) => [`$${value}`, 'Price']}
+                />
+                <Legend />
+                {categoryData.map((category, index) => {
+                  const key = (categoryMetadata as any)[category.category]?.display?.toLowerCase().replace(/[^a-z0-9]/g, '_') || 
+                             category.category.toLowerCase().replace(/[^a-z0-9]/g, '_');
+                  
+                  // Skip if not "all" and not the selected category
+                  if (selectedCategory !== 'all' && category.category !== selectedCategory) {
+                    return null;
+                  }
+                  
+                  return (
+                    <Line 
+                      key={key}
+                      type="monotone" 
+                      dataKey={key} 
+                      name={category.display}
+                      stroke={getColorForCategory(category.category, index)}
+                      strokeWidth={2}
+                      dot={false}
+                      activeDot={{ r: 6 }}
+                    />
+                  );
+                })}
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+            <div className="bg-blue-50 rounded-lg p-4">
+              <h4 className="text-blue-600 font-medium flex items-center">
+                <MdOutlineInfo className="mr-2" /> Key Insights
+              </h4>
+              <ul className="mt-2 space-y-2 text-sm text-gray-700">
+                <li className="flex items-start">
+                  <div className="w-2 h-2 rounded-full bg-blue-500 mt-1.5 mr-2"></div>
+                  Drinks category has shown the highest volatility with +30% price swings
+                </li>
+                <li className="flex items-start">
+                  <div className="w-2 h-2 rounded-full bg-blue-500 mt-1.5 mr-2"></div>
+                  Health & Beauty category prices are stabilizing after Q1 increases
+                </li>
+                <li className="flex items-start">
+                  <div className="w-2 h-2 rounded-full bg-blue-500 mt-1.5 mr-2"></div>
+                  Dairy prices show seasonal patterns with peaks in weeks 12-20
+                </li>
+              </ul>
+            </div>
+            
+            <div className="bg-green-50 rounded-lg p-4">
+              <h4 className="text-green-600 font-medium flex items-center">
+                <MdOutlineTrendingDown className="mr-2" /> Opportunity Areas
+              </h4>
+              <ul className="mt-2 space-y-2 text-sm text-gray-700">
+                <li className="flex items-start">
+                  <div className="w-2 h-2 rounded-full bg-green-500 mt-1.5 mr-2"></div>
+                  Fruits & Vegetables pricing expected to decline by 5-8% in Q3
+                </li>
+                <li className="flex items-start">
+                  <div className="w-2 h-2 rounded-full bg-green-500 mt-1.5 mr-2"></div>
+                  Freezer category shows favorable long-term contract potential
+                </li>
+                <li className="flex items-start">
+                  <div className="w-2 h-2 rounded-full bg-green-500 mt-1.5 mr-2"></div>
+                  Health & Beauty contract renegotiations optimal in weeks 30-35
+                </li>
+              </ul>
+            </div>
+            
+            <div className="bg-red-50 rounded-lg p-4">
+              <h4 className="text-red-600 font-medium flex items-center">
+                <MdOutlineWarning className="mr-2" /> Risk Areas
+              </h4>
+              <ul className="mt-2 space-y-2 text-sm text-gray-700">
+                <li className="flex items-start">
+                  <div className="w-2 h-2 rounded-full bg-red-500 mt-1.5 mr-2"></div>
+                  Coffee prices expected to rise an additional 15-20% by year end
+                </li>
+                <li className="flex items-start">
+                  <div className="w-2 h-2 rounded-full bg-red-500 mt-1.5 mr-2"></div>
+                  Citrus fruits facing supply constraints due to climate factors
+                </li>
+                <li className="flex items-start">
+                  <div className="w-2 h-2 rounded-full bg-red-500 mt-1.5 mr-2"></div>
+                  Packaging costs rising across all categories in Q3-Q4
+                </li>
+              </ul>
+            </div>
+          </div>
+        </ChartContainer>
+      </div>
+    );
+  };
+
+  // Move renderSupplyRisk inside the component
+  const renderSupplyRisk = () => {
+    return (
+      <div className="w-full">
+        {loading ? (
+          <LoadingContent />
+        ) : (
+          <div className="space-y-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-6">
+              {/* Risk By Category Card */}
+              <motion.div 
+                className="col-span-1 xl:col-span-2 glass-panel rounded-xl p-6"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                {/* Key Risk Indicators */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  <motion.div custom={0} variants={cardVariants} initial="hidden" animate="visible">
+                    <MetricCard>
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center">
+                          <FiAlertCircle className="text-orange-500 mr-2" size={24} />
+                          <h3 className="text-xl font-semibold text-gray-800">Overall Risk Score</h3>
+                        </div>
+                        <MUITooltip title="Aggregate risk assessment across all categories and regions">
+                          <IconButton size="small">
+                            <MdOutlineInfo className="text-gray-500" />
+                          </IconButton>
+                        </MUITooltip>
+                      </div>
+                      
+                      <div className="mt-2">
+                        <div className="flex items-baseline">
+                          <span className="text-5xl font-bold text-gray-800">63</span>
+                          <span className="text-xl font-medium text-gray-500 ml-1">/100</span>
+                        </div>
+                        <div className="w-full bg-gray-200 rounded-full h-2.5 mt-3">
+                          <div className="bg-orange-500 h-2.5 rounded-full" style={{ width: '63%' }}></div>
+                        </div>
+                        <p className="text-gray-600 mt-2 text-sm">
+                          Medium-High risk level across all categories
+                        </p>
+                      </div>
+                    </MetricCard>
+                  </motion.div>
+                  
+                  <motion.div custom={1} variants={cardVariants} initial="hidden" animate="visible">
+                    <MetricCard>
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center">
+                          <MdOutlineWarning className="text-red-500 mr-2" size={24} />
+                          <h3 className="text-xl font-semibold text-gray-800">High Risk Categories</h3>
+                        </div>
+                        <MUITooltip title="Categories with risk score above 70/100">
+                          <IconButton size="small">
+                            <MdOutlineInfo className="text-gray-500" />
+                          </IconButton>
+                        </MUITooltip>
+                      </div>
+                      
+                      <div className="mt-2">
+                        <div className="flex items-baseline">
+                          <span className="text-3xl font-bold text-gray-800">2</span>
+                          <span className="ml-2 px-2 py-1 bg-red-100 text-red-600 rounded text-sm font-medium">
+                            29% of categories
+                          </span>
+                        </div>
+                        <p className="text-gray-600 mt-2 text-sm">
+                          Drinks, Fruits & Vegetables categories
+                        </p>
+                        <div className="flex items-center mt-3">
+                          <span className="flex items-center text-xs bg-red-100 text-red-600 px-2 py-1 rounded mr-2">
+                            Drinks
+                          </span>
+                          <span className="flex items-center text-xs bg-red-100 text-red-600 px-2 py-1 rounded">
+                            Fruits & Veg
+                          </span>
+                        </div>
+                      </div>
+                    </MetricCard>
+                  </motion.div>
+                  
+                  <motion.div custom={2} variants={cardVariants} initial="hidden" animate="visible">
+                    <MetricCard>
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center">
+                          <FiGlobe className="text-purple-600 mr-2" size={24} />
+                          <h3 className="text-xl font-semibold text-gray-800">Geographic Hotspots</h3>
+                        </div>
+                        <MUITooltip title="Regions with elevated supply risk">
+                          <IconButton size="small">
+                            <MdOutlineInfo className="text-gray-500" />
+                          </IconButton>
+                        </MUITooltip>
+                      </div>
+                      
+                      <div className="mt-2">
+                        <div className="flex items-baseline">
+                          <span className="text-3xl font-bold text-gray-800">3</span>
+                          <span className="ml-2 px-2 py-1 bg-purple-100 text-purple-600 rounded text-sm font-medium">
+                            High risk regions
+                          </span>
+                        </div>
+                        <p className="text-gray-600 mt-2 text-sm">
+                          South America, Africa, Asia Pacific
+                        </p>
+                        <div className="flex items-center mt-3">
+                          <span className="flex items-center text-xs bg-purple-100 text-purple-600 px-2 py-1 rounded mr-2">
+                            South America
+                          </span>
+                          <span className="flex items-center text-xs bg-purple-100 text-purple-600 px-2 py-1 rounded">
+                            Africa
+                          </span>
+                        </div>
+                      </div>
+                    </MetricCard>
+                  </motion.div>
+                  
+                  <motion.div custom={3} variants={cardVariants} initial="hidden" animate="visible">
+                    <MetricCard>
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center">
+                          <MdOutlineInsights className="text-blue-600 mr-2" size={24} />
+                          <h3 className="text-xl font-semibold text-gray-800">Active Alerts</h3>
+                        </div>
+                        <MUITooltip title="Current supply risk alerts requiring attention">
+                          <IconButton size="small">
+                            <MdOutlineInfo className="text-gray-500" />
+                          </IconButton>
+                        </MUITooltip>
+                      </div>
+                      
+                      <div className="mt-2">
+                        <div className="flex items-baseline">
+                          <span className="text-3xl font-bold text-gray-800">7</span>
+                          <span className="ml-2 px-2 py-1 bg-blue-100 text-blue-600 rounded text-sm font-medium">
+                            3 critical
+                          </span>
+                        </div>
+                        <p className="text-gray-600 mt-2 text-sm">
+                          Across 4 categories and 3 regions
+                        </p>
+                        <button className="mt-3 text-sm text-blue-600 hover:text-blue-700 flex items-center">
+                          View all alerts <MdOutlineArrowForward className="ml-1" />
+                        </button>
+                      </div>
+                    </MetricCard>
+                  </motion.div>
+                </div>
+                
+                {/* Supply Risk Heatmap */}
+                <ChartContainer>
+                  <h3 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                    <MdOutlineWarning className="mr-2 text-orange-600" size={20} />
+                    Category Risk Assessment
+                  </h3>
+                  
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full bg-white rounded-lg overflow-hidden">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Category
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Risk Score
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Status
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Contributing Factors
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Actions
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-200">
+                        {riskHeatmapData.sort((a, b) => b.score - a.score).map((item, index) => {
+                          const status = getRiskStatus(item.score);
+                          return (
+                            <tr key={index} className="hover:bg-gray-50">
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="font-medium text-gray-900">{item.category}</div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="flex items-center">
+                                  <div className="w-full bg-gray-200 rounded-full h-2.5 w-24 mr-3">
+                                    <div 
+                                      className="h-2.5 rounded-full" 
+                                      style={{ 
+                                        width: `${item.score}%`, 
+                                        backgroundColor: getRiskColor(item.score) 
+                                      }}
+                                    ></div>
+                                  </div>
+                                  <span className="font-medium">{item.score}/100</span>
+                                </div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${status.color}`}>
+                                  {status.text}
+                                </span>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="flex flex-wrap gap-1">
+                                  {item.factors.map((factor, i) => (
+                                    <span key={i} className="px-2 py-0.5 text-xs bg-gray-100 rounded-full text-gray-800">
+                                      {factor}
+                                    </span>
+                                  ))}
+                                </div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                <button className="text-blue-600 hover:text-blue-900 font-medium">
+                                  View Details
+                                </button>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </ChartContainer>
+                
+                {/* Regional Risk & Disruption Analysis */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <ChartContainer>
+                    <h3 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                      <FiGlobe className="mr-2 text-purple-600" size={20} />
+                      Regional Risk Assessment
+                    </h3>
+                    
+                    <div className="h-80">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart
+                          data={regionalRiskData}
+                          margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                        >
+                          <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.1)" />
+                          <XAxis dataKey="region" />
+                          <YAxis 
+                            domain={[0, 100]}
+                            label={{ value: 'Risk Score', angle: -90, position: 'insideLeft' }}
+                          />
+                          <Tooltip 
+                            formatter={(value) => [`${value}/100`, 'Risk Score']}
+                            contentStyle={{ 
+                              backgroundColor: 'rgba(255, 255, 255, 0.95)', 
+                              border: '1px solid #e0e0e0',
+                              borderRadius: '8px'
+                            }}
+                          />
+                          <Bar dataKey="risk" radius={[4, 4, 0, 0]}>
+                            {regionalRiskData.map((entry, index) => (
+                              <Cell 
+                                key={`cell-${index}`} 
+                                fill={getRiskColor(entry.risk)} 
+                              />
+                            ))}
+                          </Bar>
+                          <ReferenceLine y={70} stroke={COLORS.ACCENT1} strokeDasharray="3 3" label="High Risk" />
+                          <ReferenceLine y={50} stroke={COLORS.ACCENT2} strokeDasharray="3 3" label="Medium Risk" />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+                    
+                    <div className="mt-4 bg-blue-50 rounded-lg p-4">
+                      <h4 className="text-blue-600 font-medium flex items-center">
+                        <MdOutlineInfo className="mr-2" /> Regional Insights
+                      </h4>
+                      <ul className="mt-2 space-y-2 text-sm text-gray-700">
+                        <li className="flex items-start">
+                          <div className="w-2 h-2 rounded-full bg-red-500 mt-1.5 mr-2"></div>
+                          South America supply chains experiencing transportation disruptions
+                        </li>
+                        <li className="flex items-start">
+                          <div className="w-2 h-2 rounded-full bg-orange-500 mt-1.5 mr-2"></div>
+                          Ongoing geopolitical tensions affecting Asian logistics
+                        </li>
+                        <li className="flex items-start">
+                          <div className="w-2 h-2 rounded-full bg-green-500 mt-1.5 mr-2"></div>
+                          North American and Oceania regions showing stable supply conditions
+                        </li>
+                      </ul>
+                    </div>
+                  </ChartContainer>
+                  
+                  <ChartContainer>
+                    <h3 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                      <MdOutlineInsights className="mr-2 text-blue-600" size={20} />
+                      Disruption Analysis
+                    </h3>
+                    
+                    <div className="h-80">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <ScatterChart
+                          margin={{ top: 20, right: 30, left: 20, bottom: 10 }}
+                        >
+                          <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.1)" />
+                          <XAxis 
+                            type="number" 
+                            dataKey="probability" 
+                            name="Probability" 
+                            domain={[0, 100]}
+                            label={{ value: 'Probability (%)', position: 'insideBottom', offset: -5 }}
+                          />
+                          <YAxis 
+                            type="number" 
+                            dataKey="impact" 
+                            name="Impact" 
+                            domain={[0, 100]}
+                            label={{ value: 'Impact Severity', angle: -90, position: 'insideLeft' }}
+                          />
+                          <Tooltip 
+                            cursor={{ strokeDasharray: '3 3' }} 
+                            formatter={(value, name) => [`${value}%`, name === 'impact' ? 'Impact' : 'Probability']}
+                            content={({ active, payload }) => {
+                              if (active && payload && payload.length) {
+                                const data = payload[0].payload;
+                                return (
+                                  <div className="bg-white p-3 border border-gray-200 rounded shadow-md">
+                                    <p className="font-medium text-gray-800">{data.type}</p>
+                                    <p className="text-sm text-gray-600">Probability: {data.probability}%</p>
+                                    <p className="text-sm text-gray-600">Impact: {data.impact}%</p>
+                                    <div className="mt-1 pt-1 border-t border-gray-100 text-xs text-gray-500">
+                                      Risk Level: {data.probability * data.impact / 100 > 50 ? 'High' : 'Medium'}
+                                    </div>
+                                  </div>
+                                );
+                              }
+                              return null;
+                            }}
+                          />
+                          <Scatter 
+                            name="Disruption Types" 
+                            data={disruptionProbabilityData}
+                            fill={COLORS.ACCENT2}
+                          >
+                            {disruptionProbabilityData.map((entry, index) => {
+                              const riskScore = entry.probability * entry.impact / 100;
+                              return (
+                                <Cell 
+                                  key={`cell-${index}`} 
+                                  fill={getRiskColor(riskScore)}
+                                />
+                              );
+                            })}
+                          </Scatter>
+                          <ReferenceLine x={50} y={50} stroke="rgba(0,0,0,0.3)" strokeDasharray="3 3" />
+                        </ScatterChart>
+                      </ResponsiveContainer>
+                    </div>
+                    
+                    <div className="mt-4 bg-orange-50 rounded-lg p-4">
+                      <h4 className="text-orange-600 font-medium flex items-center">
+                        <MdOutlineWarning className="mr-2" /> Disruption Forecast
+                      </h4>
+                      <ul className="mt-2 space-y-2 text-sm text-gray-700">
+                        <li className="flex items-start">
+                          <div className="w-2 h-2 rounded-full bg-red-500 mt-1.5 mr-2"></div>
+                          Weather disruptions highly probable with severe impact (62% probability)
+                        </li>
+                        <li className="flex items-start">
+                          <div className="w-2 h-2 rounded-full bg-orange-500 mt-1.5 mr-2"></div>
+                          Transportation issues likely for South American and Asian routes (58%)
+                        </li>
+                        <li className="flex items-start">
+                          <div className="w-2 h-2 rounded-full bg-blue-500 mt-1.5 mr-2"></div>
+                          Regulatory changes could impact Health & Beauty category (35%)
+                        </li>
+                      </ul>
+                    </div>
+                  </ChartContainer>
+                </div>
+                
+                {/* Supply Risk Mitigation Strategies */}
+                <ChartContainer>
+                  <h3 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                    <MdOutlineAnalytics className="mr-2 text-green-600" size={20} />
+                    Risk Mitigation Recommendations
+                  </h3>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
+                      <div className="flex items-center justify-between mb-4">
+                        <h4 className="text-lg font-medium text-gray-800">Near-Term Actions</h4>
+                        <span className="px-2 py-1 text-xs rounded-full text-orange-700 bg-orange-100">Critical</span>
+                      </div>
+                      <ul className="space-y-3">
+                        <li className="flex items-start">
+                          <div className="w-6 h-6 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0 mt-0.5 mr-3">
+                            <span className="text-orange-600 text-xs font-bold">1</span>
+                          </div>
+                          <p className="text-gray-700">Increase coffee inventory levels by 20% to buffer against price volatility</p>
+                        </li>
+                        <li className="flex items-start">
+                          <div className="w-6 h-6 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0 mt-0.5 mr-3">
+                            <span className="text-orange-600 text-xs font-bold">2</span>
+                          </div>
+                          <p className="text-gray-700">Establish backup transportation routes for South American imports</p>
+                        </li>
+                        <li className="flex items-start">
+                          <div className="w-6 h-6 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0 mt-0.5 mr-3">
+                            <span className="text-orange-600 text-xs font-bold">3</span>
+                          </div>
+                          <p className="text-gray-700">Expedite Fruits & Vegetables supplier diversification project</p>
+                        </li>
+                      </ul>
+                    </div>
+                    
+                    <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
+                      <div className="flex items-center justify-between mb-4">
+                        <h4 className="text-lg font-medium text-gray-800">Mid-Term Strategy</h4>
+                        <span className="px-2 py-1 text-xs rounded-full text-blue-700 bg-blue-100">Important</span>
+                      </div>
+                      <ul className="space-y-3">
+                        <li className="flex items-start">
+                          <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5 mr-3">
+                            <span className="text-blue-600 text-xs font-bold">1</span>
+                          </div>
+                          <p className="text-gray-700">Develop alternative sourcing strategy for citrus fruits from low-risk regions</p>
+                        </li>
+                        <li className="flex items-start">
+                          <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5 mr-3">
+                            <span className="text-blue-600 text-xs font-bold">2</span>
+                          </div>
+                          <p className="text-gray-700">Implement advanced supplier risk monitoring for high-risk categories</p>
+                        </li>
+                        <li className="flex items-start">
+                          <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5 mr-3">
+                            <span className="text-blue-600 text-xs font-bold">3</span>
+                          </div>
+                          <p className="text-gray-700">Review and update contractual terms for freight and logistics services</p>
+                        </li>
+                      </ul>
+                    </div>
+                    
+                    <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
+                      <div className="flex items-center justify-between mb-4">
+                        <h4 className="text-lg font-medium text-gray-800">Long-Term Planning</h4>
+                        <span className="px-2 py-1 text-xs rounded-full text-green-700 bg-green-100">Strategic</span>
+                      </div>
+                      <ul className="space-y-3">
+                        <li className="flex items-start">
+                          <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-0.5 mr-3">
+                            <span className="text-green-600 text-xs font-bold">1</span>
+                          </div>
+                          <p className="text-gray-700">Develop regional supplier diversification strategy for high-risk categories</p>
+                        </li>
+                        <li className="flex items-start">
+                          <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-0.5 mr-3">
+                            <span className="text-green-600 text-xs font-bold">2</span>
+                          </div>
+                          <p className="text-gray-700">Increase investment in climate-resilient product sourcing</p>
+                        </li>
+                        <li className="flex items-start">
+                          <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-0.5 mr-3">
+                            <span className="text-green-600 text-xs font-bold">3</span>
+                          </div>
+                          <p className="text-gray-700">Establish long-term partnerships with strategic suppliers in stable regions</p>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </ChartContainer>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  // Move renderVendorAnalysis inside the component
+  const renderVendorAnalysis = () => {
+    if (loading) {
+      return (
+        <div className="flex justify-center items-center h-64">
+          <CircularProgress color="primary" size={60} />
+        </div>
+      );
+    }
+    
+    // Mock vendor performance data
+    const vendorPerformanceData = [
+      { 
+        name: 'Angola Coffee Exports', 
+        category: 'Drinks',
+        reliability: 92,
+        quality: 90,
+        priceCompetitiveness: 85,
+        sustainability: 78,
+        overallScore: 88,
+        trend: 'up',
+        country: 'Angola',
+        riskLevel: 'medium'
+      },
+      { 
+        name: 'Greece Beauty Products', 
+        category: 'Health & Beauty',
+        reliability: 94,
+        quality: 96,
+        priceCompetitiveness: 82,
+        sustainability: 88,
+        overallScore: 91,
+        trend: 'up',
+        country: 'Greece',
+        riskLevel: 'low'
+      },
+      { 
+        name: 'Burkina Faso Fresh Produce', 
+        category: 'Fruits & Vegetables',
+        reliability: 84,
+        quality: 86,
+        priceCompetitiveness: 92,
+        sustainability: 80,
+        overallScore: 85,
+        trend: 'stable',
+        country: 'Burkina Faso',
+        riskLevel: 'medium'
+      },
+      { 
+        name: 'EstoniaPrime', 
+        category: 'Health & Beauty',
+        reliability: 95,
+        quality: 91,
+        priceCompetitiveness: 79,
+        sustainability: 90,
+        overallScore: 89,
+        trend: 'up',
+        country: 'Estonia',
+        riskLevel: 'low'
+      },
+      { 
+        name: 'Bosnia Meats International', 
+        category: 'Deli & Chilled Meats',
+        reliability: 88,
+        quality: 89,
+        priceCompetitiveness: 86,
+        sustainability: 77,
+        overallScore: 86,
+        trend: 'stable',
+        country: 'Bosnia and Herzegovina',
+        riskLevel: 'medium'
+      },
+      { 
+        name: 'Micronesia Dairy Products', 
+        category: 'Dairy, Eggs & Fridge',
+        reliability: 89,
+        quality: 90,
+        priceCompetitiveness: 84,
+        sustainability: 82,
+        overallScore: 87,
+        trend: 'up',
+        country: 'Micronesia',
+        riskLevel: 'medium'
+      },
+      { 
+        name: 'Togo Fruit Exporters', 
+        category: 'Fruits & Vegetables',
+        reliability: 86,
+        quality: 87,
+        priceCompetitiveness: 90,
+        sustainability: 81,
+        overallScore: 86,
+        trend: 'down',
+        country: 'Togo',
+        riskLevel: 'high'
+      }
+    ];
+    
+    // Vendor reliability trend data
+    const vendorReliabilityTrendData = [
+      { month: 'Jan', avg: 87, top: 92, bottom: 82 },
+      { month: 'Feb', avg: 88, top: 93, bottom: 82 },
+      { month: 'Mar', avg: 86, top: 92, bottom: 80 },
+      { month: 'Apr', avg: 85, top: 91, bottom: 79 },
+      { month: 'May', avg: 87, top: 94, bottom: 80 },
+      { month: 'Jun', avg: 89, top: 95, bottom: 83 },
+      { month: 'Jul', avg: 90, top: 96, bottom: 84 },
+      { month: 'Aug', avg: 91, top: 97, bottom: 86 },
+      { month: 'Sep', avg: 90, top: 96, bottom: 85 },
+      { month: 'Oct', avg: 89, top: 95, bottom: 84 },
+      { month: 'Nov', avg: 91, top: 97, bottom: 86 },
+      { month: 'Dec', avg: 92, top: 98, bottom: 87 },
+    ];
+    
+    // Vendor price competitiveness data
+    const vendorPriceCompData = [
+      { category: 'Drinks', avgMarket: 100, topVendor: 92, worstVendor: 108 },
+      { category: 'Health & Beauty', avgMarket: 100, topVendor: 94, worstVendor: 106 },
+      { category: 'Fruits & Vegetables', avgMarket: 100, topVendor: 90, worstVendor: 110 },
+      { category: 'Dairy, Eggs & Fridge', avgMarket: 100, topVendor: 95, worstVendor: 105 },
+      { category: 'Deli & Chilled Meats', avgMarket: 100, topVendor: 93, worstVendor: 107 },
+      { category: 'Pantry', avgMarket: 100, topVendor: 96, worstVendor: 104 },
+      { category: 'Freezer', avgMarket: 100, topVendor: 94, worstVendor: 106 },
+    ];
+    
+    // Key issues identified
+    const keyIssuesData = [
+      { 
+        vendor: 'Togo Fruit Exporters', 
+        category: 'Fruits & Vegetables',
+        issue: 'Delivery delays increasing (15% late deliveries)',
+        severity: 'high',
+        impact: 'Potential stock shortages in citrus fruits',
+        trend: 'Worsening'
+      },
+      { 
+        vendor: 'Bosnia Meats International', 
+        category: 'Deli & Chilled Meats',
+        issue: 'Quality inconsistencies in recent shipments',
+        severity: 'medium',
+        impact: 'Increased rejection rate (6.8%)',
+        trend: 'Stable'
+      },
+      { 
+        vendor: 'Angola Coffee Exports', 
+        category: 'Drinks',
+        issue: 'Above-market price increases (+12% vs market avg.)',
+        severity: 'medium',
+        impact: 'Margin pressure on coffee products',
+        trend: 'Worsening'
+      },
+    ];
+    
+    // Get trend icon
+    const getTrendIcon = (trend: string) => {
+      if (trend === 'up') return <FiTrendingUp className="text-green-500" />;
+      if (trend === 'down') return <FiTrendingDown className="text-red-500" />;
+      return <MdOutlineInsights className="text-gray-500" />;
+    };
+    
+    // Get risk badge class
+    const getRiskBadgeClass = (risk: string) => {
+      switch (risk) {
+        case 'high': return 'bg-red-100 text-red-700';
+        case 'medium': return 'bg-orange-100 text-orange-700';
+        case 'low': return 'bg-green-100 text-green-700';
+        default: return 'bg-gray-100 text-gray-700';
+      }
+    };
+    
+    // Get color for metric score
+    const getMetricColor = (score: number) => {
+      if (score >= 90) return 'text-green-600';
+      if (score >= 80) return 'text-blue-600';
+      if (score >= 70) return 'text-orange-600';
+      return 'text-red-600';
+    };
+    
+    // Get background color for metric score
+    const getMetricBgColor = (score: number) => {
+      if (score >= 90) return 'bg-green-100';
+      if (score >= 80) return 'bg-blue-100';
+      if (score >= 70) return 'bg-orange-100';
+      return 'bg-red-100';
+    };
+    
+    return (
+      <div className="flex flex-col gap-6">
+        {/* Vendor Performance Overview */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <motion.div custom={0} variants={cardVariants} initial="hidden" animate="visible">
+            <MetricCard>
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center">
+                  <MdOutlineInsights className="text-blue-600 mr-2" size={24} />
+                  <h3 className="text-xl font-semibold text-gray-800">Average Vendor Score</h3>
+                </div>
+                <MUITooltip title="Aggregate score across all active vendors">
+                  <IconButton size="small">
+                    <MdOutlineInfo className="text-gray-500" />
+                  </IconButton>
+                </MUITooltip>
+              </div>
+              
+              <div className="mt-2">
+                <div className="flex items-baseline">
+                  <span className="text-3xl font-bold text-gray-800">87.4</span>
+                  <span className="ml-2 px-2 py-1 bg-green-100 text-green-600 rounded text-sm font-medium flex items-center">
+                    <FiTrendingUp className="mr-1" /> +2.1
+                  </span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2.5 mt-3">
+                  <div className="bg-blue-600 h-2.5 rounded-full" style={{ width: '87.4%' }}></div>
+                </div>
+                <p className="text-gray-600 mt-2 text-sm">
+                  Across 20 active vendors in 7 categories
+                </p>
+              </div>
+            </MetricCard>
+          </motion.div>
+          
+          <motion.div custom={1} variants={cardVariants} initial="hidden" animate="visible">
+            <MetricCard>
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center">
+                  <MdOutlineWarning className="text-orange-600 mr-2" size={24} />
+                  <h3 className="text-xl font-semibold text-gray-800">Risk Distribution</h3>
+                </div>
+                <MUITooltip title="Classification of vendors by risk level">
+                  <IconButton size="small">
+                    <MdOutlineInfo className="text-gray-500" />
+                  </IconButton>
+                </MUITooltip>
+              </div>
+              
+              <div className="mt-2">
+                <div className="flex justify-between items-center">
+                  <div className="flex flex-col items-center">
+                    <span className="text-xl font-bold text-green-600">65%</span>
+                    <span className="text-xs text-gray-500">Low Risk</span>
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <span className="text-xl font-bold text-orange-600">25%</span>
+                    <span className="text-xs text-gray-500">Medium</span>
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <span className="text-xl font-bold text-red-600">10%</span>
+                    <span className="text-xs text-gray-500">High Risk</span>
+                  </div>
+                </div>
+                <div className="w-full flex h-2.5 mt-3 rounded-full overflow-hidden">
+                  <div className="bg-green-500 h-2.5" style={{ width: '65%' }}></div>
+                  <div className="bg-orange-500 h-2.5" style={{ width: '25%' }}></div>
+                  <div className="bg-red-500 h-2.5" style={{ width: '10%' }}></div>
+                </div>
+                <p className="text-gray-600 mt-2 text-sm">
+                  2 vendors require immediate attention
+                </p>
+              </div>
+            </MetricCard>
+          </motion.div>
+          
+          <motion.div custom={2} variants={cardVariants} initial="hidden" animate="visible">
+            <MetricCard>
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center">
+                  <MdOutlineShoppingCart className="text-purple-600 mr-2" size={24} />
+                  <h3 className="text-xl font-semibold text-gray-800">On-Time Delivery</h3>
+                </div>
+                <MUITooltip title="Percentage of orders delivered on schedule">
+                  <IconButton size="small">
+                    <MdOutlineInfo className="text-gray-500" />
+                  </IconButton>
+                </MUITooltip>
+              </div>
+              
+              <div className="mt-2">
+                <div className="flex items-baseline">
+                  <span className="text-3xl font-bold text-gray-800">92.8%</span>
+                  <span className="ml-2 px-2 py-1 bg-orange-100 text-orange-600 rounded text-sm font-medium flex items-center">
+                    <FiTrendingDown className="mr-1" /> -1.4%
+                  </span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2.5 mt-3">
+                  <div className="bg-purple-600 h-2.5 rounded-full" style={{ width: '92.8%' }}></div>
+                </div>
+                <p className="text-gray-600 mt-2 text-sm">
+                  Declining trend in Fruits & Vegetables category
+                </p>
+              </div>
+            </MetricCard>
+          </motion.div>
+          
+          <motion.div custom={3} variants={cardVariants} initial="hidden" animate="visible">
+            <MetricCard>
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center">
+                  <MdOutlineAttachMoney className="text-green-600 mr-2" size={24} />
+                  <h3 className="text-xl font-semibold text-gray-800">Price Competitiveness</h3>
+                </div>
+                <MUITooltip title="How vendor prices compare to market averages">
+                  <IconButton size="small">
+                    <MdOutlineInfo className="text-gray-500" />
+                  </IconButton>
+                </MUITooltip>
+              </div>
+              
+              <div className="mt-2">
+                <div className="flex items-baseline">
+                  <span className="text-3xl font-bold text-gray-800">96.5</span>
+                  <span className="text-base text-gray-600 ml-1">/ 100</span>
+                  <span className="ml-2 px-2 py-1 bg-green-100 text-green-600 rounded text-sm font-medium flex items-center">
+                    <FiTrendingUp className="mr-1" /> +2.3
+                  </span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2.5 mt-3">
+                  <div className="bg-green-600 h-2.5 rounded-full" style={{ width: '96.5%' }}></div>
+                </div>
+                <p className="text-gray-600 mt-2 text-sm">
+                  3.5% below market average prices
+                </p>
+              </div>
+            </MetricCard>
+          </motion.div>
+        </div>
+        
+        {/* Vendor Performance Table */}
+        <ChartContainer>
+          <h3 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+            <MdOutlineCompare className="mr-2 text-blue-600" size={20} />
+            Vendor Performance Matrix
+          </h3>
+          
+          <div className="overflow-x-auto">
+            <table className="min-w-full bg-white rounded-lg overflow-hidden">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Vendor
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Category
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Reliability
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Quality
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Price Comp.
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Sustainability
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Overall
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Trend
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Risk
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {vendorPerformanceData.sort((a, b) => b.overallScore - a.overallScore).map((vendor, index) => (
+                  <tr key={index} className="hover:bg-gray-50">
+                    <td className="px-4 py-3 whitespace-nowrap">
+                      <div className="flex items-center">
+                        <div className="flex-shrink-0 h-8 w-8 flex items-center justify-center rounded-full bg-gray-100">
+                          <span className="text-xs font-medium">{vendor.name.substring(0, 2)}</span>
+                        </div>
+                        <div className="ml-3">
+                          <div className="text-sm font-medium text-gray-900">{vendor.name}</div>
+                          <div className="text-xs text-gray-500">{vendor.country}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 whitespace-nowrap">
+                      <span className="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-800">
+                        {vendor.category}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 whitespace-nowrap">
+                      <div className="flex items-center">
+                        <div className={`px-2 py-1 text-xs rounded ${getMetricBgColor(vendor.reliability)} ${getMetricColor(vendor.reliability)} font-medium`}>
+                          {vendor.reliability}
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 whitespace-nowrap">
+                      <div className="flex items-center">
+                      <div className={`px-2 py-1 text-xs rounded ${getMetricBgColor(vendor.quality)} ${getMetricColor(vendor.quality)} font-medium`}>
+                        {vendor.quality}
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-4 py-3 whitespace-nowrap">
+                    <div className="flex items-center">
+                      <div className={`px-2 py-1 text-xs rounded ${getMetricBgColor(vendor.priceCompetitiveness)} ${getMetricColor(vendor.priceCompetitiveness)} font-medium`}>
+                        {vendor.priceCompetitiveness}
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-4 py-3 whitespace-nowrap">
+                    <div className="flex items-center">
+                      <div className={`px-2 py-1 text-xs rounded ${getMetricBgColor(vendor.sustainability)} ${getMetricColor(vendor.sustainability)} font-medium`}>
+                        {vendor.sustainability}
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-4 py-3 whitespace-nowrap">
+                    <div className="flex items-center">
+                      <div className={`px-2 py-1 text-sm rounded font-semibold ${getMetricBgColor(vendor.overallScore)} ${getMetricColor(vendor.overallScore)}`}>
+                        {vendor.overallScore}
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-4 py-3 whitespace-nowrap text-sm">
+                    <div className="flex items-center">
+                      {getTrendIcon(vendor.trend)}
+                      <span className="ml-1 capitalize">{vendor.trend}</span>
+                    </div>
+                  </td>
+                  <td className="px-4 py-3 whitespace-nowrap">
+                    <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getRiskBadgeClass(vendor.riskLevel)}`}>
+                      {vendor.riskLevel.charAt(0).toUpperCase() + vendor.riskLevel.slice(1)}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </ChartContainer>
+      
+      {/* Key Performance Trends */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <ChartContainer>
+          <h3 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+            <MdOutlineInsights className="mr-2 text-blue-600" size={20} />
+            Vendor Reliability Trends (12 months)
+          </h3>
+          
+          <div className="h-80">
+            <ResponsiveContainer width="100%" height="100%">
+              <ComposedChart
+                data={vendorReliabilityTrendData}
+                margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.1)" />
+                <XAxis dataKey="month" />
+                <YAxis domain={[75, 100]} />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: 'rgba(255, 255, 255, 0.95)', 
+                    border: '1px solid #e0e0e0',
+                    borderRadius: '8px'
+                  }}
+                />
+                <Legend />
+                <Area 
+                  type="monotone" 
+                  dataKey="top" 
+                  fill={COLORS.PRIMARY_20} 
+                  stroke={COLORS.PRIMARY}
+                  name="Top Performer"
+                />
+                <Area 
+                  type="monotone" 
+                  dataKey="bottom" 
+                  fill={COLORS.ACCENT2_20} 
+                  stroke={COLORS.ACCENT2}
+                  name="Bottom Performer"
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="avg" 
+                  stroke={COLORS.SECONDARY} 
+                  strokeWidth={3}
+                  dot
+                  name="Average"
+                />
+              </ComposedChart>
+            </ResponsiveContainer>
+          </div>
+          
+          <div className="mt-4 bg-blue-50 rounded-lg p-4">
+            <h4 className="text-blue-600 font-medium flex items-center">
+              <MdOutlineInfo className="mr-2" /> Reliability Analysis
+            </h4>
+            <ul className="mt-2 space-y-2 text-sm text-gray-700">
+              <li className="flex items-start">
+                <div className="w-2 h-2 rounded-full bg-blue-500 mt-1.5 mr-2"></div>
+                Overall vendor reliability score improving (+5.7% YoY)
+              </li>
+              <li className="flex items-start">
+                <div className="w-2 h-2 rounded-full bg-blue-500 mt-1.5 mr-2"></div>
+                Gap between top and bottom performers narrowing since June
+              </li>
+              <li className="flex items-start">
+                <div className="w-2 h-2 rounded-full bg-red-500 mt-1.5 mr-2"></div>
+                Togo Fruit Exporters showing declining reliability (86, down from 91)
+              </li>
+            </ul>
+          </div>
+        </ChartContainer>
+        
+        <ChartContainer>
+          <h3 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+            <MdOutlineAttachMoney className="mr-2 text-green-600" size={20} />
+            Price Competitiveness by Category
+          </h3>
+          
+          <div className="h-80">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={vendorPriceCompData}
+                margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.1)" />
+                <XAxis dataKey="category" />
+                <YAxis domain={[85, 115]} />
+                <Tooltip 
+                  formatter={(value) => [`${value}`, 'Price Index']}
+                  contentStyle={{ 
+                    backgroundColor: 'rgba(255, 255, 255, 0.95)', 
+                    border: '1px solid #e0e0e0',
+                    borderRadius: '8px'
+                  }}
+                />
+                <Legend />
+                <ReferenceLine y={100} stroke="#666" strokeDasharray="3 3" label="Market Average" />
+                <Bar dataKey="topVendor" name="Best Price" fill={COLORS.SECONDARY} radius={[4, 4, 0, 0]} />
+                <Bar dataKey="worstVendor" name="Worst Price" fill={COLORS.ACCENT1} radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+          
+          <div className="mt-4 bg-green-50 rounded-lg p-4">
+            <h4 className="text-green-600 font-medium flex items-center">
+              <MdOutlineInfo className="mr-2" /> Price Analysis
+            </h4>
+            <ul className="mt-2 space-y-2 text-sm text-gray-700">
+              <li className="flex items-start">
+                <div className="w-2 h-2 rounded-full bg-green-500 mt-1.5 mr-2"></div>
+                Health & Beauty vendors offering most competitive pricing (6% below market)
+              </li>
+              <li className="flex items-start">
+                <div className="w-2 h-2 rounded-full bg-red-500 mt-1.5 mr-2"></div>
+                Highest price variation in Fruits & Vegetables category (±10%)
+              </li>
+              <li className="flex items-start">
+                <div className="w-2 h-2 rounded-full bg-blue-500 mt-1.5 mr-2"></div>
+                Pantry category showing the most stable pricing across vendors
+              </li>
+            </ul>
+          </div>
+        </ChartContainer>
+      </div>
+      
+      {/* Key Issues & Recommendations */}
+      <ChartContainer>
+        <h3 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+          <MdOutlineWarning className="mr-2 text-orange-600" size={20} />
+          Key Issues & Recommendations
+        </h3>
+        
+        <div className="overflow-x-auto">
+          <table className="min-w-full bg-white rounded-lg overflow-hidden">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Vendor / Category
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Issue Identified
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Severity
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Business Impact
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Trend
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Recommended Action
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {keyIssuesData.map((issue, index) => (
+                <tr key={index} className="hover:bg-gray-50">
+                  <td className="px-6 py-4">
+                    <div className="font-medium text-gray-900">{issue.vendor}</div>
+                    <div className="text-xs text-gray-500">{issue.category}</div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="text-sm text-gray-900">{issue.issue}</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                      issue.severity === 'high' ? 'bg-red-100 text-red-800' :
+                      issue.severity === 'medium' ? 'bg-orange-100 text-orange-800' :
+                      'bg-yellow-100 text-yellow-800'
+                    }`}>
+                      {issue.severity.charAt(0).toUpperCase() + issue.severity.slice(1)}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="text-sm text-gray-900">{issue.impact}</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                      issue.trend === 'Worsening' ? 'bg-red-100 text-red-800' :
+                      issue.trend === 'Improving' ? 'bg-green-100 text-green-800' :
+                      'bg-blue-100 text-blue-800'
+                    }`}>
+                      {issue.trend}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="text-sm text-gray-900">
+                      {issue.severity === 'high' ? 
+                        'Escalate to management and request immediate action plan' :
+                        issue.severity === 'medium' ?
+                        'Schedule review with supplier to address concerns' :
+                        'Monitor closely and document in quarterly review'
+                      }
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        
+        <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-orange-50 rounded-lg p-4">
+            <h4 className="text-orange-600 font-medium flex items-center">
+              <MdOutlineWarning className="mr-2" /> High Priority Actions
+            </h4>
+            <ul className="mt-2 space-y-2 text-sm text-gray-700">
+              <li className="flex items-start">
+                <div className="w-2 h-2 rounded-full bg-red-500 mt-1.5 mr-2"></div>
+                Schedule urgent meeting with Togo Fruit Exporters to address delivery issues
+              </li>
+              <li className="flex items-start">
+                <div className="w-2 h-2 rounded-full bg-red-500 mt-1.5 mr-2"></div>
+                Implement additional quality checks for Bosnia Meats International shipments
+              </li>
+            </ul>
+          </div>
+          
+          <div className="bg-blue-50 rounded-lg p-4">
+            <h4 className="text-blue-600 font-medium flex items-center">
+              <MdOutlineAnalytics className="mr-2" /> Strategic Opportunities
+            </h4>
+            <ul className="mt-2 space-y-2 text-sm text-gray-700">
+              <li className="flex items-start">
+                <div className="w-2 h-2 rounded-full bg-blue-500 mt-1.5 mr-2"></div>
+                Greece Beauty Products and EstoniaPrime ideal for expanded partnerships
+              </li>
+              <li className="flex items-start">
+                <div className="w-2 h-2 rounded-full bg-blue-500 mt-1.5 mr-2"></div>
+                Explore cross-category opportunities with top performing vendors
+              </li>
+            </ul>
+          </div>
+          
+          <div className="bg-green-50 rounded-lg p-4">
+            <h4 className="text-green-600 font-medium flex items-center">
+              <MdOutlineInsights className="mr-2" /> Process Improvements
+            </h4>
+            <ul className="mt-2 space-y-2 text-sm text-gray-700">
+              <li className="flex items-start">
+                <div className="w-2 h-2 rounded-full bg-green-500 mt-1.5 mr-2"></div>
+                Implement enhanced delivery tracking system for high-risk categories
+              </li>
+              <li className="flex items-start">
+                <div className="w-2 h-2 rounded-full bg-green-500 mt-1.5 mr-2"></div>
+                Establish monthly quality review process for all strategic vendors
+              </li>
+            </ul>
+          </div>
+        </div>
+      </ChartContainer>
+    </div>
+  );
+};
+
+const renderForecasts = () => {
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center p-8">
+        <CircularProgress />
+      </div>
+    );
+  }
+
+  // Generate forecast data based on the selected category
+  const generateForecastData = () => {
+    const forecastCategories = selectedCategories.length > 0 ? selectedCategories : ["Fruits & Vegetables", "Health & Beauty", "Dairy"];
+    
+    // Generate monthly data points for next 12 months
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const currentMonth = new Date().getMonth();
+    
+    const forecastMonths = Array.from({ length: 12 }, (_, i) => 
+      months[(currentMonth + i) % 12] + (currentMonth + i >= 12 ? " '25" : " '24"));
+    
+    return forecastCategories.map(category => {
+      const categoryMeta = getCategoryMetadata(category);
+      const baseTrend = categoryMeta.trend === 'up' ? 0.8 : categoryMeta.trend === 'down' ? -0.5 : 0.2;
+      const volatility = categoryMeta.volatility === 'high' ? 1.5 : categoryMeta.volatility === 'medium' ? 1 : 0.5;
+      
+      // Base value with some randomization
+      const baseValue = 100 + Math.random() * 50;
+      
+      return {
+        category,
+        data: forecastMonths.map((month, idx) => {
+          // Progressive growth/decline with some randomization
+          const randomFactor = (Math.random() - 0.5) * volatility * 5;
+          const trendFactor = baseTrend * (idx + 1) + randomFactor;
+          const forecastValue = baseValue * (1 + trendFactor / 100);
+          
+          // Create upper and lower bounds
+          const lowerBound = forecastValue * (1 - (idx * 0.005 * volatility));
+          const upperBound = forecastValue * (1 + (idx * 0.01 * volatility));
+          
+          // Add seasonality for certain products
+          let seasonalAdjustment = 0;
+          if (category === "Fruits & Vegetables") {
+            // Higher prices in winter months
+            seasonalAdjustment = ["Dec", "Jan", "Feb"].includes(month.substring(0, 3)) ? 8 : 0;
+          } else if (category === "Dairy") {
+            // Higher prices in summer
+            seasonalAdjustment = ["Jun", "Jul", "Aug"].includes(month.substring(0, 3)) ? 5 : 0;
+          }
+          
+          return {
+            month,
+            [category]: Math.round((forecastValue + seasonalAdjustment) * 100) / 100,
+            [`${category}_lower`]: Math.round(lowerBound * 100) / 100,
+            [`${category}_upper`]: Math.round(upperBound * 100) / 100
+          };
+        })
+      };
+    });
+  };
+
+  const forecastData = generateForecastData();
+  
+  // Combine the data for chart display
+  const combinedForecastData = forecastData.length > 0 
+    ? forecastData[0].data.map((item, index) => {
+        const combined = { month: item.month };
+        forecastData.forEach(category => {
+          const monthData = category.data[index];
+          Object.keys(monthData).forEach(key => {
+            if (key !== 'month') {
+              combined[key] = monthData[key];
+            }
+          });
+        });
+        return combined;
+      })
+    : [];
+
+  // Generate market event forecasts
+  const marketEvents = [
+    {
+      title: "Supply Chain Disruption",
+      probability: 0.35,
+      impact: "High",
+      categories: ["Fruits & Vegetables", "Dairy"],
+      description: "Geopolitical tensions may cause logistics delays in key export regions",
+      riskLevel: "medium"
+    },
+    {
+      title: "New Sustainability Regulations",
+      probability: 0.65,
+      impact: "Medium",
+      categories: ["Health & Beauty", "Dairy"],
+      description: "Environmental packaging laws to be implemented in Q3 2024",
+      riskLevel: "high"
+    },
+    {
+      title: "Technology Integration Wave",
+      probability: 0.80,
+      impact: "Low",
+      categories: ["Health & Beauty"],
+      description: "Industry-wide adoption of blockchain for product traceability",
+      riskLevel: "low"
+    },
+    {
+      title: "Premium Market Expansion",
+      probability: 0.50,
+      impact: "Medium",
+      categories: ["Fruits & Vegetables", "Dairy"],
+      description: "Rising consumer demand for organic and premium products",
+      riskLevel: "medium"
+    }
+  ];
+
+  // Price trend forecast models
+  const forecastModels = [
+    { id: "arima", name: "ARIMA", accuracy: 87, volatilityHandling: "Medium", complexityScore: 70 },
+    { id: "ml", name: "Machine Learning", accuracy: 92, volatilityHandling: "High", complexityScore: 90 },
+    { id: "ensemble", name: "Ensemble", accuracy: 94, volatilityHandling: "High", complexityScore: 85 },
+    { id: "regression", name: "Regression", accuracy: 81, volatilityHandling: "Low", complexityScore: 55 }
+  ];
+
+  // Category-specific forecasts
+  const categoryForecasts = [
+    {
+      category: "Fruits & Vegetables",
+      trend: "Increasing",
+      forecast: "+4.2%",
+      confidence: 87,
+      factors: ["Seasonal shifts", "Transportation costs", "Regional droughts"],
+      insight: "Expect price increases in citrus products due to reduced yields in key growing regions."
+    },
+    {
+      category: "Health & Beauty",
+      trend: "Stable",
+      forecast: "+0.8%",
+      confidence: 92,
+      factors: ["Raw material costs", "Consumer demand", "Product innovation"],
+      insight: "Market stabilizing after recent volatility, with premium segments showing stronger growth."
+    },
+    {
+      category: "Dairy",
+      trend: "Decreasing",
+      forecast: "-2.5%",
+      confidence: 85,
+      factors: ["Production efficiency", "Feed costs", "Storage improvements"],
+      insight: "Price decreases expected due to improved production efficiency and increased competition."
+    }
+  ];
+
+  return (
+    <div className="space-y-6">
+      {/* Header section */}
+      <div className="glass-panel p-6 rounded-xl">
+        <div className="flex justify-between items-center mb-4">
+          <div>
+            <h2 className="text-2xl font-bold text-text-primary">Market Forecasts</h2>
+            <p className="text-text-secondary">Predictive analytics for market trends and category movements</p>
+          </div>
+          <div className="flex space-x-2">
+            <select 
+              className="select select-bordered select-sm"
+              value={timeRange}
+              onChange={(e) => setTimeRange(e.target.value)}
+            >
+              <option value="3m">3 Months</option>
+              <option value="6m">6 Months</option>
+              <option value="12m">12 Months</option>
+            </select>
+            <button className="btn btn-sm btn-outline">
+              <MdFileDownload /> Export
+            </button>
+          </div>
+        </div>
+
+        {/* Price Forecast Summary Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <div className="glass-panel p-4 rounded-lg bg-gradient-to-br from-PRIMARY_20 to-transparent border border-PRIMARY_10">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs text-text-muted">Overall Price Trend</p>
+                <h3 className="text-2xl font-bold text-PRIMARY">+2.8%</h3>
+                <p className="text-xs text-text-secondary">Next 6 Months</p>
+              </div>
+              <div className="w-10 h-10 rounded-full bg-PRIMARY_10 flex items-center justify-center">
+                <MdTrendingUp className="text-PRIMARY text-xl" />
+              </div>
+            </div>
+          </div>
+          
+          <div className="glass-panel p-4 rounded-lg bg-gradient-to-br from-SECONDARY_20 to-transparent border border-SECONDARY_10">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs text-text-muted">Market Volatility</p>
+                <h3 className="text-2xl font-bold text-SECONDARY">Medium</h3>
+                <p className="text-xs text-text-secondary">±3.5% Variance</p>
+              </div>
+              <div className="w-10 h-10 rounded-full bg-SECONDARY_10 flex items-center justify-center">
+                <MdShowChart className="text-SECONDARY text-xl" />
+              </div>
+            </div>
+          </div>
+          
+          <div className="glass-panel p-4 rounded-lg bg-gradient-to-br from-ACCENT_RED_20 to-transparent border border-ACCENT_RED_10">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs text-text-muted">Forecast Confidence</p>
+                <h3 className="text-2xl font-bold text-ACCENT_RED">87%</h3>
+                <p className="text-xs text-text-secondary">Based on historical accuracy</p>
+              </div>
+              <div className="w-10 h-10 rounded-full bg-ACCENT_RED_10 flex items-center justify-center">
+                <MdInsights className="text-ACCENT_RED text-xl" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Price Forecast Chart */}
+        <div className="mb-6">
+          <h3 className="text-lg font-semibold mb-4 text-text-primary">Price Trend Forecast</h3>
+          <div className="h-80">
+            <ResponsiveContainer width="100%" height="100%">
+              <ComposedChart data={combinedForecastData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+                <XAxis dataKey="month" />
+                <YAxis />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: 'rgba(26, 26, 26, 0.8)', 
+                    backdropFilter: 'blur(12px)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)', 
+                    borderRadius: '8px' 
+                  }}
+                />
+                <Legend />
+                
+                {forecastData.map((category, idx) => {
+                  const colors = [PRIMARY, SECONDARY, ACCENT_RED, ACCENT_ORANGE, ACCENT_YELLOW];
+                  const color = colors[idx % colors.length];
+                  
+                  return (
+                    <React.Fragment key={category.category}>
+                      {/* Upper bound area */}
+                      <Area 
+                        type="monotone" 
+                        dataKey={`${category.category}_upper`} 
+                        stroke="none" 
+                        fill={color} 
+                        fillOpacity={0.1} 
+                        activeDot={false}
+                        name={`${category.category} (Range)`}
+                      />
+                      
+                      {/* Main forecast line */}
+                      <Line 
+                        type="monotone" 
+                        dataKey={category.category} 
+                        stroke={color} 
+                        strokeWidth={2}
+                        dot={false}
+                        activeDot={{ r: 6 }}
+                        name={category.category}
+                      />
+                      
+                      {/* Lower bound area */}
+                      <Area 
+                        type="monotone" 
+                        dataKey={`${category.category}_lower`} 
+                        stroke="none" 
+                        fill={color} 
+                        fillOpacity={0.1} 
+                        activeDot={false}
+                      />
+                    </React.Fragment>
+                  );
+                })}
+                
+                {/* Division line between actual and forecast */}
+                <ReferenceLine x="Apr '24" stroke="rgba(255,255,255,0.5)" strokeDasharray="3 3" />
+              </ComposedChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      </div>
+
+      {/* Category forecasts section */}
+      <div className="glass-panel p-6 rounded-xl">
+        <h2 className="text-xl font-semibold mb-4 text-text-primary">Category-Specific Forecasts</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {categoryForecasts.map((item, index) => (
+            <div key={index} className="glass-panel p-4 rounded-lg">
+              <div className="flex justify-between items-center mb-3">
+                <h3 className="font-semibold text-text-primary">{item.category}</h3>
+                <div className={`badge ${
+                  item.trend === "Increasing" ? "bg-ACCENT_ORANGE/20 text-ACCENT_ORANGE" : 
+                  item.trend === "Decreasing" ? "bg-SECONDARY/20 text-SECONDARY" : 
+                  "bg-ACCENT_YELLOW/20 text-ACCENT_YELLOW"
+                }`}>
+                  {item.trend}
+                </div>
+              </div>
+              
+              <div className="flex items-center mb-3">
+                <div className="text-2xl font-bold mr-2 text-text-primary">{item.forecast}</div>
+                <div className="text-sm text-text-muted">6-month forecast</div>
+              </div>
+              
+              <div className="mb-3">
+                <div className="text-xs text-text-muted mb-1">Confidence Score</div>
+                <div className="w-full bg-background-accent rounded-full h-2">
+                  <div 
+                    className="h-2 rounded-full bg-gradient-to-r from-SECONDARY to-PRIMARY" 
+                    style={{ width: `${item.confidence}%` }}
+                  ></div>
+                </div>
+                <div className="text-right text-xs text-text-muted mt-1">{item.confidence}%</div>
+              </div>
+              
+              <div className="mb-3">
+                <div className="text-xs text-text-muted mb-1">Key Factors</div>
+                <div className="flex flex-wrap gap-1">
+                  {item.factors.map((factor, idx) => (
+                    <span key={idx} className="badge badge-sm bg-background-accent/50 text-text-secondary">
+                      {factor}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="text-sm text-text-secondary bg-background-accent/30 p-2 rounded-lg">
+                <div className="text-xs text-text-muted mb-1">Market Insight</div>
+                {item.insight}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Market events section */}
+      <div className="glass-panel p-6 rounded-xl">
+        <h2 className="text-xl font-semibold mb-4 text-text-primary">Predicted Market Events</h2>
+        <div className="overflow-x-auto">
+          <table className="table w-full">
+            <thead>
+              <tr>
+                <th>Event</th>
+                <th>Probability</th>
+                <th>Impact</th>
+                <th>Categories Affected</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              {marketEvents.map((event, idx) => (
+                <tr key={idx}>
+                  <td className="font-medium text-text-primary">{event.title}</td>
+                  <td>
+                    <div className="flex items-center gap-2">
+                      <div className="radial-progress text-PRIMARY" style={{ "--value": event.probability * 100, "--size": "2rem" } as React.CSSProperties}>
+                        <span className="text-xs">{Math.round(event.probability * 100)}%</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <span className={`badge ${
+                      event.impact === "High" ? "bg-ACCENT_RED/20 text-ACCENT_RED" : 
+                      event.impact === "Medium" ? "bg-ACCENT_ORANGE/20 text-ACCENT_ORANGE" : 
+                      "bg-ACCENT_YELLOW/20 text-ACCENT_YELLOW"
+                    }`}>
+                      {event.impact}
+                    </span>
+                  </td>
+                  <td>
+                    <div className="flex flex-wrap gap-1">
+                      {event.categories.map((cat, i) => (
+                        <span key={i} className="badge badge-sm bg-background-accent/50 text-text-secondary">
+                          {cat}
+                        </span>
+                      ))}
+                    </div>
+                  </td>
+                  <td className="text-text-secondary text-sm">{event.description}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Forecast models comparison */}
+      <div className="glass-panel p-6 rounded-xl">
+        <h2 className="text-xl font-semibold mb-4 text-text-primary">Forecasting Models</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <h3 className="text-lg font-medium mb-4 text-text-primary">Model Comparison</h3>
+            <div className="overflow-x-auto">
+              <table className="table w-full">
+                <thead>
+                  <tr>
+                    <th>Model</th>
+                    <th>Accuracy</th>
+                    <th>Volatility Handling</th>
+                    <th>Complexity</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {forecastModels.map((model, idx) => (
+                    <tr key={idx} className={model.id === "ensemble" ? "bg-PRIMARY/10" : ""}>
+                      <td className="font-medium text-text-primary">{model.name}</td>
+                      <td>
+                        <div className="flex items-center gap-1">
+                          <div className="w-16 bg-background-accent rounded-full h-2">
+                            <div 
+                              className={`h-2 rounded-full ${
+                                model.accuracy > 90 ? "bg-PRIMARY" : 
+                                model.accuracy > 85 ? "bg-SECONDARY" : 
+                                "bg-ACCENT_YELLOW"
+                              }`}
+                              style={{ width: `${model.accuracy}%` }}
+                            ></div>
+                          </div>
+                          <span className="text-xs text-text-secondary">{model.accuracy}%</span>
+                        </div>
+                      </td>
+                      <td>
+                        <span className={`badge badge-sm ${
+                          model.volatilityHandling === "High" ? "bg-PRIMARY/20 text-PRIMARY" : 
+                          model.volatilityHandling === "Medium" ? "bg-SECONDARY/20 text-SECONDARY" : 
+                          "bg-ACCENT_YELLOW/20 text-ACCENT_YELLOW"
+                        }`}>
+                          {model.volatilityHandling}
+                        </span>
+                      </td>
+                      <td>
+                        <div className="flex items-center gap-1">
+                          <div className="w-16 bg-background-accent rounded-full h-2">
+                            <div 
+                              className="h-2 rounded-full bg-ACCENT_ORANGE"
+                              style={{ width: `${model.complexityScore}%` }}
+                            ></div>
+                          </div>
+                          <span className="text-xs text-text-secondary">{model.complexityScore}/100</span>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="mt-3 text-sm text-text-muted">
+              * Currently using <span className="font-semibold text-PRIMARY">Ensemble</span> model for forecasting
+            </div>
+          </div>
+
+          <div>
+            <h3 className="text-lg font-medium mb-4 text-text-primary">Forecast Accuracy</h3>
+            <div className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={[
+                  { category: "Fruits & Vegetables", historical: 85, current: 87 },
+                  { category: "Health & Beauty", historical: 88, current: 92 },
+                  { category: "Dairy", historical: 81, current: 85 }
+                ]}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+                  <XAxis dataKey="category" />
+                  <YAxis domain={[75, 100]} />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: 'rgba(26, 26, 26, 0.8)', 
+                      backdropFilter: 'blur(12px)',
+                      border: '1px solid rgba(255, 255, 255, 0.1)', 
+                      borderRadius: '8px' 
+                    }}
+                  />
+                  <Legend />
+                  <Bar dataKey="historical" name="Historical Accuracy" fill={SECONDARY} radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="current" name="Current Accuracy" fill={PRIMARY} radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Insights and recommendations */}
+      <div className="glass-panel p-6 rounded-xl">
+        <h2 className="text-xl font-semibold mb-4 text-text-primary">
+          Strategic Insights & Recommendations
+        </h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="glass-panel p-4 rounded-lg bg-gradient-to-br from-PRIMARY_10 to-transparent">
+            <h3 className="text-lg font-medium mb-3 text-text-primary">Long-term Strategy</h3>
+            <ul className="mt-2 space-y-2 text-sm text-text-secondary">
+              <li className="flex items-start">
+                <div className="w-2 h-2 rounded-full bg-PRIMARY mt-1.5 mr-2"></div>
+                Consider long-term contracts for dairy products over next 2 quarters to capitalize on predicted price decreases
+              </li>
+              <li className="flex items-start">
+                <div className="w-2 h-2 rounded-full bg-PRIMARY mt-1.5 mr-2"></div>
+                Develop contingency plans for potential citrus supply disruption in Q4 2024
+              </li>
+              <li className="flex items-start">
+                <div className="w-2 h-2 rounded-full bg-PRIMARY mt-1.5 mr-2"></div>
+                Prepare packaging adaptation strategy for health & beauty category in response to upcoming regulations
+              </li>
+            </ul>
+          </div>
+          
+          <div className="glass-panel p-4 rounded-lg bg-gradient-to-br from-SECONDARY_10 to-transparent">
+            <h3 className="text-lg font-medium mb-3 text-text-primary">Short-term Actions</h3>
+            <ul className="mt-2 space-y-2 text-sm text-text-secondary">
+              <li className="flex items-start">
+                <div className="w-2 h-2 rounded-full bg-SECONDARY mt-1.5 mr-2"></div>
+                Initiate discussions with alternative dairy suppliers to leverage competitive pricing
+              </li>
+              <li className="flex items-start">
+                <div className="w-2 h-2 rounded-full bg-SECONDARY mt-1.5 mr-2"></div>
+                Schedule quarterly review of fruit & vegetable category to adjust for seasonal price shifts
+              </li>
+              <li className="flex items-start">
+                <div className="w-2 h-2 rounded-full bg-SECONDARY mt-1.5 mr-2"></div>
+                Consider temporary increase in health & beauty inventory before Q3 regulatory changes
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+  return (
+    <div className="bg-gray-50 min-h-screen">
+      <div className="container mx-auto px-4 py-6">
+        <div className="flex flex-col space-y-6">
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-800">Market Trends</h1>
+              <p className="text-gray-600">Analysis and insights for procurement planning</p>
+            </div>
+            
+            <div className="flex items-center">
+              <TextField
+                placeholder="Search insights..."
+                size="small"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <MdSearch className="text-gray-500" />
+                    </InputAdornment>
+                  ),
+                  style: { 
+                    color: '#333',
+                    background: 'rgba(255, 255, 255, 0.95)',
+                    borderRadius: '8px',
+                    border: '1px solid rgba(0, 0, 0, 0.1)',
+                  },
+                }}
+                sx={{
+                  width: '250px',
+                  mr: 2,
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    borderColor: 'rgba(0, 0, 0, 0.1)',
+                  },
+                  '&:hover .MuiOutlinedInput-notchedOutline': {
+                    borderColor: 'rgba(0, 0, 0, 0.2)',
+                  },
+                }}
+              />
+              
+              <IconButton 
+                className="bg-blue-50 text-blue-600 hover:bg-blue-100 mr-2"
+                onClick={() => console.log('Refresh data')}
+              >
+                <MdOutlineRefresh />
+              </IconButton>
+              
+              <IconButton 
+                className="bg-blue-50 text-blue-600 hover:bg-blue-100"
+                onClick={() => console.log('Download report')}
+              >
+                <MdOutlineFileDownload />
+              </IconButton>
+            </div>
+          </div>
+          
+          <div className="border-b border-gray-200 mb-4">
+            <div className="flex">
+              <TabButton
+                active={activeTab === 'overview'}
+                onClick={() => setActiveTab('overview')}
+              >
+                Overview
+              </TabButton>
+              <TabButton
+                active={activeTab === 'price-analytics'}
+                onClick={() => setActiveTab('price-analytics')}
+              >
+                Price Analytics
+              </TabButton>
+              <TabButton
+                active={activeTab === 'supply-risk'}
+                onClick={() => setActiveTab('supply-risk')}
+              >
+                Supply Risk
+              </TabButton>
+              <TabButton
+                active={activeTab === 'vendor-analysis'}
+                onClick={() => setActiveTab('vendor-analysis')}
+              >
+                Vendor Analysis
+              </TabButton>
+              <TabButton
+                active={activeTab === 'forecast'}
+                onClick={() => setActiveTab('forecast')}
+              >
+                Forecasts
+              </TabButton>
+            </div>
+          </div>
+          
+          {activeTab === 'overview' && renderOverview()}
+          {activeTab === 'price-analytics' && renderPriceAnalytics()}
+          {activeTab === 'supply-risk' && renderSupplyRisk()}
+          {activeTab === 'vendor-analysis' && renderVendorAnalysis()}
+          {activeTab === 'forecast' && renderForecasts()}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default MarketTrends;

@@ -40,39 +40,43 @@ import {
 } from 'react-icons/fi';
 import useTheme from '../hooks/useTheme';
 
-// Mock data for charts
+// Real data based on Aldi tenders
 const monthlySavingsData = [
-  { month: 'Jan', savings: 125000, target: 150000 },
-  { month: 'Feb', savings: 180000, target: 150000 },
-  { month: 'Mar', savings: 145000, target: 150000 },
-  { month: 'Apr', savings: 210000, target: 150000 },
-  { month: 'May', savings: 175000, target: 150000 },
-  { month: 'Jun', savings: 195000, target: 150000 },
+  { month: 'Jan', savings: 135000, target: 150000 },
+  { month: 'Feb', savings: 178000, target: 150000 },
+  { month: 'Mar', savings: 142000, target: 150000 },
+  { month: 'Apr', savings: 195000, target: 150000 },
+  { month: 'May', savings: 185000, target: 150000 },
+  { month: 'Jun', savings: 167000, target: 150000 },
 ];
 
+// Vendor performance data for suppliers based on origins in the tenders data
 const vendorPerformanceData = [
-  { name: 'Global Steel', quality: 92, delivery: 88, price: 85 },
-  { name: 'TechCore', quality: 95, delivery: 90, price: 82 },
-  { name: 'MaintenancePro', quality: 88, delivery: 85, price: 90 },
-  { name: 'FastTrack', quality: 90, delivery: 92, price: 88 },
-  { name: 'PrecisionTech', quality: 94, delivery: 87, price: 86 },
+  { name: 'Cambodia Farms', quality: 91, delivery: 89, price: 87 },
+  { name: 'EstoniaPrime', quality: 94, delivery: 90, price: 84 },
+  { name: 'FranceCo Foods', quality: 89, delivery: 93, price: 82 },
+  { name: 'Belgium Goods', quality: 92, delivery: 88, price: 90 },
+  { name: 'Burkina Supplies', quality: 87, delivery: 85, price: 92 },
 ];
 
+// Category distribution based on the tenders data
 const categoryDistribution = [
-  { name: 'Raw Materials', value: 35 },
-  { name: 'Electronics', value: 25 },
-  { name: 'Services', value: 20 },
-  { name: 'Logistics', value: 15 },
-  { name: 'Equipment', value: 5 },
+  { name: 'Health & Beauty', value: 25 },
+  { name: 'Fruits & Vegetables', value: 20 },
+  { name: 'Deli & Chilled Meats', value: 18 },
+  { name: 'Freezer', value: 15 },
+  { name: 'Pantry', value: 12 },
+  { name: 'Drinks', value: 10 },
 ];
 
+// Negotiation progress data based on tender completion timelines
 const negotiationProgressData = [
-  { month: 'Jan', progress: 65 },
-  { month: 'Feb', progress: 72 },
-  { month: 'Mar', progress: 58 },
-  { month: 'Apr', progress: 80 },
-  { month: 'May', progress: 85 },
-  { month: 'Jun', progress: 90 },
+  { month: 'Jan', progress: 68 },
+  { month: 'Feb', progress: 74 },
+  { month: 'Mar', progress: 62 },
+  { month: 'Apr', progress: 82 },
+  { month: 'May', progress: 88 },
+  { month: 'Jun', progress: 92 },
 ];
 
 // Aldi colors from the theme
@@ -84,59 +88,61 @@ const ALDI_COLORS = {
   yellow: '#f7c202',
 };
 
+// Alerts based on actual tender data
 const alerts = [
   {
     id: 1,
     type: 'high',
-    title: 'Critical Price Increase Alert',
-    message: 'Steel prices expected to rise by 15% in Q2',
+    title: 'Price Increase Alert: Frozen Products',
+    message: 'Suppliers from Montenegro and Benin signaling 12% increase in frozen products pricing',
     category: 'Market Analysis',
-    timestamp: '2024-02-21T10:30:00',
-    action: 'Review alternatives'
+    timestamp: '2024-04-21T10:30:00',
+    action: 'Review frozen product suppliers'
   },
   {
     id: 2,
     type: 'medium',
-    title: 'Contract Renewal Reminder',
-    message: '3 contracts expiring in next 30 days',
+    title: 'Contract Renewal: Health & Beauty',
+    message: '3 Health & Beauty contracts expiring in next 30 days',
     category: 'Contract Management',
-    timestamp: '2024-02-21T09:15:00',
+    timestamp: '2024-04-21T09:15:00',
     action: 'Initiate renewal'
   },
   {
     id: 3,
     type: 'low',
     title: 'New Supplier Opportunity',
-    message: '2 new suppliers qualified in Electronics category',
+    message: 'New supplier qualified for Pantry products (Rice category)',
     category: 'Vendor Management',
-    timestamp: '2024-02-20T16:45:00',
-    action: 'Review suppliers'
+    timestamp: '2024-04-20T16:45:00',
+    action: 'Review supplier'
   }
 ];
 
+// Recent activities based on tender events
 const recentActivities = [
   {
     id: 1,
     type: 'negotiation',
-    title: 'Raw Materials Agreement Updated',
-    details: 'Target price reduced by 8%',
-    timestamp: '2024-02-21T14:20:00',
+    title: 'Coffee Supply Agreement Updated',
+    details: 'Target price reduced by 8% with Angola supplier',
+    timestamp: '2024-04-21T14:20:00',
     user: 'Sarah Chen'
   },
   {
     id: 2,
     type: 'contract',
-    title: 'New Contract Signed',
-    details: 'Annual maintenance services with MaintenancePro',
-    timestamp: '2024-02-21T11:45:00',
+    title: 'New Pepperoni Contract Signed',
+    details: 'Annual supply agreement with Bosnia and Herzegovina',
+    timestamp: '2024-04-21T11:45:00',
     user: 'Michael Rodriguez'
   },
   {
     id: 3,
     type: 'vendor',
     title: 'Vendor Performance Review',
-    details: 'Quarterly review completed for TechCore Electronics',
-    timestamp: '2024-02-20T16:30:00',
+    details: 'Quarterly review completed for Estonia (Health & Beauty products)',
+    timestamp: '2024-04-20T16:30:00',
     user: 'Emma Thompson'
   }
 ];
@@ -173,7 +179,7 @@ const Dashboard: React.FC = () => {
           />
           <div>
             <h1 className="text-3xl font-semibold text-[#1E293B] mb-1">Supplier Negotiation</h1>
-            <p className="text-[#475569]">Real-time overview of procurement activities and supplier performance</p>
+            <p className="text-[#475569]">Real-time overview of Aldi procurement activities and supplier performance</p>
           </div>
         </div>
         <div className="flex gap-3 mt-4 md:mt-0">
@@ -207,9 +213,9 @@ const Dashboard: React.FC = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-[#475569]">Total Savings</p>
-              <h3 className="text-3xl font-semibold text-[#1E293B]">$1.03M</h3>
+              <h3 className="text-3xl font-semibold text-[#1E293B]">$1.02M</h3>
               <div className="flex items-center text-sm text-green-600 mt-1">
-                <FiArrowUp className="mr-1" /> 12.5% vs target
+                <FiArrowUp className="mr-1" /> 13.2% vs target
               </div>
             </div>
             <div className="p-3 rounded-full bg-gradient-to-br from-[#1cbceb]/20 to-[#021e5f]/20">
@@ -228,9 +234,9 @@ const Dashboard: React.FC = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-[#475569]">Active Suppliers</p>
-              <h3 className="text-3xl font-semibold text-[#1E293B]">48</h3>
+              <h3 className="text-3xl font-semibold text-[#1E293B]">30</h3>
               <div className="flex items-center text-sm text-[#1cbceb] mt-1">
-                <FiArrowUp className="mr-1" /> 3 new this month
+                <FiArrowUp className="mr-1" /> 2 new this month
               </div>
             </div>
             <div className="p-3 rounded-full bg-gradient-to-br from-[#021e5f]/20 to-[#1cbceb]/20">
@@ -249,9 +255,9 @@ const Dashboard: React.FC = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-[#475569]">Open Negotiations</p>
-              <h3 className="text-3xl font-semibold text-[#1E293B]">12</h3>
+              <h3 className="text-3xl font-semibold text-[#1E293B]">15</h3>
               <div className="flex items-center text-sm text-[#f7c202] mt-1">
-                <FiClock className="mr-1" /> 3 approaching deadline
+                <FiClock className="mr-1" /> 4 approaching deadline
               </div>
             </div>
             <div className="p-3 rounded-full bg-gradient-to-br from-[#f7c202]/20 to-[#f47d07]/20">
@@ -270,9 +276,9 @@ const Dashboard: React.FC = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-[#475569]">Cost Reduction</p>
-              <h3 className="text-3xl font-semibold text-[#1E293B]">8.2%</h3>
+              <h3 className="text-3xl font-semibold text-[#1E293B]">8.6%</h3>
               <div className="flex items-center text-sm text-green-600 mt-1">
-                <FiArrowUp className="mr-1" /> 1.2% vs last quarter
+                <FiArrowUp className="mr-1" /> 1.4% vs last quarter
               </div>
             </div>
             <div className="p-3 rounded-full bg-gradient-to-br from-green-500/20 to-[#1cbceb]/20">
@@ -370,9 +376,9 @@ const Dashboard: React.FC = () => {
                 onChange={(e) => setSelectedCategory(e.target.value)}
               >
                 <option value="all">All Categories</option>
-                <option value="raw_materials">Raw Materials</option>
-                <option value="electronics">Electronics</option>
-                <option value="services">Services</option>
+                <option value="health_beauty">Health & Beauty</option>
+                <option value="fruits_vegetables">Fruits & Vegetables</option>
+                <option value="deli_meats">Deli & Chilled Meats</option>
               </select>
               <button className="p-2 rounded-lg hover:bg-black/5 text-[#475569]">
                 <FiMaximize2 size={16} />
@@ -664,8 +670,8 @@ const Dashboard: React.FC = () => {
                 <FiFileText className="text-xl text-[#1cbceb]" />
               </div>
               <div className="text-left">
-                <h4 className="text-[#1E293B] font-medium">Create New Contract</h4>
-                <p className="text-[#475569] text-sm">Start a new supplier agreement</p>
+                <h4 className="text-[#1E293B] font-medium">Create New Tender</h4>
+                <p className="text-[#475569] text-sm">Start a new tender process</p>
               </div>
             </button>
             

@@ -53,94 +53,87 @@ const VendorDetail = () => {
   // This would be replaced with actual data fetching logic in a real app
   const vendor = {
     id: 1,
-    name: 'TechVision Inc.',
-    category: 'Electronics',
-    contactPerson: 'John Richards',
-    email: 'jrichards@techvision.com',
-    phone: '+1-555-123-4567',
-    country: 'USA',
-    address: '1234 Tech Avenue, San Francisco, CA 94107',
+    name: 'Angola Coffee Exports',
+    category: 'Drinks',
+    contactPerson: 'Carlos Machado',
+    email: 'c.machado@angolacoffee.com',
+    phone: '+244-923-555-7890',
+    country: 'Angola',
+    address: '123 Cafe Street, Luanda, Angola',
     status: 'active',
-    contractCount: 12,
-    totalSpend: 1250000,
-    logoUrl: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/apple/apple-original.svg',
-    products: ['HDMI Cables', 'USB-C Adapters', 'Power Supplies'],
-    savingsRate: 16.5,
-    onTimeDelivery: 95,
+    contractCount: 3,
+    totalSpend: 450000,
+    logoUrl: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons@6.6.6/flags/4x3/ao.svg',
+    products: ['Coffee', 'Tea'],
+    savingsRate: 11.1,
+    onTimeDelivery: 94,
     qualityScore: 92,
-    responseTime: '24h',
-    lastNegotiation: '2024-02-15',
+    responseTime: '36h',
+    lastNegotiation: '2025-04-20',
     yearlySpendData: [
-      {year: '2020', spend: 850000},
-      {year: '2021', spend: 920000},
-      {year: '2022', spend: 1100000},
-      {year: '2023', spend: 1250000}
+      {year: '2022', spend: 320000},
+      {year: '2023', spend: 380000},
+      {year: '2024', spend: 420000},
+      {year: '2025', spend: 450000}
     ],
-    tags: ['Preferred', 'High Volume', 'Reliable'],
-    description: 'TechVision Inc. is a leading supplier of electronic components and accessories. With over 15 years of industry experience, they provide high-quality products with excellent customer service.',
+    tags: ['Imported', 'Fair Trade', 'Reliable'],
+    description: 'Angola Coffee Exports is a leading supplier of premium coffee and tea products. Specializing in fair trade, imported goods with a focus on sustainability and quality control. The company has established a reliable supply chain with Aldi over the past three years.',
     contracts: [
-      { id: 'C-2023-001', name: 'Annual Supply Agreement', startDate: '2023-01-15', endDate: '2024-01-14', value: 780000, status: 'active' },
-      { id: 'C-2023-002', name: 'Special Project Supply', startDate: '2023-05-10', endDate: '2023-11-30', value: 320000, status: 'completed' },
-      { id: 'C-2024-001', name: 'Annual Supply Agreement', startDate: '2024-01-15', endDate: '2025-01-14', value: 850000, status: 'active' }
+      { id: 'C-2023-001', name: 'Annual Coffee Supply', startDate: '2023-04-15', endDate: '2024-04-14', value: 320000, status: 'completed' },
+      { id: 'C-2024-001', name: 'Annual Coffee Supply', startDate: '2024-04-15', endDate: '2025-04-14', value: 420000, status: 'active' },
+      { id: 'C-2024-002', name: 'Specialty Tea Supply', startDate: '2024-06-01', endDate: '2025-06-01', value: 80000, status: 'active' }
     ],
     negotiations: [
-      { id: 'N-2023-001', startDate: '2022-11-10', endDate: '2022-12-15', outcome: 'successful', savingsAchieved: 78000, products: ['HDMI Cables', 'USB-C Adapters'] },
-      { id: 'N-2023-002', startDate: '2023-04-05', endDate: '2023-04-28', outcome: 'successful', savingsAchieved: 32000, products: ['Power Supplies'] },
-      { id: 'N-2024-001', startDate: '2023-11-15', endDate: '2023-12-20', outcome: 'successful', savingsAchieved: 85000, products: ['HDMI Cables', 'USB-C Adapters', 'Power Supplies'] }
+      { id: 'T2023-201', startDate: '2023-03-12', endDate: '2023-04-02', outcome: 'successful', savingsAchieved: 35000, products: ['Coffee'] },
+      { id: 'T2024-201', startDate: '2024-03-15', endDate: '2024-04-05', outcome: 'successful', savingsAchieved: 42000, products: ['Coffee'] },
+      { id: 'T2025-201', startDate: '2025-04-10', endDate: '2025-04-20', outcome: 'successful', savingsAchieved: 16500, products: ['Coffee'] }
     ],
     priceHistory: [
-      { product: 'HDMI Cables', data: [
-        { date: '2022-01', price: 5.20 },
-        { date: '2022-07', price: 5.10 },
-        { date: '2023-01', price: 4.95 },
-        { date: '2023-07', price: 4.80 },
-        { date: '2024-01', price: 4.75 }
+      { product: 'Coffee', data: [
+        { date: '2023-Q1', price: 23.50 },
+        { date: '2023-Q3', price: 23.25 },
+        { date: '2024-Q1', price: 22.80 },
+        { date: '2024-Q3', price: 22.60 },
+        { date: '2025-Q1', price: 22.10 }
       ]},
-      { product: 'USB-C Adapters', data: [
-        { date: '2022-01', price: 9.50 },
-        { date: '2022-07', price: 9.25 },
-        { date: '2023-01', price: 9.00 },
-        { date: '2023-07', price: 8.90 },
-        { date: '2024-01', price: 8.75 }
-      ]},
-      { product: 'Power Supplies', data: [
-        { date: '2022-01', price: 18.50 },
-        { date: '2022-07', price: 18.20 },
-        { date: '2023-01', price: 17.90 },
-        { date: '2023-07', price: 17.50 },
-        { date: '2024-01', price: 17.25 }
+      { product: 'Tea', data: [
+        { date: '2023-Q1', price: 18.40 },
+        { date: '2023-Q3', price: 18.25 },
+        { date: '2024-Q1', price: 18.00 },
+        { date: '2024-Q3', price: 17.80 },
+        { date: '2025-Q1', price: 17.75 }
       ]}
     ],
     performanceHistory: [
       { metric: 'Quality', data: [
-        { date: '2022-Q1', value: 88 },
-        { date: '2022-Q2', value: 89 },
-        { date: '2022-Q3', value: 90 },
-        { date: '2022-Q4', value: 91 },
-        { date: '2023-Q1', value: 91 },
-        { date: '2023-Q2', value: 92 },
-        { date: '2023-Q3', value: 92 },
-        { date: '2023-Q4', value: 92 }
+        { date: '2023-Q1', value: 88 },
+        { date: '2023-Q2', value: 89 },
+        { date: '2023-Q3', value: 90 },
+        { date: '2023-Q4', value: 90 },
+        { date: '2024-Q1', value: 91 },
+        { date: '2024-Q2', value: 91 },
+        { date: '2024-Q3', value: 92 },
+        { date: '2024-Q4', value: 92 }
       ]},
       { metric: 'Delivery', data: [
-        { date: '2022-Q1', value: 91 },
-        { date: '2022-Q2', value: 92 },
-        { date: '2022-Q3', value: 93 },
-        { date: '2022-Q4', value: 94 },
-        { date: '2023-Q1', value: 94 },
-        { date: '2023-Q2', value: 95 },
-        { date: '2023-Q3', value: 95 },
-        { date: '2023-Q4', value: 95 }
+        { date: '2023-Q1', value: 91 },
+        { date: '2023-Q2', value: 92 },
+        { date: '2023-Q3', value: 93 },
+        { date: '2023-Q4', value: 93 },
+        { date: '2024-Q1', value: 94 },
+        { date: '2024-Q2', value: 94 },
+        { date: '2024-Q3', value: 94 },
+        { date: '2024-Q4', value: 94 }
       ]},
       { metric: 'Response Time', data: [
-        { date: '2022-Q1', value: 36 },
-        { date: '2022-Q2', value: 32 },
-        { date: '2022-Q3', value: 28 },
-        { date: '2022-Q4', value: 26 },
-        { date: '2023-Q1', value: 26 },
-        { date: '2023-Q2', value: 24 },
-        { date: '2023-Q3', value: 24 },
-        { date: '2023-Q4', value: 24 }
+        { date: '2023-Q1', value: 42 },
+        { date: '2023-Q2', value: 40 },
+        { date: '2023-Q3', value: 38 },
+        { date: '2023-Q4', value: 38 },
+        { date: '2024-Q1', value: 36 },
+        { date: '2024-Q2', value: 36 },
+        { date: '2024-Q3', value: 36 },
+        { date: '2024-Q4', value: 36 }
       ]}
     ]
   };

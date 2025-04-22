@@ -62,151 +62,151 @@ const NegotiationHistory: React.FC = () => {
   const [sortBy, setSortBy] = useState<string>('date_desc');
   const [selectedNegotiation, setSelectedNegotiation] = useState<string | null>(null);
   
-  // Mock negotiation history data
+  // Mock negotiation history data based on Aldi tenders
   const negotiations: Negotiation[] = [
     {
-      id: 'neg-001',
-      title: 'Q2 Electronics Components Order',
-      vendor: 'TechSupply Inc.',
-      vendorId: 'vendor-001',
+      id: 'T2025-201',
+      title: 'Coffee Supply Agreement',
+      vendor: 'Angola Coffee Imports',
+      vendorId: 'vendor-201',
       status: 'completed',
-      category: 'Electronics',
-      startDate: '2024-04-02T10:00:00Z',
-      endDate: '2024-04-15T16:30:00Z',
-      initialPrice: 145000,
-      finalPrice: 128500,
+      category: 'Drinks',
+      startDate: '2025-04-10T10:00:00Z',
+      endDate: '2025-04-20T16:30:00Z',
+      initialPrice: 148500,
+      finalPrice: 132000,
       savings: 16500,
-      savingsPercent: 11.4,
-      items: 28,
-      messages: 42,
-      documents: 5,
-      notes: 'Successfully negotiated bulk discount and favorable payment terms. Vendor agreed to expedited shipping.'
+      savingsPercent: 11.1,
+      items: 1,
+      messages: 38,
+      documents: 6,
+      notes: 'Successfully negotiated bulk discount and expedited shipping for 14kg, 3-pack coffee products. Vendor committed to maintaining Imported quality standards.'
     },
     {
-      id: 'neg-002',
-      title: 'Manufacturing Equipment Lease',
-      vendor: 'Industrial Machines Co.',
-      vendorId: 'vendor-008',
+      id: 'T2025-202',
+      title: 'Health & Beauty Products - Conditioner',
+      vendor: 'Greece Beauty Products',
+      vendorId: 'vendor-202',
       status: 'completed',
-      category: 'Machinery',
-      startDate: '2024-03-15T09:15:00Z',
-      endDate: '2024-03-28T14:45:00Z',
-      initialPrice: 875000,
-      finalPrice: 792000,
-      savings: 83000,
-      savingsPercent: 9.5,
-      items: 5,
-      messages: 36,
-      documents: 12,
-      notes: 'Multi-year lease agreement with annual maintenance included. Option to purchase at end of term.'
-    },
-    {
-      id: 'neg-003',
-      title: 'Raw Materials Supply (Steel)',
-      vendor: 'Global Materials Corp',
-      vendorId: 'vendor-015',
-      status: 'rejected',
-      category: 'Raw Materials',
-      startDate: '2024-03-10T08:00:00Z',
-      endDate: '2024-03-18T11:30:00Z',
-      initialPrice: 245000,
-      finalPrice: 228000,
-      savings: 17000,
-      savingsPercent: 6.9,
-      items: 6,
-      messages: 24,
-      documents: 3,
-      notes: 'Could not reach agreement on delivery schedule. Vendor unwilling to meet our timeline requirements.'
-    },
-    {
-      id: 'neg-004',
-      title: 'Office Furniture Package',
-      vendor: 'Corporate Interiors Ltd.',
-      vendorId: 'vendor-023',
-      status: 'completed',
-      category: 'Office Supplies',
-      startDate: '2024-02-28T13:20:00Z',
-      endDate: '2024-03-08T17:15:00Z',
-      initialPrice: 68500,
-      finalPrice: 58200,
-      savings: 10300,
-      savingsPercent: 15.0,
-      items: 85,
-      messages: 28,
+      category: 'Health & Beauty',
+      startDate: '2025-04-13T09:15:00Z',
+      endDate: '2025-04-23T14:45:00Z',
+      initialPrice: 78500,
+      finalPrice: 72000,
+      savings: 6500,
+      savingsPercent: 8.3,
+      items: 1,
+      messages: 27,
       documents: 4,
-      notes: 'Excellent deal with free installation and 5-year warranty. Vendor offered additional accessories at no cost.'
+      notes: 'Value line conditioner supply agreement with favorable payment terms. Price negotiated down for 10kg, 2-pack products with chilled storage requirements.'
     },
     {
-      id: 'neg-005',
-      title: 'Logistics Services Contract',
-      vendor: 'FastTrack Shipping',
-      vendorId: 'vendor-034',
-      status: 'expired',
-      category: 'Logistics',
-      startDate: '2024-02-15T10:30:00Z',
-      endDate: '2024-03-01T10:30:00Z',
-      initialPrice: 125000,
-      finalPrice: 125000,
+      id: 'T2025-203',
+      title: 'Fresh Produce - Oranges',
+      vendor: 'Burkina Faso Fruits',
+      vendorId: 'vendor-203',
+      status: 'rejected',
+      category: 'Fruits & Vegetables',
+      startDate: '2025-03-25T08:00:00Z',
+      endDate: '2025-04-04T11:30:00Z',
+      initialPrice: 92000,
+      finalPrice: 92000,
       savings: 0,
       savingsPercent: 0,
-      items: 12,
-      messages: 18,
-      documents: 6,
-      notes: 'Negotiation time limit expired before reaching agreement. Vendor was slow to respond to our counter-offers.'
+      items: 1,
+      messages: 32,
+      documents: 5,
+      notes: 'Could not reach agreement on delivery schedule or price. Vendor unwilling to meet our standards for value-line oranges. 13kg, 2-pack products with chilled storage requirements.'
     },
     {
-      id: 'neg-006',
-      title: 'Product Packaging Materials',
-      vendor: 'BoxCraft Supplies',
-      vendorId: 'vendor-041',
+      id: 'T2025-204',
+      title: 'Organic Deodorant Supply',
+      vendor: 'Estonia Natural Products',
+      vendorId: 'vendor-204',
       status: 'completed',
-      category: 'Packaging',
-      startDate: '2024-02-05T09:00:00Z',
-      endDate: '2024-02-12T15:45:00Z',
-      initialPrice: 42500,
-      finalPrice: 36800,
-      savings: 5700,
-      savingsPercent: 13.4,
-      items: 35,
-      messages: 22,
+      category: 'Health & Beauty',
+      startDate: '2025-03-28T13:20:00Z',
+      endDate: '2025-04-07T17:15:00Z',
+      initialPrice: 68000,
+      finalPrice: 59800,
+      savings: 8200,
+      savingsPercent: 12.1,
+      items: 1,
+      messages: 24,
       documents: 3,
-      notes: 'Negotiated better terms for eco-friendly packaging materials. Volume discount applied to future orders.'
+      notes: 'Secured organic deodorant products with sustainability certification. 6kg, 2-pack ambient storage products with excellent pricing and delivery terms.'
     },
     {
-      id: 'neg-007',
-      title: 'Circuit Board Components',
-      vendor: 'ElectroTech Systems',
-      vendorId: 'vendor-003',
-      status: 'rejected',
-      category: 'Electronics',
-      startDate: '2024-01-20T11:15:00Z',
-      endDate: '2024-01-25T16:20:00Z',
-      initialPrice: 96000,
-      finalPrice: 92500,
-      savings: 3500,
-      savingsPercent: 3.6,
-      items: 64,
-      messages: 15,
-      documents: 2,
-      notes: 'Quality standards could not be guaranteed by vendor. Decided to pursue alternative suppliers.'
+      id: 'T2025-205',
+      title: 'Premium Moisturizer Contract',
+      vendor: 'Costa Rica Cosmetics',
+      vendorId: 'vendor-205',
+      status: 'expired',
+      category: 'Health & Beauty',
+      startDate: '2025-04-04T10:30:00Z',
+      endDate: '2025-04-14T10:30:00Z',
+      initialPrice: 124000,
+      finalPrice: 124000,
+      savings: 0,
+      savingsPercent: 0,
+      items: 1,
+      messages: 18,
+      documents: 4,
+      notes: 'Negotiation time limit expired before reaching agreement on premium moisturizer line. 16kg, 3-pack chilled storage requirements were a complicating factor.'
     },
     {
-      id: 'neg-008',
-      title: 'Software Licensing Agreement',
-      vendor: 'Enterprise Solutions Inc.',
-      vendorId: 'vendor-056',
+      id: 'T2025-206',
+      title: 'Deli Meats - Pepperoni',
+      vendor: 'Bosnia Herzegovina Meats',
+      vendorId: 'vendor-206',
       status: 'completed',
-      category: 'Software',
-      startDate: '2024-01-10T13:00:00Z',
-      endDate: '2024-01-30T17:30:00Z',
-      initialPrice: 185000,
-      finalPrice: 148000,
-      savings: 37000,
-      savingsPercent: 20.0,
-      items: 8,
-      messages: 45,
-      documents: 9,
-      notes: 'Excellent savings on enterprise license. Negotiated additional user seats and premium support.'
+      category: 'Deli & Chilled Meats',
+      startDate: '2025-04-14T09:00:00Z',
+      endDate: '2025-04-24T15:45:00Z',
+      initialPrice: 95000,
+      finalPrice: 85500,
+      savings: 9500,
+      savingsPercent: 10.0,
+      items: 1,
+      messages: 29,
+      documents: 5,
+      notes: 'Value line pepperoni with favorable quality control metrics. 18kg, 3-pack products in box packaging with chilled storage requirements met our standards.'
+    },
+    {
+      id: 'T2025-207',
+      title: 'Imported Shampoo Products',
+      vendor: 'Cambodia Beauty Essentials',
+      vendorId: 'vendor-207',
+      status: 'rejected',
+      category: 'Health & Beauty',
+      startDate: '2025-03-19T11:15:00Z',
+      endDate: '2025-03-29T16:20:00Z',
+      initialPrice: 108000,
+      finalPrice: 102500,
+      savings: 5500,
+      savingsPercent: 5.1,
+      items: 1,
+      messages: 21,
+      documents: 3,
+      notes: 'Quality standards for shampoo products (6kg, 4-pack) could not be guaranteed by vendor. Alternate supplier being sourced for imported line.'
+    },
+    {
+      id: 'T2025-208',
+      title: 'Fresh Produce - Tomatoes',
+      vendor: 'Somalia Fresh Produce',
+      vendorId: 'vendor-208',
+      status: 'completed',
+      category: 'Fruits & Vegetables',
+      startDate: '2025-03-27T13:00:00Z',
+      endDate: '2025-04-06T17:30:00Z',
+      initialPrice: 74000,
+      finalPrice: 65000,
+      savings: 9000,
+      savingsPercent: 12.2,
+      items: 1,
+      messages: 26,
+      documents: 4,
+      notes: 'Excellent value tomato products with favorable pricing. 20kg, 1-pack pallet products requiring frozen storage with quick delivery timeline.'
     },
   ];
 
@@ -263,10 +263,10 @@ const NegotiationHistory: React.FC = () => {
   
   // Monthly savings data for chart
   const monthlySavingsData = [
-    { month: 'Jan', savings: 40500 },
-    { month: 'Feb', savings: 16000 },
-    { month: 'Mar', savings: 100000 },
-    { month: 'Apr', savings: 16500 },
+    { month: 'Jan', savings: 21500 },
+    { month: 'Feb', savings: 18000 },
+    { month: 'Mar', savings: 17200 },
+    { month: 'Apr', savings: 43200 },
     { month: 'May', savings: 0 },
     { month: 'Jun', savings: 0 },
     { month: 'Jul', savings: 0 },
@@ -279,13 +279,12 @@ const NegotiationHistory: React.FC = () => {
   
   // Categories performance data
   const categorySavingsData = [
-    { name: 'Electronics', savings: 20000 },
-    { name: 'Machinery', savings: 83000 },
-    { name: 'Raw Materials', savings: 17000 },
-    { name: 'Office Supplies', savings: 10300 },
-    { name: 'Logistics', savings: 0 },
-    { name: 'Packaging', savings: 5700 },
-    { name: 'Software', savings: 37000 },
+    { name: 'Health & Beauty', savings: 20200 },
+    { name: 'Deli & Chilled Meats', savings: 9500 },
+    { name: 'Fruits & Vegetables', savings: 9000 },
+    { name: 'Drinks', savings: 16500 },
+    { name: 'Pantry', savings: 0 },
+    { name: 'Freezer', savings: 0 },
   ];
   
   // Format currency
@@ -322,12 +321,12 @@ const NegotiationHistory: React.FC = () => {
       {/* Page Header */}
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-3xl font-semibold text-text-primary">Negotiation History</h1>
-          <p className="text-text-secondary mt-1">View and analyze past negotiations and outcomes</p>
+          <h1 className="text-3xl font-semibold text-text-primary">Aldi Tender History</h1>
+          <p className="text-text-secondary mt-1">View and analyze past negotiations and tender outcomes</p>
         </div>
         <div className="flex gap-2">
           <Link to="/active-negotiations" className="btn btn-outline btn-sm flex items-center gap-2">
-            <MdOutlineAccessTime className="text-lg" /> Active Negotiations
+            <MdOutlineAccessTime className="text-lg" /> Active Tenders
           </Link>
           <Link to="/negotiation-calendar" className="btn btn-primary btn-sm flex items-center gap-2">
             <MdOutlineCalendarToday className="text-lg" /> Calendar
@@ -755,14 +754,13 @@ const NegotiationHistory: React.FC = () => {
                 {[
                   { date: format(parseISO(selectedNegotiationData.startDate), 'MMM d'), event: 'Negotiation Started', desc: 'Initial quote received' },
                   { date: format(parseISO(selectedNegotiationData.startDate), 'MMM d'), event: 'First Counteroffer', desc: 'Requested 10% volume discount' },
-                  { date: format(addDays(parseISO(selectedNegotiationData.startDate), 3), 'MMM d'), event: 'Vendor Response', desc: 'Offered 3% discount' },
-                  { date: format(addDays(parseISO(selectedNegotiationData.startDate), 4), 'MMM d'), event: 'Second Counteroffer', desc: 'Requested expedited shipping and 7% discount' },
-                  { date: format(addDays(parseISO(selectedNegotiationData.startDate), 7), 'MMM d'), event: 'Final Offer', desc: 'Vendor agreed to expedited shipping and 5.5% discount' },
+                  { date: format(parseISO(selectedNegotiationData.startDate), 'MMM d'), event: 'Second Counteroffer', desc: 'Requested expedited shipping and 7% discount' },
+                  { date: format(parseISO(selectedNegotiationData.startDate), 'MMM d'), event: 'Final Offer', desc: 'Vendor agreed to expedited shipping and 5.5% discount' },
                   { date: format(parseISO(selectedNegotiationData.endDate), 'MMM d'), event: 'Agreement Reached', desc: `Final price: ${formatCurrency(selectedNegotiationData.finalPrice)}` },
                 ].map((item, index) => (
                   <div key={index} className="relative">
                     <div className="absolute -left-8 mt-1.5 w-4 h-4 rounded-full bg-accent-primary"></div>
-                    {index < 5 && <div className="absolute -left-6 mt-5 h-14 w-0.5 bg-accent-primary/30"></div>}
+                    {index < 4 && <div className="absolute -left-6 mt-5 h-14 w-0.5 bg-accent-primary/30"></div>}
                     <div>
                       <span className="text-text-muted text-xs">{item.date}</span>
                       <h4 className="text-text-primary font-medium">{item.event}</h4>

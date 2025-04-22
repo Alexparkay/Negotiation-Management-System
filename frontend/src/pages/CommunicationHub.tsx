@@ -12,7 +12,6 @@ import {
   MdOutlineArrowForward,
   MdOutlineCalendarToday,
   MdOutlineAttachFile,
-  MdOutlineSend,
   MdOutlineInsertDriveFile,
   MdOutlineImage,
   MdOutlinePerson,
@@ -24,7 +23,8 @@ import {
   MdOutlineSave,
   MdOutlineWarning,
   MdOutlineDelete,
-  MdOutlineLocationOn
+  MdOutlineLocationOn,
+  MdOutlineSend
 } from 'react-icons/md';
 import { HiOutlineChatBubbleLeftRight, HiOutlineDocumentText } from 'react-icons/hi2';
 import ChatPopup from '../components/ChatPopup';
@@ -92,46 +92,46 @@ const CommunicationHub = () => {
   const [showComposeForm, setShowComposeForm] = useState(false);
   const [composeType, setComposeType] = useState<'email' | 'call' | 'meeting' | 'note'>('email');
   
-  // Mock data
+  // Mock data using real vendor info from Aldi tenders
   const communications: Communication[] = [
     {
       id: 1,
       type: 'email',
-      subject: 'Q2 Price Negotiation for HDMI Cables',
-      content: 'Hello John, Following our recent market analysis, we would like to discuss potential adjustments to our pricing for HDMI cables in Q2. Our data shows a 5% reduction in raw material costs that we believe should be reflected in our contract. Could we schedule a call to discuss this further?',
-      date: '2024-03-15 10:23',
+      subject: 'Coffee Supply Agreement - Price Adjustment',
+      content: 'Hello Carlos, Following our recent market analysis, we would like to discuss potential adjustments to our pricing for Coffee in Q2. Our data shows a 5% reduction in raw material costs that we believe should be reflected in our contract. Could we schedule a call to discuss this further?',
+      date: '2025-04-12 10:23',
       vendor: {
         id: 1,
-        name: 'TechVision Inc.',
-        logo: 'https://via.placeholder.com/40?text=TV'
+        name: 'Angola Coffee Exports',
+        logo: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons@6.6.6/flags/4x3/ao.svg'
       },
-      participants: ['john.richards@techvision.com', 'procurement@aldi.com'],
+      participants: ['c.machado@angolacoffee.com', 'procurement@aldi.com'],
       attachments: [
-        { name: 'Market_Analysis_Q2.pdf', type: 'pdf', size: '2.4 MB' },
+        { name: 'Coffee_Market_Analysis_Q2.pdf', type: 'pdf', size: '2.4 MB' },
         { name: 'Price_Comparison.xlsx', type: 'excel', size: '1.8 MB' }
       ],
-      tags: ['negotiation', 'pricing', 'Q2'],
+      tags: ['negotiation', 'pricing', 'coffee'],
       isRead: true,
       isStarred: true,
       isArchived: false,
-      relatedNegotiation: 101
+      relatedNegotiation: 201
     },
     {
       id: 2,
       type: 'call',
-      subject: 'Call Summary: USB-C Adapter Quality Issues',
-      content: 'Call with Sarah from NetWare Solutions regarding recent quality issues with USB-C adapters. They acknowledged the problem and committed to replacing the affected batch. They will also implement additional quality checks moving forward.',
-      date: '2024-03-12 14:30',
+      subject: 'Call Summary: Conditioner Quality Issues',
+      content: 'Call with Elena from Greece Beauty Products regarding recent quality issues with Conditioner products. They acknowledged the problem and committed to replacing the affected batch. They will also implement additional quality checks moving forward.',
+      date: '2025-04-15 14:30',
       vendor: {
         id: 2,
-        name: 'NetWare Solutions',
-        logo: 'https://via.placeholder.com/40?text=NW'
+        name: 'Greece Beauty Products',
+        logo: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons@6.6.6/flags/4x3/gr.svg'
       },
-      participants: ['sarah.connors@netware.com', 'quality@aldi.com', 'procurement@aldi.com'],
+      participants: ['elena@greecebeauty.com', 'quality@aldi.com', 'procurement@aldi.com'],
       attachments: [
         { name: 'Quality_Report.pdf', type: 'pdf', size: '3.1 MB' }
       ],
-      tags: ['quality', 'issue resolution'],
+      tags: ['quality', 'issue resolution', 'health & beauty'],
       isRead: true,
       isStarred: false,
       isArchived: false
@@ -139,20 +139,20 @@ const CommunicationHub = () => {
     {
       id: 3,
       type: 'meeting',
-      subject: 'Q1 Performance Review Meeting',
-      content: 'Quarterly performance review with DataSphere Systems. Discussion points: delivery performance (92%, below target of 95%), quality metrics (meeting expectations), responsiveness (excellent). Action items: improvement plan for delivery performance to be submitted within 2 weeks.',
-      date: '2024-03-10 09:00',
+      subject: 'Q2 Performance Review Meeting',
+      content: 'Quarterly performance review with Burkina Faso Fresh Produce. Discussion points: delivery performance (87%, below target of 90%), quality metrics (meeting expectations), responsiveness (good). Action items: improvement plan for delivery performance to be submitted within 2 weeks.',
+      date: '2025-04-02 09:00',
       vendor: {
         id: 3,
-        name: 'DataSphere Systems',
-        logo: 'https://via.placeholder.com/40?text=DS'
+        name: 'Burkina Faso Fresh Produce',
+        logo: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons@6.6.6/flags/4x3/bf.svg'
       },
-      participants: ['michael.chen@datasphere.com', 'performance@aldi.com', 'procurement@aldi.com'],
+      participants: ['i.ouedraogo@bffresh.com', 'performance@aldi.com', 'procurement@aldi.com'],
       attachments: [
-        { name: 'Q1_Performance_Report.pptx', type: 'powerpoint', size: '4.2 MB' },
+        { name: 'Q2_Performance_Report.pptx', type: 'powerpoint', size: '4.2 MB' },
         { name: 'Meeting_Minutes.docx', type: 'word', size: '0.8 MB' }
       ],
-      tags: ['performance review', 'quarterly', 'Q1'],
+      tags: ['performance review', 'quarterly', 'fruits & vegetables'],
       isRead: true,
       isStarred: true,
       isArchived: false
@@ -160,19 +160,19 @@ const CommunicationHub = () => {
     {
       id: 4,
       type: 'email',
-      subject: 'New Price List for Q2 2024',
-      content: 'Dear Aldi Procurement Team, Please find attached our updated price list for Q2 2024. We\'ve been able to maintain most prices from Q1, with a slight reduction on Cat6 cables due to improved manufacturing processes. We look forward to your feedback.',
-      date: '2024-03-08 16:45',
+      subject: 'New Price List for Organic Deodorant',
+      content: 'Dear Aldi Procurement Team, Please find attached our updated price list for Organic Deodorant products. We\'ve been able to maintain most prices, with a slight reduction due to improved manufacturing processes. Our organic certification has been renewed for another year. We look forward to your feedback.',
+      date: '2025-04-06 16:45',
       vendor: {
-        id: 2,
-        name: 'NetWare Solutions',
-        logo: 'https://via.placeholder.com/40?text=NW'
+        id: 4,
+        name: 'EstoniaPrime',
+        logo: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons@6.6.6/flags/4x3/ee.svg'
       },
-      participants: ['sarah.connors@netware.com', 'procurement@aldi.com'],
+      participants: ['k.tamm@estoniaprime.ee', 'procurement@aldi.com'],
       attachments: [
-        { name: 'NetWare_PriceList_Q2_2024.xlsx', type: 'excel', size: '1.2 MB' }
+        { name: 'Estonia_PriceList_2025.xlsx', type: 'excel', size: '1.2 MB' }
       ],
-      tags: ['pricing', 'Q2'],
+      tags: ['pricing', 'organic', 'health & beauty'],
       isRead: false,
       isStarred: false,
       isArchived: false
@@ -180,21 +180,42 @@ const CommunicationHub = () => {
     {
       id: 5,
       type: 'note',
-      subject: 'Notes from Supplier Conference',
-      content: 'Met representatives from GlobalConnect Ltd at the Annual Tech Suppliers Conference. Discussed potential for expanding our product range with their new line of eco-friendly peripherals. They seemed particularly interested in establishing a long-term relationship and mentioned potential for volume discounts.',
-      date: '2024-03-05 11:20',
+      subject: 'Notes from Supplier Fair',
+      content: 'Met representatives from Costa Rica Cosmetics at the Annual Health & Beauty Suppliers Fair. Discussed potential for expanding our premium moisturizer range. They seemed particularly interested in establishing a long-term relationship and mentioned potential for volume discounts and exclusive product formulations.',
+      date: '2025-04-08 11:20',
       vendor: {
-        id: 4,
-        name: 'GlobalConnect Ltd',
-        logo: 'https://via.placeholder.com/40?text=GC'
+        id: 5,
+        name: 'Costa Rica Cosmetics',
+        logo: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons@6.6.6/flags/4x3/cr.svg'
       },
       participants: ['procurement@aldi.com'],
       attachments: [
         { name: 'Product_Catalog.pdf', type: 'pdf', size: '5.6 MB' }
       ],
-      tags: ['networking', 'expansion'],
+      tags: ['premium', 'health & beauty', 'expansion'],
       isRead: true,
       isStarred: false,
+      isArchived: false
+    },
+    {
+      id: 6,
+      type: 'email',
+      subject: 'Pepperoni Supply Contract Renewal',
+      content: `Dear Aldi Team, As our current supply contract approaches its renewal date, we would like to propose a continuation of our partnership with some adjustments to volume and delivery terms. We believe we can offer even better value with a multi-year agreement. Please find our proposal attached. We're open to discussion on all terms.`,
+      date: '2025-04-18 13:15',
+      vendor: {
+        id: 6,
+        name: 'Bosnia Meats International',
+        logo: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons@6.6.6/flags/4x3/ba.svg'
+      },
+      participants: ['a.begic@bosniameats.ba', 'procurement@aldi.com'],
+      attachments: [
+        { name: 'Contract_Renewal_Proposal.pdf', type: 'pdf', size: '3.8 MB' },
+        { name: 'Price_Schedule_2025.xlsx', type: 'excel', size: '1.5 MB' }
+      ],
+      tags: ['contract renewal', 'meat products', 'negotiation'],
+      isRead: false,
+      isStarred: true,
       isArchived: false
     }
   ];
@@ -203,16 +224,16 @@ const CommunicationHub = () => {
     {
       id: 1,
       type: 'email',
-      subject: 'Price Negotiation Follow-up',
-      content: 'Draft follow-up to our discussion about pricing adjustments...',
-      to: ['john.richards@techvision.com'],
+      subject: 'Coffee Agreement Follow-up',
+      content: 'Draft follow-up to our discussion about pricing adjustments for imported coffee products...',
+      to: ['c.machado@angolacoffee.com'],
       attachments: []
     },
     {
       id: 2,
       type: 'note',
-      subject: 'Meeting Preparation: FiberTech',
-      content: 'Key points to discuss in upcoming meeting with FiberTech...',
+      subject: 'Meeting Preparation: EstoniaPrime',
+      content: 'Key points to discuss in upcoming meeting about organic deodorant line expansion...',
       to: [],
       attachments: [
         { name: 'Discussion_Points.docx', type: 'word', size: '0.5 MB' }
@@ -223,30 +244,44 @@ const CommunicationHub = () => {
   const upcomingMeetings: UpcomingMeeting[] = [
     {
       id: 1,
-      title: 'Q2 Price Negotiation',
-      date: '2024-03-20',
+      title: 'Coffee Supply Negotiation',
+      date: '2025-04-22',
       time: '10:00 - 11:30',
       vendor: {
         id: 1,
-        name: 'TechVision Inc.',
-        logo: 'https://via.placeholder.com/40?text=TV'
+        name: 'Angola Coffee Exports',
+        logo: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons@6.6.6/flags/4x3/ao.svg'
       },
-      participants: ['John Richards', 'Mark Wilson', 'Anna Smith'],
+      participants: ['Carlos Machado', 'Procurement Team', 'Category Manager'],
       location: 'Virtual - Zoom',
       type: 'negotiation'
     },
     {
       id: 2,
-      title: 'Annual Vendor Review',
-      date: '2024-03-25',
+      title: 'Quarterly Vendor Review',
+      date: '2025-04-25',
       time: '14:00 - 16:00',
       vendor: {
         id: 3,
-        name: 'DataSphere Systems',
-        logo: 'https://via.placeholder.com/40?text=DS'
+        name: 'Burkina Faso Fresh Produce',
+        logo: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons@6.6.6/flags/4x3/bf.svg'
       },
-      participants: ['Michael Chen', 'Procurement Team', 'Finance Representative'],
+      participants: ['Ibrahim Ouédraogo', 'Procurement Team', 'Quality Assurance'],
       location: 'Conference Room A',
+      type: 'review'
+    },
+    {
+      id: 3,
+      title: 'Organic Certification Review',
+      date: '2025-04-28',
+      time: '09:30 - 11:00',
+      vendor: {
+        id: 4,
+        name: 'EstoniaPrime',
+        logo: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons@6.6.6/flags/4x3/ee.svg'
+      },
+      participants: ['Kristiina Tamm', 'Sustainability Team', 'Procurement'],
+      location: 'Virtual - Teams',
       type: 'review'
     }
   ];
@@ -318,10 +353,12 @@ const CommunicationHub = () => {
               </label>
               <select className="select select-bordered w-full">
                 <option disabled selected>Select vendor or contact</option>
-                <option>TechVision Inc. (John Richards)</option>
-                <option>NetWare Solutions (Sarah Connors)</option>
-                <option>DataSphere Systems (Michael Chen)</option>
-                <option>GlobalConnect Ltd (Robert Wilson)</option>
+                <option>Angola Coffee Exports (Carlos Machado)</option>
+                <option>Greece Beauty Products (Elena Papadopoulos)</option>
+                <option>Burkina Faso Fresh Produce (Ibrahim Ouédraogo)</option>
+                <option>EstoniaPrime (Kristiina Tamm)</option>
+                <option>Costa Rica Cosmetics (Maria Hernandez)</option>
+                <option>Bosnia Meats International (Adnan Begić)</option>
               </select>
             </div>
           )}
@@ -378,9 +415,10 @@ const CommunicationHub = () => {
             </label>
             <select className="select select-bordered w-full">
               <option disabled selected>Select related negotiation</option>
-              <option>Q2 2024 Price Negotiation - TechVision</option>
-              <option>Annual Contract Review - NetWare</option>
-              <option>Quality Improvement Plan - DataSphere</option>
+              <option>Coffee Supply Agreement - Angola Coffee Exports</option>
+              <option>Health & Beauty Products - Greece Beauty Products</option>
+              <option>Fresh Produce Supply - Burkina Faso Fresh Produce</option>
+              <option>Organic Deodorant - EstoniaPrime</option>
             </select>
           </div>
           
@@ -656,10 +694,10 @@ const CommunicationHub = () => {
                   onClick={() => setSelectedItem(comm.id)}
                 >
                   <div className="flex items-center gap-3 mb-2">
-                    {comm.type === 'email' && <MdOutlineEmail className="text-accent-primary text-lg" />}
-                    {comm.type === 'call' && <MdOutlinePhone className="text-accent-secondary text-lg" />}
-                    {comm.type === 'meeting' && <MdOutlineVideoCall className="text-warning text-lg" />}
-                    {comm.type === 'note' && <MdOutlineChat className="text-info text-lg" />}
+                    {comm.type === 'email' && <MdOutlineEmail className="text-[#24bce7] text-lg" />}
+                    {comm.type === 'call' && <MdOutlinePhone className="text-[#00005e] text-lg" />}
+                    {comm.type === 'meeting' && <MdOutlineVideoCall className="text-[#f4c200] text-lg" />}
+                    {comm.type === 'note' && <MdOutlineChat className="text-[#f87304] text-lg" />}
                     <div className="flex-1 truncate font-medium">{comm.subject}</div>
                     {comm.isStarred && <span className="text-warning">★</span>}
                   </div>
@@ -751,15 +789,15 @@ const CommunicationHub = () => {
                   <div key={comm.id} className="glass-panel p-4 rounded-lg">
                     <div className="flex items-start gap-3">
                       <div className={`p-2 rounded-full 
-                        ${comm.type === 'email' ? 'bg-accent-primary/20' : 
-                          comm.type === 'call' ? 'bg-accent-secondary/20' : 
-                          comm.type === 'meeting' ? 'bg-warning/20' : 
-                          'bg-info/20'}`
+                        ${comm.type === 'email' ? 'bg-[#24bce7]/20' : 
+                          comm.type === 'call' ? 'bg-[#00005e]/20' : 
+                          comm.type === 'meeting' ? 'bg-[#f4c200]/20' : 
+                          'bg-[#f87304]/20'}`
                       }>
-                        {comm.type === 'email' && <MdOutlineEmail className={`text-accent-primary text-lg`} />}
-                        {comm.type === 'call' && <MdOutlinePhone className={`text-accent-secondary text-lg`} />}
-                        {comm.type === 'meeting' && <MdOutlineVideoCall className={`text-warning text-lg`} />}
-                        {comm.type === 'note' && <MdOutlineChat className={`text-info text-lg`} />}
+                        {comm.type === 'email' && <MdOutlineEmail className={`text-[#24bce7] text-lg`} />}
+                        {comm.type === 'call' && <MdOutlinePhone className={`text-[#00005e] text-lg`} />}
+                        {comm.type === 'meeting' && <MdOutlineVideoCall className={`text-[#f4c200] text-lg`} />}
+                        {comm.type === 'note' && <MdOutlineChat className={`text-[#f87304] text-lg`} />}
                       </div>
                       <div className="flex-1">
                         <div className="flex justify-between">
